@@ -44,7 +44,7 @@ const Navbar = () => {
                   </button>
                   <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                     <li><a className="dropdown-item" href="#">Hồ sơ cá nhân</a></li>
-                    <li><a className="dropdown-item" href="#">Đăng xuất</a></li>
+                    <li><a className="dropdown-item" href="/loign">Đăng xuất</a></li>
                   </ul>
                 </div>
               </div>
