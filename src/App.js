@@ -1,25 +1,19 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import AppRoutes from "./routes/AppRoutes";
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
+import EmployerDashboard from "./pages/EmployerDashboard";
+import "@fortawesome/fontawesome-free/css/all.min.css";
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <Navbar />
+      <EmployerDashboard />
+      <AppRoutes />
+      <Footer />
     </div>
   );
-}
+};
 
 export default App;

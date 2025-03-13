@@ -1,0 +1,17 @@
+footer {
+    .footer-links {
+        list-style: none;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+
+        li {
+            margin: 0 20px;
+            a {
+                text-decoration: none;
+                color: #ffffff;
+            }
+        }
+    }
+}

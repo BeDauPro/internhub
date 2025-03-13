@@ -1,0 +1,75 @@
+.navbar-container {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+}
+
+.bg-img {
+  background-image: url("https://source.unsplash.com/1600x900/?nature,water");
+  min-height: 400px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
+}
+.navbar-nav{
+  display: flex;
+  align-items: center;
+  gap: 50px;
+}
+.navbar {
+  background: rgba(255, 250, 250, 0.7) !important;
+  border-radius: 10px;
+}
+.navbar-brand{
+  color: #123082;
+}
+.navbar-brand, .nav-link {
+  color: #878787 !important;
+  font-weight: bold;
+}
+
+.nav-link:hover {
+  color: #123082 !important;
+  border-bottom: 3px solid;
+}
+
+.user-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-btn img {
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+}
+
+#userDropdown{
+  background-color: #123082;
+  color: white;
+  border-radius: 20px; 
+}
+
+.btn-notification {
+  color: black !important;
+  position: relative;
+}
+
+.fa-bell {
+  font-size: 20px;
+}
+
+.btn-notification .badge {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  font-size: 9px;
+}
+
+.navbar-toggler-icon {
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba%280, 0, 0, 1%29' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E") !important;
+}
