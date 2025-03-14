@@ -1,10 +1,5 @@
-.login-page {
-  .login-form-container {
-    width: 50%;
-    background-color: #fff;
-  }
-
-  .login-image-container {
+.register-page {
+  .register-image-container {
     width: 50%;
     display: none;
 
@@ -13,7 +8,12 @@
     }
   }
 
-  .login-box {
+  .register-form-container {
+    width: 50%;
+    background-color: #fff;
+  }
+
+  .register-box {
     max-width: 400px;
     width: 100%;
     padding: 2rem;
@@ -29,5 +29,11 @@
 
   .form-control {
     border-left: none;
+  }
+
+  .role-selection {
+    button {
+      transition: all 0.3s ease;
+    }
   }
 }

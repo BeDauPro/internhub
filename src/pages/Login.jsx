@@ -1,8 +1,9 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import "../styles/pages/login.scss"; 
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useNavigate } from "react-router-dom";
 import loginImage from "../images/login.jpg";
+import Button from '../components/Button';
 
 const Login = ({onLogin}) => {
   const [email, setEmail] = useState("");
@@ -12,7 +13,6 @@ const Login = ({onLogin}) => {
     e.preventDefault();
     onLogin();
   };
-
 
   return (
     <div className="login-page d-flex vh-100">
@@ -55,14 +55,11 @@ const Login = ({onLogin}) => {
             <div className="text-end mb-3">
               <a href="#" className="text-primary">Quên mật khẩu?</a>
             </div>
-
-            <button type="submit" className="btn btn-primary w-100">
-              Đăng nhập
-            </button>
+            <Button text="Sign in" variant="btn btn-primary w-100" type="submit"/>
           </form>
 
           <p className="text-center mt-3">
-            Bạn chưa có tài khoản? <a href="#" className="text-primary">Đăng ký</a>
+            Bạn chưa có tài khoản? <Link to="/rigister" className="text-primary">Đăng ký</Link>
           </p>
         </div>
       </div>

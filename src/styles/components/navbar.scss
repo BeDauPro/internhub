@@ -59,6 +59,15 @@
   position: relative;
 }
 
+.d-flex {
+  padding-top: 10px;
+  display: flex !important
+;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: center;
+}
+
 .fa-bell {
   font-size: 20px;
 }

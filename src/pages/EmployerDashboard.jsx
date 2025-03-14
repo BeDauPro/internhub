@@ -13,7 +13,7 @@ const EmployerDashboard = () => {
       <h2>Chỉnh sửa Hồ sơ</h2>
       <input type="text" placeholder="Họ và tên" />
       <input type="email" placeholder="Email" />
-      <Button text="Edit" onClick={handleEdit} variant="secondary"/>
+      <Button  text="Edit" onClick={handleEdit} variant="secondary"/>
       <Button text="Lưu" onClick={handleSave} variant="primary"/>
     </div>
   )
