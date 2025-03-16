@@ -5,7 +5,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import loginImage from "../images/login.jpg";
 import Button from '../components/Button';
 
-const Login = ({onLogin}) => {
+const Login = ({ onLogin }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -59,7 +59,7 @@ const Login = ({onLogin}) => {
           </form>
 
           <p className="text-center mt-3">
-            Bạn chưa có tài khoản? <Link to="/rigister" className="text-primary">Đăng ký</Link>
+            Bạn chưa có tài khoản? <Link to="/register" className="text-primary">Đăng ký</Link>
           </p>
         </div>
       </div>

@@ -1,0 +1,184 @@
+body,
+html {
+  height: 100%;
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.bg-image {
+  height: 50vh;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
+  opacity: 0.8;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(18, 48, 130, 0.3);
+  z-index: 1;
+}
+
+.img1 {
+  background-image: url("https://www.pace.edu.vn/uploads/news/2023/07/6-cau-hoi-thuong-gap-ve-intern.jpg");
+}
+
+.img2 {
+  background-image: url("https://careers.smartosc.com/wp-content/uploads/2023/12/thuc-tap-nganh-cong-nghe-thong-tin-03-1024x576.jpg");
+}
+
+.img3 {
+  background-image: url("https://www.careerxone.com/wp-content/uploads/2018/10/kariyervestaj_1440_en.jpg");
+}
+
+.img4 {
+  background-image: url("https://i.ytimg.com/vi/AHJMUI6w2zk/maxresdefault.jpg");
+}
+
+.bg-text {
+  background-color: rgba(0, 0, 0, 0.4);
+  color: white;
+  font-weight: bold;
+  font-size: 40px;
+  font-family: 'Roboto', sans-serif;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  width: 80%;
+  padding: 20px;
+  text-align: center;
+  border: 5px solid #f1f1f1;
+  transition: top 0.3s ease;
+  animation: fadeIn 1.5s ease-in-out;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  background: #002f6c;
+  padding: 10px;
+  border-radius: 50px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  width: 100%;
+  position: fixed;
+  top: calc(50% + 200px);
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  gap: 5px;
+  transition: top 0.3s ease;
+  margin-top: 150px;
+
+
+  .search-input {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    padding: 12px 16px;
+    border-radius: 50px;
+    background: transparent;
+    color: white;
+
+    input {
+      border: none;
+      outline: none;
+      background: transparent;
+      font-size: 16px;
+      color: white;
+      flex: 1;
+
+      &::placeholder {
+        color: white;
+        opacity: 0.7;
+      }
+    }
+
+    .search-icon {
+      font-size: 20px;
+      color: white;
+      margin-right: 8px;
+    }
+  }
+
+  .location-input {
+    display: flex;
+    align-items: center;
+    background: white;
+    padding: 12px 16px;
+    border-radius: 50px;
+    color: #555;
+    font-weight: 600;
+    cursor: pointer;
+    gap: 8px;
+
+    .location-icon {
+      font-size: 18px;
+      color: #444;
+    }
+
+    .dropdown-icon {
+      font-size: 16px;
+      color: #666;
+    }
+  }
+
+  .submit-button {
+    background:#f1f1f1;
+    color: #002f6c;
+    border: none;
+    padding: 12px 16px;
+    border-radius: 50px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.text-yellow-500 {
+  color: #FFD700;
+  padding: 5px;
+  font-size: 45px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

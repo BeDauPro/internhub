@@ -1,31 +1,36 @@
 .navbar-container {
-  position: absolute;
-  top: 20px;
+  margin-top: 20px;
+  position: fixed; /* Ensure the navbar is fixed at the top */
+  top: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 90%;
+  width: 80%;
+  z-index: 1000;
 }
 
 .bg-img {
-  background-image: url("https://source.unsplash.com/1600x900/?nature,water");
-  min-height: 400px;
+  min-height: 0px;
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
   position: relative;
 }
-.navbar-nav{
+
+.navbar-nav {
   display: flex;
   align-items: center;
   gap: 50px;
 }
+
 .navbar {
-  background: rgba(255, 250, 250, 0.7) !important;
+  background: rgba(255, 250, 250) !important;
   border-radius: 10px;
 }
-.navbar-brand{
+
+.navbar-brand {
   color: #123082;
 }
+
 .navbar-brand, .nav-link {
   color: #878787 !important;
   font-weight: bold;
@@ -48,7 +53,7 @@
   height: 35px;
 }
 
-#userDropdown{
+#userDropdown {
   background-color: #123082;
   color: white;
   border-radius: 20px; 
@@ -61,8 +66,7 @@
 
 .d-flex {
   padding-top: 10px;
-  display: flex !important
-;
+  display: flex !important;
   flex-wrap: wrap;
   align-content: center;
   justify-content: center;
