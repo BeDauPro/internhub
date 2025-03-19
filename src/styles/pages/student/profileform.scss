@@ -68,15 +68,17 @@
       font-size: 12px;
       margin-left: 5px;
     }
+    
+    
   }
 }
 
 .profile-edit-details {
-  width: 100%;
   background: white;
   border-radius: 15px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   padding: 20px;
+  height: 100%;
 
   @media (min-width: 768px) {
     width: 500px;
@@ -108,10 +110,11 @@
 
       input, textarea {
         width: 100%;
-        padding: 8px;
+        padding: 1px;
         border: 1px solid #ccc;
         border-radius: 5px;
       }
+
 
       textarea {
         height: 60px;
@@ -140,5 +143,71 @@
   .cancel-btn {
     background-color: #ccc;
     color: black;
+  }
+}
+
+.contact-section {
+  background: #f9f9f9;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  margin-top: 15px;
+
+  h3 {
+    font-size: 18px;
+    font-weight: bold;
+    color: #001f54;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  p {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: white;
+    padding: 0 5px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+
+    svg {
+      font-size: 18px;
+      color: #001f54;
+    }
+
+    input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-size: 14px;
+      padding: 5px;
+      border-radius: 5px;
+    }
+
+    input[type="date"] {
+      cursor: pointer;
+    }
+  }
+  p:last-child {
+    display: flex;
+    align-items: center;
+    
+    select {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-size: 14px;
+      padding: 5px;
+      border-radius: 5px;
+      background: white;
+      cursor: pointer;
+      appearance: none; // Ẩn style mặc định của trình duyệt
+      text-align: center;
+
+      &:hover {
+        background: #f1f1f1;
+      }
+    }
   }
 }

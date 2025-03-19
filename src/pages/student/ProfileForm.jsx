@@ -13,7 +13,7 @@ const ProfileForm = ({ initialData, onSave }) => {
   //đảm bảo formData được cập nhật khi initialData thay đổi
   useEffect(() => {
     setFormData(initialData);
-  }, [initialData]); 
+  }, [initialData]);
 
   //xử lý thay đổi input với handleChange
   const handleChange = (e) => {
@@ -43,17 +43,23 @@ const ProfileForm = ({ initialData, onSave }) => {
           <span className="status-label">Trạng thái việc làm</span>
           <span className="status-badge">{formData.status}</span>
         </div>
-      </div>
-
-      <div className="profile-edit-details">
-        <section>
+        <section className="contact-section">
           <h3>Thông tin liên hệ</h3>
           <p><AiOutlineMail /> <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="Email" /></p>
           <p><AiOutlineHome /> <input type="text" name="address" value={formData.address} onChange={handleChange} placeholder="Địa chỉ" /></p>
           <p><AiOutlinePhone /> <input type="text" name="phone" value={formData.phone} onChange={handleChange} placeholder="Số điện thoại" /></p>
           <p><FaBirthdayCake /> <input type="date" name="birthday" value={formData.birthday} onChange={handleChange} /></p>
-          <p><FaMale /> <input type="text" name="gender" value={formData.gender} onChange={handleChange} placeholder="Giới tính" /></p>
+          <p><FaMale />
+            <select name="gender" value={formData.gender} onChange={handleChange} placeholder="Giới tính">
+              <option>Nam</option>
+              <option>Nữ</option>
+            </select>
+          </p>
         </section>
+      </div>
+
+      <div className="profile-edit-details">
+
 
         <section>
           <h3>Giới thiệu bản thân</h3>
@@ -62,11 +68,11 @@ const ProfileForm = ({ initialData, onSave }) => {
 
         <section>
           <h3>Trình độ học vấn</h3>
-          <input 
-            type="text" 
-            name="education" 
-            value={formData.education.map((edu) => edu.institution).join(", ")} 
-            onChange={(e) => handleArrayChange(e, "education")} 
+          <input
+            type="text"
+            name="education"
+            value={formData.education.map((edu) => edu.institution).join(", ")}
+            onChange={(e) => handleArrayChange(e, "education")}
             placeholder="Nhập các trường học, cách nhau bằng dấu phẩy"
           />
           <input type="text" name="gpa" value={formData.otherInfo.gpa} onChange={handleChange} placeholder="GPA" />
@@ -74,15 +80,15 @@ const ProfileForm = ({ initialData, onSave }) => {
 
         <section>
           <h3>Github</h3>
-          <input type="url" name="github" value={formData.otherInfo.github} onChange={handleChange} />
+          <input type="text" name="github" value={formData.otherInfo.github} onChange={handleChange} />
         </section>
 
         <section>
           <h3>Kỹ năng</h3>
-          <textarea 
-            name="skills" 
-            value={formData.skills.join(", ")} 
-            onChange={(e) => handleArrayChange(e, "skills")} 
+          <textarea
+            name="skills"
+            value={formData.skills.join(", ")}
+            onChange={(e) => handleArrayChange(e, "skills")}
             placeholder="Nhập các kỹ năng, cách nhau bằng dấu phẩy"
           />
         </section>

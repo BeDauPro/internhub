@@ -2,12 +2,11 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../styles/pages/student/studentprofile.scss';
 import { AiOutlineMail, AiOutlineHome, AiOutlinePhone, AiOutlineGithub, AiOutlineFileText } from "react-icons/ai";
-import { FaGraduationCap, FaBirthdayCake, FaMale } from "react-icons/fa";
+import { FaGraduationCap, FaBirthdayCake, FaMale, FaLanguage} from "react-icons/fa";
 import avatar from '../../images/avatar.jpg';
 
 const StudentProfile = ({ profileData }) => {
     const navigate = useNavigate();
-
     const handleEdit = () => {
         navigate('/profileform', { state: { profileData } });
     };
@@ -22,12 +21,14 @@ const StudentProfile = ({ profileData }) => {
                     <span className="status-label">Trạng thái việc làm</span>
                     <span className="status-badge">{profileData.status}</span>
                 </div>
+                <section className="contact-section">
                 <h3>Thông tin liên hệ</h3>
                 <p><AiOutlineMail /> {profileData.email}</p>
                 <p><AiOutlineHome /> {profileData.address}</p>
                 <p><AiOutlinePhone /> {profileData.phone}</p>
                 <p><FaBirthdayCake /> {profileData.birthday}</p>
                 <p><FaMale /> {profileData.gender}</p>
+                </section>      
             </div>
 
             <div className="profile-details">
@@ -50,7 +51,7 @@ const StudentProfile = ({ profileData }) => {
                     <h3>Thông tin khác</h3>
                     <p><AiOutlineGithub /> <strong>Github link:</strong> <a href={profileData.otherInfo.github} target="_blank" rel="noopener noreferrer">{profileData.otherInfo.github}</a></p>
                     <p><FaGraduationCap /> <strong>GPA:</strong> {profileData.otherInfo.gpa}</p>
-                    <p><strong>Ngôn ngữ sử dụng:</strong> {profileData.otherInfo.languages}</p>
+                    <p><FaLanguage /><strong>Ngôn ngữ sử dụng:</strong> {profileData.otherInfo.languages}</p>
                 </section>
 
                 <section className="section">

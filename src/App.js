@@ -4,9 +4,13 @@ import StudentProfile from "./pages/student/StudentProfile";
 import ProfileForm from "./pages/student/ProfileForm";
 import "./styles/pages/student/profileform.scss";
 import Login from "./pages/Login";
+import FindJob from "./pages/student/FindJob";
+import Navbar from "./components/students/Navbar";
+import Footer from "./components/Footer";
 import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
-
+import EmployerProfile from "./pages/employer/EmployerProfile";
+import EditProfile from "./pages/employer/EditProfile";
 const App = () => {
   //chứa toàn bộ thông tin của bạn 
   const [profile, setProfile] = useState({
@@ -34,23 +38,47 @@ const App = () => {
     skills: ["ASP.NET", "ReactJS", "Flutter", "SQL Server", "Figma"],
     cvUploaded: false,
   });
+  const [eProfile, setEProfile] = useState({
+    companyName: "FPT Software",
+    companyID: "fpt123",
+    companyEmail: "contact@fptsoftware.com",
+    addresscom: "Hà Nội, Việt Nam",
+    phone: "+84-24-7300-7300",
+    website: "https://www.fpt-software.com",
+    since: "1999",
+    totalEmployee: "27000",
+    introduction: "FPT Software is a leading IT services provider in Southeast Asia, specializing in digital transformation, software development, and IT outsourcing.",
+    services: [
+      "Digital Transformation Consulting",
+      "Cloud Migration",
+      "AI & Data Analytics",
+      "Software Development",
+      "Managed Services",
+    ]
+  });
   //hàm cập nhật hồ sơ khi chỉnh sửa xong
   const handleSave = (updatedProfile) => {
-    console.log("Updated profile:", updatedProfile); 
     setProfile(updatedProfile);
+    setEProfile(updatedProfile);
   };
 
+
   return (
-    <Router>
+<Router>
       <Routes>
-        <Route path="/" element={<Navigate to="/login" />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        {/* <Route path="/" element={<Navigate to="/login" />} />
+        <Route
+          path="/login"
+          element={<Login onLogin={() => <Navigate to="/studentprofile" />} />}
+        /> */}
+        {/* <Route path="/register" element={<Register />} /> */}
         {/* truyền dữ liệu từ app.js xuống studentprofile.jsx */}
         <Route path="/studentprofile" element={<StudentProfile profileData={profile} />} />
         {/* Truyền dũliệu và hàm cập nhật xuống profileform */}
         <Route path="/profileform" element={<ProfileForm initialData={profile} onSave={handleSave} />} />
-        <Route path="*" element={<NotFound />} />
+        {/* <Route path="/employerprofile" element={<EmployerProfile profileData={eProfile} onSave={handleSave} />} />
+        <Route path="/editprofile" element={<EditProfile initialData={eProfile} onSave={handleSave} />} /> */}
+        {/* <Route path="/findjob" element={<FindJob />} /> */}
       </Routes>
     </Router>
   );

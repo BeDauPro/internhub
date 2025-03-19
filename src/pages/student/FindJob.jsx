@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Navbar from '../../components/students/Navbar'
 import Footer from '../../components/Footer'
 import JobCard from './JobCard'
@@ -7,8 +7,16 @@ import '../../styles/pages/student/overview.scss'
 import FptIntern from '../../images/fptintern.jpg'
 import Intern from '../../images/intern.jpg'
 import imgLogin from '../../images/login.jpg'
+import { jobs } from './JobCard';
 
-const HeroSection = () => {
+const HeroSection = ({ onSearch }) => {
+    const [searchInput, setSearchInput] = useState('');
+    const [selectedLocation, setSelectedLocation] = useState('');
+
+    const handleSearch = () => {
+        onSearch(searchInput, selectedLocation);
+    };
+
     useEffect(() => {
         const handleScroll = () => {
             const bgText = document.querySelector('.bg-text');
@@ -32,6 +40,8 @@ const HeroSection = () => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    const uniqueLocations = [...new Set(jobs.map(job => job.location))]; 
+
     return (
         <section className="hero-section" style={{ marginBottom: '10vh' }}>
             <div className="bg-image img1">
@@ -46,23 +56,49 @@ const HeroSection = () => {
             <div className="bg-image img4">
                 <div className="overlay"></div>
             </div>
-            
+
             <div className="bg-text">
                 Khám phá <span className="text-yellow-500">CƠ HỘI THỰC TẬP</span> <br />Bước đệm cho sự nghiệp tương lai!
             </div>
             <div className="search-bar">
                 <div className="search-input">
                     <i className="fa fa-search search-icon"></i>
-                    <input type="text" placeholder="Vị trí tuyển dụng/tên công ty" />
+                    <input
+                        type="text"
+                        placeholder="Vị trí tuyển dụng/tên công ty"
+                        value={searchInput}
+                        onChange={(e) => setSearchInput(e.target.value)}
+                    />
                 </div>
 
-                <div className="location-input">
-                    <i className="fa fa-globe location-icon"></i>
-                    <span>Địa điểm</span>
-                    <i className="fa fa-chevron-down dropdown-icon"></i>
+                <div className="dropdown">
+                    <button
+                        className="btn btn-secondary dropdown-toggle location-input"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                    >
+                        <i className="fa fa-globe location-icon"></i>
+                        {selectedLocation || 'Địa điểm'}
+                    </button>
+                    <ul className="dropdown-menu">
+                        {uniqueLocations.map(location => (
+                            <li key={location}>
+                                <a
+                                    className="dropdown-item"
+                                    href="#"
+                                    onClick={() => setSelectedLocation(location)}
+                                >
+                                    {location}
+                                </a>
+                            </li>
+                        ))}
+                    </ul>
                 </div>
 
-                <button className="submit-button">Tìm kiếm</button>
+                <button className="submit-button" onClick={handleSearch}>
+                    Tìm kiếm
+                </button>
             </div>
         </section>
     );
@@ -115,12 +151,25 @@ const Overview = () => {
 };
 
 const FindJob = () => {
+    const [searchResults, setSearchResults] = useState(null);
+    const jobCardRef = React.useRef(null);
+
+    const handleSearch = (searchInput, selectedLocation) => {
+        const result = searchInput ? { searchInput } : { selectedLocation };
+        setSearchResults(result);
+        if (jobCardRef.current) {
+            jobCardRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
     return (
         <div className="find-job">
             <Navbar />
-            <HeroSection />
+            <HeroSection onSearch={handleSearch} />
             <Overview />
-            <JobCard/>
+            <div ref={jobCardRef}>
+                <JobCard searchResults={searchResults} />
+            </div>
             <Footer />
         </div>
     );

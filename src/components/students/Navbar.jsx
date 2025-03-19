@@ -1,9 +1,19 @@
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../../styles/components/navbar.scss";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
+  const navigate = useNavigate();
+
+  const handleProfileClick = () => {
+    navigate("/studentprofile");
+  };
+
+  const handleLogoutClick = () => {
+    navigate("/login");
+  };
+
   return (
     <div className="bg-img">
       <div className="navbar-container">
@@ -44,8 +54,12 @@ const Navbar = () => {
                     <span className="studentName">Nguyen Duc</span>
                   </button>
                   <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                    <Link className="dropdown-item" to="/studentprofile">Hồ sơ cá nhân</Link>
-                    <Link className="dropdown-item" to="/login">Đăng xuất</Link>
+                    <li>
+                      <button className="dropdown-item" onClick={handleProfileClick}>Hồ sơ cá nhân</button>
+                    </li>
+                    <li>
+                      <button className="dropdown-item" onClick={handleLogoutClick}>Đăng xuất</button>
+                    </li>
                   </ul>
                 </div>
               </div>

@@ -4,7 +4,7 @@ import lgLogo from '../../images/lglogo.png'
 import fptLogo from '../../images/fpt.jpg'
 import nvLogo from '../../images/nvidialogo.png'
 
-const jobs = [
+export const jobs = [
   {
     id: 1,
     title: "Flutter",
@@ -39,7 +39,7 @@ const jobs = [
     date: "5/3/2025",
   },
   {
-    id: 1,
+    id: 4,
     title: "Flutter",
     company: "FPT Software",
     location: "Đà Nẵng",
@@ -50,7 +50,7 @@ const jobs = [
     date: "5/3/2025",
   },
   {
-    id: 2,
+    id: 5,
     title: "ReactJS",
     company: "LG Company",
     location: "Huế",
@@ -61,7 +61,7 @@ const jobs = [
     date: "5/3/2025",
   },
   {
-    id: 3,
+    id: 6,
     title: "Full-stack",
     company: "NVIDIA Company",
     location: "Hà Nội",
@@ -72,7 +72,7 @@ const jobs = [
     date: "5/3/2025",
   },
   {
-    id: 1,
+    id: 7,
     title: "Flutter",
     company: "FPT Software",
     location: "Đà Nẵng",
@@ -83,7 +83,7 @@ const jobs = [
     date: "5/3/2025",
   },
   {
-    id: 2,
+    id: 8,
     title: "ReactJS",
     company: "LG Company",
     location: "Huế",
@@ -94,7 +94,7 @@ const jobs = [
     date: "5/3/2025",
   },
   {
-    id: 3,
+    id: 9,
     title: "Full-stack",
     company: "NVIDIA Company",
     location: "Hà Nội",
@@ -105,7 +105,7 @@ const jobs = [
     date: "5/3/2025",
   },
   {
-    id: 1,
+    id: 10,
     title: "Flutter",
     company: "FPT Software",
     location: "Đà Nẵng",
@@ -116,7 +116,7 @@ const jobs = [
     date: "5/3/2025",
   },
   {
-    id: 2,
+    id: 21,
     title: "ReactJS",
     company: "LG Company",
     location: "Huế",
@@ -127,7 +127,7 @@ const jobs = [
     date: "5/3/2025",
   },
   {
-    id: 3,
+    id: 31,
     title: "Full-stack",
     company: "NVIDIA Company",
     location: "Hà Nội",
@@ -138,7 +138,7 @@ const jobs = [
     date: "5/3/2025",
   },
   {
-    id: 1,
+    id: 112,
     title: "Flutter",
     company: "FPT Software",
     location: "Đà Nẵng",
@@ -149,7 +149,7 @@ const jobs = [
     date: "5/3/2025",
   },
   {
-    id: 2,
+    id: 32,
     title: "ReactJS",
     company: "LG Company",
     location: "Huế",
@@ -160,7 +160,7 @@ const jobs = [
     date: "5/3/2025",
   },
   {
-    id: 3,
+    id: 3121,
     title: "Full-stack",
     company: "NVIDIA Company",
     location: "Hà Nội",
@@ -171,7 +171,7 @@ const jobs = [
     date: "5/3/2025",
   },
   {
-    id: 1,
+    id: 141,
     title: "Flutter",
     company: "FPT Software",
     location: "Đà Nẵng",
@@ -182,7 +182,7 @@ const jobs = [
     date: "5/3/2025",
   },
   {
-    id: 2,
+    id: 243,
     title: "ReactJS",
     company: "LG Company",
     location: "Huế",
@@ -192,20 +192,10 @@ const jobs = [
     quantity: 10,
     date: "5/3/2025",
   },
-  {
-    id: 3,
-    title: "Full-stack",
-    company: "NVIDIA Company",
-    location: "Hà Nội",
-    type: "Full-time",
-    typeClass: "fullTime",
-    logo: nvLogo,
-    quantity: 10,
-    date: "5/3/2025",
-  },
+  
 ];
 
-const JobCard = () => {
+const JobCard = ({ searchResults }) => {
   const [visibleJobs, setVisibleJobs] = useState(8);
   const [selectedType, setSelectedType] = useState("All");
   const [selectedLocation, setSelectedLocation] = useState("All");
@@ -214,7 +204,10 @@ const JobCard = () => {
   const filteredJobs = jobs.filter((job) =>
     (selectedType === "All" || job.type === selectedType) &&
     (selectedLocation === "All" || job.location === selectedLocation) &&
-    (selectedTitle === "All" || job.title === selectedTitle)
+    (selectedTitle === "All" || job.title === selectedTitle) &&
+    (!searchResults || 
+      (!searchResults.searchInput || job.title.toLowerCase().includes(searchResults.searchInput.toLowerCase())) &&
+      (!searchResults.selectedLocation || job.location === searchResults.selectedLocation))
   );
 
   const handleLoadMore = () => {
@@ -274,7 +267,7 @@ const JobCard = () => {
         )}
       </div>
     </>
-  )
-}
+  );
+};
 
-export default JobCard
+export default JobCard;
