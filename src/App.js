@@ -11,8 +11,9 @@ import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
 import EmployerProfile from "./pages/employer/EmployerProfile";
 import EditProfile from "./pages/employer/EditProfile";
+import JobDetail from "./pages/student/JobDetail";
+import EditJob from "./pages/employer/EditJob";
 const App = () => {
-  //chứa toàn bộ thông tin của bạn 
   const [profile, setProfile] = useState({
     name: "Nguyễn Đức",
     studentId: "21T1020310",
@@ -56,29 +57,46 @@ const App = () => {
       "Managed Services",
     ]
   });
-  //hàm cập nhật hồ sơ khi chỉnh sửa xong
+  const [jobDetails, setJobDetails] = useState({
+    companyName: "FPT Software",
+    location: "Hà Nội, Việt Nam",
+    field: "Information Technology",
+    jobTitle: "Software Engineer Intern",
+    jobType: "Full-time",
+    salary: "1,000,000 - 3,000,000 VND",
+    experience: "No experience required",
+    jobDescription: "Assist in developing and maintaining software applications. Collaborate with the team to deliver high-quality solutions.Assist in developing and maintaining software applications. Collaborate with the team to deliver high-quality solutions.",
+    jobRequirements: "Basic knowledge of programming languages such as Java, Python, or C#. Good problem-solving skills.",
+    languages: ["English", "Vietnamese"],
+    vacancies: 5,
+    deadline: "2023-12-31",
+  });
+
   const handleSave = (updatedProfile) => {
     setProfile(updatedProfile);
     setEProfile(updatedProfile);
+    setJobDetails(updatedProfile);
   };
 
 
   return (
 <Router>
       <Routes>
-        {/* <Route path="/" element={<Navigate to="/login" />} />
+        <Route path="/" element={<Navigate to="/login" />} />
         <Route
           path="/login"
           element={<Login onLogin={() => <Navigate to="/studentprofile" />} />}
-        /> */}
-        {/* <Route path="/register" element={<Register />} /> */}
+        />
+        <Route path="/register" element={<Register />} />
         {/* truyền dữ liệu từ app.js xuống studentprofile.jsx */}
         <Route path="/studentprofile" element={<StudentProfile profileData={profile} />} />
         {/* Truyền dũliệu và hàm cập nhật xuống profileform */}
         <Route path="/profileform" element={<ProfileForm initialData={profile} onSave={handleSave} />} />
-        {/* <Route path="/employerprofile" element={<EmployerProfile profileData={eProfile} onSave={handleSave} />} />
-        <Route path="/editprofile" element={<EditProfile initialData={eProfile} onSave={handleSave} />} /> */}
-        {/* <Route path="/findjob" element={<FindJob />} /> */}
+        <Route path="/employerprofile" element={<EmployerProfile profileData={eProfile} />} />
+        <Route path="/editprofile" element={<EditProfile initialData={eProfile} onSave={handleSave} />} />
+        <Route path="/findjob" element={<FindJob />} />
+        <Route path="/jobdetail" element={<JobDetail job={jobDetails} />} />
+        <Route path="/editjob" element={<EditJob editJob={jobDetails} onSave={handleSave} />} />
       </Routes>
     </Router>
   );

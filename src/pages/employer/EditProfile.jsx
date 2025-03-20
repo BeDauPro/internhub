@@ -7,9 +7,11 @@ import logo from '../../images/fpt.jpg';
 const EditProfile = ({ initialData, onSave }) => {
     const navigate = useNavigate();
     const [formData, setFormData] = useState(initialData);
+
     useEffect(() => {
         setFormData(initialData);
     }, [initialData]);
+    
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
