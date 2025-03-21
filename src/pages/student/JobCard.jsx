@@ -3,6 +3,7 @@ import '../../styles/components/jobcard.scss'
 import lgLogo from '../../images/lglogo.png'
 import fptLogo from '../../images/fpt.jpg'
 import nvLogo from '../../images/nvidialogo.png'
+import { useNavigate } from 'react-router-dom'
 
 export const jobs = [
   {
@@ -200,7 +201,7 @@ const JobCard = ({ searchResults }) => {
   const [selectedType, setSelectedType] = useState("All");
   const [selectedLocation, setSelectedLocation] = useState("All");
   const [selectedTitle, setSelectedTitle] = useState("All");
-
+  const navigate = useNavigate();
   const filteredJobs = jobs.filter((job) =>
     (selectedType === "All" || job.type === selectedType) &&
     (selectedLocation === "All" || job.location === selectedLocation) &&
@@ -239,7 +240,7 @@ const JobCard = ({ searchResults }) => {
             ))}
           </select>
         </div>
-        <div className="jobList">
+        <div className="jobList" onClick={() => navigate("/jobdetail")}>
           {filteredJobs.slice(0, visibleJobs).map((job) => (
             <div key={job.id} className="jobCard animate-slide-up">
               <div className="jobHeader">

@@ -6,10 +6,6 @@ import { useNavigate } from "react-router-dom";
 const Navbar = () => {
   const navigate = useNavigate();
 
-  const handleProfileClick = () => {
-    navigate("/studentprofile");
-  };
-
   const handleLogoutClick = () => {
     navigate("/login");
   };
@@ -29,11 +25,10 @@ const Navbar = () => {
             <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
               <span className="navbar-toggler-icon"></span>
             </button>
-
-
+            
             <div className="collapse navbar-collapse" id="navbarNav">
               <ul className="navbar-nav mx-auto">
-                <li className="nav-item"><a className="nav-link" href="#">Tìm kiếm việc làm</a></li>
+                <li className="nav-item" ><a className="nav-link" onClick={() => navigate("/findjob")}>Tìm kiếm việc làm</a></li>
                 <li className="nav-item"><a className="nav-link" href="#">Sự kiện</a></li>
                 <li className="nav-item"><a className="nav-link" href="#">Lịch sử ứng tuyển</a></li>
               </ul>
@@ -55,7 +50,7 @@ const Navbar = () => {
                   </button>
                   <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                     <li>
-                      <button className="dropdown-item" onClick={handleProfileClick}>Hồ sơ cá nhân</button>
+                      <button className="dropdown-item" onClick={() => navigate("/studentprofile")}>Hồ sơ cá nhân</button>
                     </li>
                     <li>
                       <button className="dropdown-item" onClick={handleLogoutClick}>Đăng xuất</button>

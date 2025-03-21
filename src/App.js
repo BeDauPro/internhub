@@ -13,6 +13,7 @@ import EmployerProfile from "./pages/employer/EmployerProfile";
 import EditProfile from "./pages/employer/EditProfile";
 import JobDetail from "./pages/student/JobDetail";
 import EditJob from "./pages/employer/EditJob";
+import ManagePosts from "./pages/employer/ManagePosts";
 const App = () => {
   const [profile, setProfile] = useState({
     name: "Nguyễn Đức",
@@ -97,6 +98,7 @@ const App = () => {
         <Route path="/findjob" element={<FindJob />} />
         <Route path="/jobdetail" element={<JobDetail job={jobDetails} />} />
         <Route path="/editjob" element={<EditJob editJob={jobDetails} onSave={handleSave} />} />
+        <Route path="/manageposts" element={<ManagePosts />} />
       </Routes>
     </Router>
   );
