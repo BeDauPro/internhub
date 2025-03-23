@@ -1,13 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../../styles/components/navbar.scss";
 import { useNavigate } from "react-router-dom";
-
+import Notification from "../../pages/student/Notification";
 const Navbar = () => {
   const navigate = useNavigate();
+  const [showNotification, setShowNotification] = useState(false);
 
   const handleLogoutClick = () => {
     navigate("/login");
+  };
+
+  const toggleNotification = () => {
+    setShowNotification((prev) => !prev);
   };
 
   return (
@@ -35,13 +40,16 @@ const Navbar = () => {
 
 
 
-              <div className="d-flex align-items-center">
-
-                <button className="btn btn-notification me-3">
+              <div className="d-flex align-items-center position-relative">
+                <button className="btn btn-notification me-3" onClick={toggleNotification}>
                   <i className="fas fa-bell text-dark"></i>
                   <span className="badge bg-danger">3</span>
                 </button>
-
+                {showNotification && (
+ 
+                    <Notification />
+          
+                )}
 
                 <div className="dropdown">
                   <button className="btn user-btn dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown">
