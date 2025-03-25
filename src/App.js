@@ -14,6 +14,8 @@ import EditProfile from "./pages/employer/EditProfile";
 import JobDetail from "./pages/student/JobDetail";
 import EditJob from "./pages/employer/EditJob";
 import ManagePosts from "./pages/employer/ManagePosts";
+import Review from "./pages/employer/Review";
+import EventManagement from "./pages/admin/EventManagement";
 const App = () => {
   const [profile, setProfile] = useState({
     name: "Nguyễn Đức",
@@ -99,6 +101,8 @@ const App = () => {
         <Route path="/jobdetail" element={<JobDetail job={jobDetails} />} />
         <Route path="/editjob" element={<EditJob editJob={jobDetails} onSave={handleSave} />} />
         <Route path="/manageposts" element={<ManagePosts />} />
+        <Route path="/review" element={<Review />} />
+        <Route path="/eventmanagement" element={<EventManagement/>}/>
       </Routes>
     </Router>
   );

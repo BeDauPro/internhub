@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import '../../styles/pages/employer/employerprofile.scss';
 import logo from '../../images/fpt.jpg';
 import { AiOutlineMail, AiOutlineHome, AiOutlinePhone, AiOutlineGroup, AiOutlineGlobal, AiOutlineFieldTime } from "react-icons/ai";
+import Review from './Review';
 
 const EmployerProfile = ({ profileData }) => {
     const navigate = useNavigate();
@@ -25,7 +26,7 @@ const EmployerProfile = ({ profileData }) => {
                 <p><AiOutlineGlobal/> <a href={profileData.website} target="_blank" rel="noopener noreferrer">{profileData.website}</a></p>
                 <p><AiOutlineFieldTime/>  {profileData.since}</p>
             </div>
-
+            <div className='main-profile'>
             <div className="profile-details">
                 <section className="section">
                     <h3>Giới thiệu công ty</h3>
@@ -42,7 +43,9 @@ const EmployerProfile = ({ profileData }) => {
                 </section>
                 <div className='profile-actions'>
                     <button className="edit-btn" onClick={handleEdit}>Chỉnh sửa</button>
-                </div>
+                </div>       
+            </div>
+            <Review/>
             </div>
         </div>
     );
