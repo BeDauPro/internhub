@@ -140,7 +140,6 @@ h2 {
 }
 
 .job-list-background {
-  background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
   padding: 40px 20px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -166,6 +165,7 @@ h2 {
     border-radius: 8px;
     cursor: pointer;
     transition: 0.3s;
+    margin-right: 60px;
 
     .icon {
         font-size: 18px;

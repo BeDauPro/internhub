@@ -1,7 +1,5 @@
 .profile-container {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-evenly;
   gap: 20px;
   padding: 20px;
   font-family: Arial, sans-serif;
@@ -16,9 +14,9 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center; // Căn giữa nội dung
-  width: 300px; // Thống nhất kích thước
-  min-height: 420px; // Đảm bảo không quá nhỏ
+  align-items: center;
+  width: 300px;
+  min-height: 420px; 
 
 
   .profile-image {
@@ -142,7 +140,7 @@
 
 @media (min-width: 768px) {
   .profile-details {
-    width: 580px;
+    width: 660px;
   }
 }
 

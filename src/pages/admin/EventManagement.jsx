@@ -4,11 +4,13 @@ import "bootstrap/dist/css/bootstrap.min.css"
 import "../../styles/pages/admin/EventManagement.scss"
 
 const EventManagement = () => {
-    const [eventTitle, setEventTitle] = useState("")
-    const [eventLocation, setEventLocation] = useState("")
-    const [eventOrganizer, setEventOrganizer] = useState("")
-    const [eventDate, setEventDate] = useState("")
-    const [eventContent, setEventContent] = useState("")
+    const [formData, setFormData] = useState({
+        title: "",
+        location: "",
+        organizer: "",
+        date: "",
+        content: "",
+    });
     const [selectedEvent, setSelectedEvent] = useState(null);
 
     const [events, setEvents] = useState([
@@ -38,8 +40,15 @@ const EventManagement = () => {
         },
     ]);
 
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+    };
+
     const handleSave = () => {
-        if (!eventTitle || !eventLocation) {
+        const { title, location, organizer, date, content } = formData;
+
+        if (!title || !location || !organizer || !date || !content ) {
             alert("Vui lòng điền đầy đủ thông tin sự kiện!");
             return;
         }
@@ -47,7 +56,7 @@ const EventManagement = () => {
         if (selectedEvent) {
             const updatedEvents = events.map((event) =>
                 event.id === selectedEvent.id
-                    ? { ...event, title: eventTitle, location: eventLocation, organizer: eventOrganizer, date: eventDate, content: eventContent }
+                    ? { ...event, title, location, organizer, date, content }
                     : event
             );
             setEvents(updatedEvents);
@@ -55,11 +64,11 @@ const EventManagement = () => {
         } else {
             const newEvent = {
                 id: events.length + 1,
-                title: eventTitle,
-                location: eventLocation,
-                organizer: eventOrganizer,
-                date: eventDate,
-                content: eventContent,
+                title,
+                location,
+                organizer,
+                date,
+                content,
             };
             setEvents([...events, newEvent]);
             alert("Đã thêm sự kiện mới!");
@@ -85,20 +94,24 @@ const EventManagement = () => {
     };
 
     const clearForm = () => {
-        setEventTitle("");
-        setEventLocation("");
-        setEventOrganizer("");
-        setEventDate("");
-        setEventContent("");
+        setFormData({
+            title: "",
+            location: "",
+            organizer: "",
+            date: "",
+            content: "",
+        });
     };
 
     const handleEventClick = (event) => {
         setSelectedEvent(event);
-        setEventTitle(event.title);
-        setEventLocation(event.location);
-        setEventOrganizer(event.organizer || ""); 
-        setEventDate(event.date || ""); 
-        setEventContent(event.content || ""); 
+        setFormData({
+            title: event.title,
+            location: event.location,
+            organizer: event.organizer,
+            date: event.date,
+            content: event.content,
+        });
     };
 
     return (
@@ -141,10 +154,11 @@ const EventManagement = () => {
                                 </label>
                                 <input
                                     type="text"
+                                    name="title"
                                     className="form-control bg-light rounded"
                                     placeholder="Vui lòng viết tiêu đề của sự kiện..."
-                                    value={eventTitle}
-                                    onChange={(e) => setEventTitle(e.target.value)}
+                                    value={formData.title}
+                                    onChange={handleInputChange}
                                 />
                             </div>
 
@@ -154,10 +168,11 @@ const EventManagement = () => {
                                 </label>
                                 <input
                                     type="text"
+                                    name="location"
                                     className="form-control bg-light rounded"
                                     placeholder="Nhập địa điểm tổ chức..."
-                                    value={eventLocation}
-                                    onChange={(e) => setEventLocation(e.target.value)}
+                                    value={formData.location}
+                                    onChange={handleInputChange}
                                 />
                             </div>
 
@@ -167,10 +182,11 @@ const EventManagement = () => {
                                 </label>
                                 <input
                                     type="text"
+                                    name="organizer"
                                     className="form-control bg-light rounded"
                                     placeholder="Nhập người tổ chức..."
-                                    value={eventOrganizer}
-                                    onChange={(e) => setEventOrganizer(e.target.value)}
+                                    value={formData.organizer}
+                                    onChange={handleInputChange}
                                 />
                             </div>
 
@@ -180,10 +196,10 @@ const EventManagement = () => {
                                 </label>
                                 <input
                                     type="date"
+                                    name="date"
                                     className="form-control bg-light rounded"
-                                    placeholder="dd/mm/yyyy"
-                                    value={eventDate}
-                                    onChange={(e) => setEventDate(e.target.value)}
+                                    value={formData.date}
+                                    onChange={handleInputChange}
                                 />
                             </div>
 
@@ -192,10 +208,11 @@ const EventManagement = () => {
                                     <FaAlignLeft /> Nội dung sự kiện
                                 </label>
                                 <textarea
+                                    name="content"
                                     className="form-control bg-light rounded content-textarea"
                                     placeholder="Vui lòng viết nội dung của sự kiện..."
-                                    value={eventContent}
-                                    onChange={(e) => setEventContent(e.target.value)}
+                                    value={formData.content}
+                                    onChange={handleInputChange}
                                     rows="10"
                                 />
                             </div>

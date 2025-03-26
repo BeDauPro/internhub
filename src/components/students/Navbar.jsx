@@ -16,7 +16,6 @@ const Navbar = () => {
   };
 
   return (
-    <div className="bg-img">
       <div className="navbar-container">
         <nav className="navbar navbar-expand-lg navbar-dark shadow">
           <div className="container-fluid">
@@ -70,7 +69,6 @@ const Navbar = () => {
           </div>
         </nav>
       </div>
-    </div>
   );
 };
 

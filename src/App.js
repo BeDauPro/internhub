@@ -16,6 +16,9 @@ import EditJob from "./pages/employer/EditJob";
 import ManagePosts from "./pages/employer/ManagePosts";
 import Review from "./pages/employer/Review";
 import EventManagement from "./pages/admin/EventManagement";
+import Evaluate from "./pages/student/Evaluate";
+import ConfirmJobs from "./pages/admin/ConfirmJobs";
+
 const App = () => {
   const [profile, setProfile] = useState({
     name: "Nguyễn Đức",
@@ -103,6 +106,8 @@ const App = () => {
         <Route path="/manageposts" element={<ManagePosts />} />
         <Route path="/review" element={<Review />} />
         <Route path="/eventmanagement" element={<EventManagement/>}/>
+        <Route path="/evaluate" element={<Evaluate/>}/>
+        <Route path="/confirmJobs" element={<ConfirmJobs/>}/>
       </Routes>
     </Router>
   );

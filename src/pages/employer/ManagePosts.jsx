@@ -1,14 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../../styles/components/jobcard.scss';
 import { jobs } from '../student/JobCard';
+import "../../components/employer/NavbarEmployer"
+import NavbarEmployer from '../../components/employer/NavbarEmployer';
+import Footer from '../../components/Footer';
+import { useNavigate } from "react-router-dom";
 
 const ManagePosts = () => {
   const [visibleJobs, setVisibleJobs] = useState(8);
   const [selectedType, setSelectedType] = useState("All");
   const [selectedLocation, setSelectedLocation] = useState("All");
   const [selectedTitle, setSelectedTitle] = useState("All");
+  const [jobPosts, setJobPosts] = useState(jobs); // State to store job posts
+  const navigate = useNavigate();
 
-  const filteredJobs = jobs.filter((job) =>
+  useEffect(() => {
+    const updatedJob = window.history.state?.usr?.updatedJob;
+    if (updatedJob) {
+      setJobPosts((prevJobs) => {
+        const existingIndex = prevJobs.findIndex((job) => job.id === updatedJob.id);
+        if (existingIndex !== -1) {
+          const updatedJobs = [...prevJobs];
+          updatedJobs[existingIndex] = updatedJob;
+          return [updatedJob, ...updatedJobs.filter((_, index) => index !== existingIndex)];
+        }
+        return [updatedJob, ...prevJobs]; 
+      });
+    }
+  }, []);
+
+  const filteredJobs = jobPosts.filter((job) =>
     (selectedType === "All" || job.type === selectedType) &&
     (selectedLocation === "All" || job.location === selectedLocation) &&
     (selectedTitle === "All" || job.title === selectedTitle)
@@ -18,17 +39,15 @@ const ManagePosts = () => {
     setVisibleJobs(prevVisibleJobs => prevVisibleJobs + 8);
   };
 
-  const handleViewDetails = (jobId) => {
-    console.log(`View details for job ID: ${jobId}`);
+  const handleAddNewPost = () => {
+    navigate("/editjob", { state: { clearForm: true } });
   };
 
-  const handleAddNewPost = () => {
-    console.log("Add new post clicked");
-  };
 
   return (
     <>
-      <div className="JobListContainer job-list-background" style={{ marginBottom: '1vh' }}>
+    <NavbarEmployer/>
+      <div className="JobListContainer job-list-background" style={{ marginTop: '20vh'}}>
         <div className="header">
           <h2>Quản lý bài đăng</h2>
           <button className="addNewPost" onClick={handleAddNewPost}>
@@ -75,7 +94,7 @@ const ManagePosts = () => {
               </div>
               <div className="jobFooter">
                 <span>Số lượng tuyển: {job.quantity}</span>
-                <button className="viewDetails" onClick={() => handleViewDetails(job.id)}>Xem chi tiết</button>
+                <button className="viewDetails" onClick={() => navigate("/jobdetail")}>Xem chi tiết</button>
               </div>
             </div>
           ))}
@@ -84,6 +103,7 @@ const ManagePosts = () => {
           <button className="loadMore" onClick={handleLoadMore}>Xem nhiều hơn</button>
         )}
       </div>
+      <Footer/>
     </>
   );
 };

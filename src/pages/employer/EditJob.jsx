@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import logo from '../../images/fpt.jpg';
 import { PiCertificate } from "react-icons/pi";
 import { FaLocationDot, FaMoneyBill1 } from "react-icons/fa6";
@@ -9,11 +9,31 @@ import '../../styles/pages/employer/editjob.scss';
 
 const EditJob = ({ editJob, onSave }) => {
     const navigate = useNavigate();
+    const location = useLocation();
     const [formData, setFormData] = useState(editJob);
 
     useEffect(() => {
         setFormData(editJob);
     }, [editJob]);
+
+    useEffect(() => {
+        if (location.state?.clearForm) {
+            setFormData({
+                companyName: "",
+                location: "",
+                field: "",
+                jobTitle: "",
+                jobType: "",
+                salary: "",
+                experience: "",
+                jobDescription: "",
+                jobRequirements: "",
+                languages: [],
+                vacancies: 0,
+                deadline: "",
+            });
+        }
+    }, [location.state]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -39,7 +59,16 @@ const EditJob = ({ editJob, onSave }) => {
     const handleSave = () => {
         console.log("Updated Data:", formData);
         onSave(formData);
-        navigate("/jobdetail");
+        navigate("/manageposts", { state: { updatedJob: { 
+            id: formData.id || Date.now(), // Generate ID if not present
+            title: formData.jobTitle,
+            type: formData.jobType,
+            typeClass: formData.jobType.toLowerCase().replace(" ", "-"),
+            company: formData.companyName,
+            location: formData.location,
+            quantity: formData.vacancies,
+            logo: formData.logo
+        } } });
     };
 
     return (
@@ -57,15 +86,14 @@ const EditJob = ({ editJob, onSave }) => {
                     </div>
                 </div>
                 <div className="job-summary">
-                    <p>Tên công việc:<input type="text" name="salary" value={formData.jobTitle} onChange={handleChange} placeholder="Mức lương" /> </p>
+                    <p>Tên công việc:<input type="text" name="jobTitle" value={formData.jobTitle} onChange={handleChange} placeholder="Tên công việc" /></p>
                     <p>Mức lương:<input type="text" name="salary" value={formData.salary} onChange={handleChange} placeholder="Mức lương" /></p>
-                    <p>Kinh nghiệm:<input type="text" name="totalemployee" value={formData.experience} onChange={handleChange} placeholder="Kinh nghiệm" /></p>
+                    <p>Kinh nghiệm:<input type="text" name="experience" value={formData.experience} onChange={handleChange} placeholder="Kinh nghiệm" /></p>
                     <select name="jobType" value={formData.jobType} onChange={handleChange} placeholder="Loại việc">
                         <option>Full-time</option>
                         <option>Part-time</option>
                         <option>Remote</option>
                     </select>
-
                 </div>
             </div>
 

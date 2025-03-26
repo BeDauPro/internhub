@@ -11,7 +11,6 @@ const EmployerProfile = ({ profileData }) => {
         navigate('/editprofile', { state: { profileData } });
     };
 
-
     return (
         <div className="profile-container">
             <div className="profile-card">
