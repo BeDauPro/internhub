@@ -1,19 +1,11 @@
 .navbar-container {
   margin-top: 20px;
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 50%;
   transform: translateX(-50%);
   width: 80%;
   z-index: 1000;
-}
-
-.bg-img {
-  min-height: 0px;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  position: relative;
 }
 
 .navbar-nav {

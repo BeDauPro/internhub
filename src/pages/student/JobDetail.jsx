@@ -7,10 +7,11 @@ import { FaUsers, FaCalendarAlt } from "react-icons/fa";
 import '../../styles/pages/student/jobdetail.scss';
 import Navbar from '../../components/students/Navbar'
 import Footer from '../../components/Footer'
+import { useNavigate } from 'react-router-dom';
 
 const JobDetail = ({ job }) => {
     const [showAlert, setShowAlert] = useState(false);
-
+    const navigate = useNavigate();
     const handleApply = () => {
         setShowAlert(true);
         setTimeout(() => setShowAlert(false), 3500); 
@@ -19,6 +20,7 @@ const JobDetail = ({ job }) => {
     return (
         <>
         <Navbar/>
+        <div className="job-detail-page">
             {showAlert && (
                 <div className="success-alert">
                     Đã nộp hồ sơ thành công vào {job.companyName}!
@@ -27,7 +29,7 @@ const JobDetail = ({ job }) => {
             <div className="job-detail-container">
                 <div className="job-header">
                     <div className="company-info">
-                        <img className="company-logo" src={fptLogo} alt="Company Logo" />
+                        <img className="company-logo" src={fptLogo} onClick={() => navigate("/employerprofile")} alt="Company Logo" />
                         <div className="company-details">
                             <h2>{job.companyName}</h2>
                             <p><FaLocationDot /> {job.location}</p>
@@ -65,7 +67,8 @@ const JobDetail = ({ job }) => {
                     <button className="apply-btn" onClick={handleApply}>Apply</button>
                 </div>
             </div>
-            <Footer/>
+        </div>
+        <Footer/>
         </>
     )
 }

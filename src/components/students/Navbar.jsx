@@ -32,9 +32,9 @@ const Navbar = () => {
             
             <div className="collapse navbar-collapse" id="navbarNav">
               <ul className="navbar-nav mx-auto">
-                <li className="nav-item" ><a className="nav-link" onClick={() => navigate("/findjob")}>Tìm kiếm việc làm</a></li>
-                <li className="nav-item"><a className="nav-link" href="#">Sự kiện</a></li>
-                <li className="nav-item"><a className="nav-link" href="#">Lịch sử ứng tuyển</a></li>
+                <li className="nav-item" ><a className="nav-link" href="#" onClick={() => navigate("/findjob")}>Tìm kiếm việc làm</a></li>
+                <li className="nav-item"><a className="nav-link" href="#" onClick={() => navigate("/eventstudent")}>Sự kiện</a></li>
+                <li className="nav-item"><a className="nav-link" href="#"onClick={() => navigate("/applicationhistory")}>Lịch sử ứng tuyển</a></li>
               </ul>
 
 

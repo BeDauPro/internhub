@@ -18,6 +18,8 @@ import Review from "./pages/employer/Review";
 import EventManagement from "./pages/admin/EventManagement";
 import Evaluate from "./pages/student/Evaluate";
 import ConfirmJobs from "./pages/admin/ConfirmJobs";
+import EventStudent from "./pages/student/EventStudent";
+import ApplicationsHistory from "./pages/student/ApplicationsHistory";
 
 const App = () => {
   const [profile, setProfile] = useState({
@@ -108,6 +110,8 @@ const App = () => {
         <Route path="/eventmanagement" element={<EventManagement/>}/>
         <Route path="/evaluate" element={<Evaluate/>}/>
         <Route path="/confirmJobs" element={<ConfirmJobs/>}/>
+        <Route path="/eventstudent" element={<EventStudent/>}/>
+        <Route path="/applicationhistory" element={<ApplicationsHistory/>}/>
       </Routes>
     </Router>
   );

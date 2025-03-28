@@ -3,6 +3,8 @@ import '../../styles/components/jobcard.scss';
 import '../../styles/pages/admin/ConfirmJobs.scss';
 import { jobs } from '../student/JobCard';
 import { useNavigate } from 'react-router-dom';
+import NavbarAdmin from '../../components/admin/NavbarAdmin';
+import Footer from '../../components/Footer';
 
 const ConfirmJobs = ({ searchResults }) => {
   const [visibleJobs, setVisibleJobs] = useState(8);
@@ -25,7 +27,9 @@ const ConfirmJobs = ({ searchResults }) => {
   };
 
   return (
-    <div className="JobListContainer job-list-background" style={{ marginBottom: '1vh' }}>
+    <>
+    <NavbarAdmin/>
+    <div className="JobListContainer job-list-background" style={{ marginTop: '10vh' }}>
       <h2>Danh sách công việc cần xác nhận</h2>
       <div className="filters">
         <select value={selectedType} onChange={(e) => setSelectedType(e.target.value)}>
@@ -84,6 +88,8 @@ const ConfirmJobs = ({ searchResults }) => {
         </button>
       )}
     </div>
+    <Footer/>
+    </>
   );
 };
 

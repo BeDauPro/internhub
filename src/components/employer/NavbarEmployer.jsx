@@ -1,6 +1,5 @@
 import React from 'react'
 import loginLogo from '../../images/login.jpg';
-import '../../styles/components/NavbarEmployer.scss'
 import { useNavigate } from "react-router-dom";
 
 const NavbarEmployer = () => {
@@ -18,7 +17,7 @@ const NavbarEmployer = () => {
           </button>
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav mx-auto">
-              <li className="nav-item"><a className="nav-link" href="#">Quản lý bài đăng</a></li>
+              <li className="nav-item"><a className="nav-link" href="#" onClick={() => navigate("/manageposts")}>Quản lý bài đăng</a></li>
               <li className="nav-item"><a className="nav-link" href="#">Các ứng viên</a></li>
             </ul>
 

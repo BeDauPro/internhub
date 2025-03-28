@@ -1,4 +1,3 @@
-// Variables
 $primary-color: #1a3a8f;
 $secondary-color: #f8f9fa;
 $border-color: #dee2e6;
@@ -6,14 +5,13 @@ $text-color: #333;
 $light-text: #666;
 $white: #fff;
 $red: #dc3545;
-// Override Bootstrap variables
 $primary: $primary-color;
 $danger: $red;
 .event-container {
     font-family: 'Roboto', sans-serif;
     color: $text-color;
     max-width: 1000px;
-    margin: 0 auto;
+    margin: 100px auto;
 }
 
 .event-title {
@@ -29,11 +27,12 @@ $danger: $red;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
-// Event List Section
 .event-list-container {
     border-right: 1px solid $primary-color;
     padding: 0;
     background-color: $white;
+    height: 100%; // Ensure it matches the height of the event form
+    overflow-y: auto; // Add scroll if content overflows
     .event-list-header {
         background-color: $primary-color;
         color: $white;
@@ -81,9 +80,9 @@ $danger: $red;
     }
 }
 
-// Event Form Section
 .event-form-container {
     background-color: $white;
+    height: 100%;
 }
 
 .event-form {
@@ -129,7 +128,7 @@ $danger: $red;
         min-height: 200px;
         resize: none;
     }
-    // Button styles
+
     .btn-outline-danger {
         color: #dc3545;
         border-color: #dc3545;
@@ -154,7 +153,6 @@ $danger: $red;
     }
 }
 
-// Responsive adjustments
 @media (max-width: 767.98px) {
     .event-list-container {
         border-right: none;
@@ -169,7 +167,6 @@ $danger: $red;
     }
 }
 
-// Override specific Bootstrap styles
 input.form-control,
 textarea.form-control {
     background-color: #f8f9fa !important;

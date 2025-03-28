@@ -2,6 +2,8 @@ import { React, useState } from 'react';
 import { FaPencilAlt, FaMapMarkerAlt, FaUser, FaCalendarAlt, FaAlignLeft } from 'react-icons/fa'; // Import icons
 import "bootstrap/dist/css/bootstrap.min.css"
 import "../../styles/pages/admin/EventManagement.scss"
+import NavbarAdmin from '../../components/admin/NavbarAdmin';
+import Footer from '../../components/Footer';
 
 const EventManagement = () => {
     const [formData, setFormData] = useState({
@@ -115,7 +117,9 @@ const EventManagement = () => {
     };
 
     return (
-        <div className="container mt-4">
+        <>
+        <NavbarAdmin/>
+        <div className="container">
             <div className="event-container">
                 <h2 className="text-center mb-4 event-title">Sự kiện</h2>
 
@@ -230,6 +234,8 @@ const EventManagement = () => {
                 </div>
             </div>
         </div>
+        <Footer/>
+        </>
     )
 }
 

@@ -11,7 +11,7 @@ const ManagePosts = () => {
   const [selectedType, setSelectedType] = useState("All");
   const [selectedLocation, setSelectedLocation] = useState("All");
   const [selectedTitle, setSelectedTitle] = useState("All");
-  const [jobPosts, setJobPosts] = useState(jobs); // State to store job posts
+  const [jobPosts, setJobPosts] = useState(jobs);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -47,7 +47,7 @@ const ManagePosts = () => {
   return (
     <>
     <NavbarEmployer/>
-      <div className="JobListContainer job-list-background" style={{ marginTop: '20vh'}}>
+      <div className="JobListContainer" style={{ marginTop: '20vh'}}>
         <div className="header">
           <h2>Quản lý bài đăng</h2>
           <button className="addNewPost" onClick={handleAddNewPost}>

@@ -1,4 +1,5 @@
 footer {
+    margin-top: auto;
     .footer-links {
         list-style: none;
         padding: 0;
@@ -15,4 +16,14 @@ footer {
             }
         }
     }
+}
+
+body, html {
+    height: 100%; 
+}
+
+#root {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; 
 }
