@@ -7,11 +7,21 @@ import avatar from '../../images/avatar.jpg';
 import Navbar from '../../components/students/Navbar'
 import Footer from '../../components/Footer'
 import Evaluate from './Evaluate';
-const StudentProfile = ({ profileData }) => {
+
+const StudentProfile = ({ profileData, reviews }) => {
     const navigate = useNavigate();
     const handleEdit = () => {
         navigate('/profileform', { state: { profileData } });
     };
+
+    if (!profileData) {
+        return (
+            <div className="error-container">
+                <h2>Thông tin sinh viên không khả dụng</h2>
+                <button onClick={() => window.location.reload()} className="back-btn">Tải lại</button>
+            </div>
+        );
+    }
 
     return (
         <>
@@ -79,7 +89,7 @@ const StudentProfile = ({ profileData }) => {
                         </div>
 
                     </div>
-                    <Evaluate />
+                    <Evaluate initialReviews={reviews} />
                 </div>
             </div>
             <Footer />

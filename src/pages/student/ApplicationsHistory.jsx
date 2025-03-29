@@ -1,48 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { FaFilter } from "react-icons/fa";
-import "../../styles/pages/student/applicationhistory.scss"
+import "../../styles/pages/student/applicationhistory.scss";
 import Navbar from '../../components/students/Navbar';
 import Footer from '../../components/Footer';
 import { useNavigate } from "react-router-dom";
 
-const ApplicationsHistory = () => {
+const ApplicationsHistory = ({ applications }) => { 
     const navigate = useNavigate();
-    const [applications, setApplications] = useState([
-        {
-            id: '123',
-            position: 'Flutter Mobile App Intern',
-            company: 'FPT Software',
-            dateRange: '21/2/2025',
-            status: 'Chờ phản hồi'
-        },
-        {
-            id: '124',
-            position: 'Flutter Mobile App Intern',
-            company: 'FPT Software',
-            dateRange: '25/2/2025',
-            status: 'Phỏng vấn'
-        },
-        {
-            id: '125',
-            position: 'Flutter Mobile App Intern',
-            company: 'FPT Software',
-            dateRange: '29/2/2025',
-            status: 'Thực tập'
-        },
-        {
-            id: '126',
-            position: 'Flutter Mobile App Intern',
-            company: 'FPT Software',
-            dateRange: '23/2/2025',
-            status: 'Hoàn thành'
-        }
-    ]);
-
     const [filters, setFilters] = useState({
         status: '',
         timeSort: ''
     });
-
     const [showFilterDropdown, setShowFilterDropdown] = useState(false);
 
     // Status priority order
@@ -71,29 +39,21 @@ const ApplicationsHistory = () => {
     const handleFilterChange = (e) => {
         const { name, value } = e.target;
         setFilters({ ...filters, [name]: value });
-        console.log(`Filter changed: ${name} = ${value}`); // Debug log
     };
 
     // Filter and sort applications based on criteria
     const filteredAndSortedApplications = applications
         .filter(app => {
-            // For "priority" filter, show all applications, but we'll sort them later
             if (filters.status === '' || filters.status === 'priority') {
                 return true;
             }
-            // For specific status filters, only show matching status
             return app.status === filters.status;
         })
         .sort((a, b) => {
-            // Sort by status priority if "priority" is selected
             if (filters.status === 'priority') {
                 return statusPriority[a.status] - statusPriority[b.status];
             }
-
-            // Then sort by time if requested
             if (filters.timeSort === 'newest') {
-                // For proper date sorting, we need to convert string dates to Date objects
-                // Assuming dateRange format is DD/MM/YYYY
                 const dateA = a.dateRange.split('/').reverse().join('-');
                 const dateB = b.dateRange.split('/').reverse().join('-');
                 return new Date(dateB) - new Date(dateA);
@@ -102,14 +62,8 @@ const ApplicationsHistory = () => {
                 const dateB = b.dateRange.split('/').reverse().join('-');
                 return new Date(dateA) - new Date(dateB);
             }
-
-            return 0; // Default: no sorting
+            return 0;
         });
-
-    useEffect(() => {
-        // Debug log to see current filters
-        console.log('Current filters:', filters);
-    }, [filters]);
 
     const toggleFilterDropdown = () => {
         setShowFilterDropdown(!showFilterDropdown);
@@ -120,12 +74,10 @@ const ApplicationsHistory = () => {
             <Navbar />
             <div className="application-history-container">
                 <h1 className="page-title">LỊCH SỬ ỨNG TUYỂN</h1>
-
                 <div className="filter-section">
                     <button className="filter-button" onClick={toggleFilterDropdown}>
                         <FaFilter /> Bộ lọc
                     </button>
-
                     {showFilterDropdown && (
                         <div className="filter-dropdown">
                             <div className="filter-group">
@@ -143,7 +95,6 @@ const ApplicationsHistory = () => {
                                     <option value="Chờ phản hồi">Chờ phản hồi</option>
                                 </select>
                             </div>
-
                             <div className="filter-group">
                                 <label>Thời gian:</label>
                                 <select
@@ -159,7 +110,6 @@ const ApplicationsHistory = () => {
                         </div>
                     )}
                 </div>
-
                 <div className="applications-table">
                     <div className="table-header">
                         <div className="header-cell id-cell">ID</div>
@@ -168,7 +118,6 @@ const ApplicationsHistory = () => {
                         <div className="header-cell date-cell">Thời gian</div>
                         <div className="header-cell status-cell">Trạng thái</div>
                     </div>
-
                     {filteredAndSortedApplications.length > 0 ? (
                         filteredAndSortedApplications.map((app, index) => (
                             <div className="table-row" key={index}>
@@ -193,6 +142,6 @@ const ApplicationsHistory = () => {
             <Footer />
         </>
     );
-}
+};
 
-export default ApplicationsHistory
+export default ApplicationsHistory;

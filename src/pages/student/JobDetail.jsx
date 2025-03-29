@@ -17,6 +17,10 @@ const JobDetail = ({ job }) => {
         setTimeout(() => setShowAlert(false), 3500); 
     };
 
+    if (!job) {
+        return <div>Loading job details...</div>;
+    }
+
     return (
         <>
         <Navbar/>

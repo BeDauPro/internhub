@@ -5,10 +5,10 @@ import { faStar } from '@fortawesome/free-solid-svg-icons';
 import "../../styles/pages/employer/review.scss";
 import avatar from "../../images/avatar.jpg";
 
-const Review = () => {
+const Review = ({ EmployerReview }) => {
   const loggedInUser = {
     name: "Nguyen Van A",
-    avatar: {avatar},
+    avatar: { avatar },
   };
 
   const [formReview, setFormReview] = useState({
@@ -18,20 +18,7 @@ const Review = () => {
     imgSrc: loggedInUser.avatar,
   });
 
-  const [reviews, setReviews] = useState([
-    {
-      name: 'Nguyen Đuc',
-      text: 'Các anh chị mentor rất thân thiện, hướng dẫn, chỉ dạy nhiệt tình, chu đáo. Xứng đáng là môi trường thực tập tốt nhất Việt Nam.',
-      rating: 5,
-      imgSrc: 'https://storage.googleapis.com/a1aa/image/D91cQhagVVi70nxKj8yih2EgR5Y7PzOgVo0tO_t2sfE.jpg',
-    },
-    {
-      name: 'Sơn Tùng MTP',
-      text: 'Các anh chị mentor rất thân thiện, hướng dẫn, chỉ dạy nhiệt tình, chu đáo. Xứng đáng là môi trường thực tập tốt nhất Việt Nam.',
-      rating: 3,
-      imgSrc: 'https://storage.googleapis.com/a1aa/image/9do6e4N20k9FQ_tBwb-0jV1l1B62dv4NnlCzp6lIko8.jpg',
-    },
-  ]);
+  const [reviews, setReviews] = useState(EmployerReview || []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

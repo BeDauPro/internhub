@@ -1,16 +1,16 @@
-import { React, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../../styles/components/jobcard.scss';
 import '../../styles/pages/admin/ConfirmJobs.scss';
-import { jobs } from '../student/JobCard';
 import { useNavigate } from 'react-router-dom';
 import NavbarAdmin from '../../components/admin/NavbarAdmin';
 import Footer from '../../components/Footer';
 
-const ConfirmJobs = ({ searchResults }) => {
+const ConfirmJobs = ({ searchResults, jobs }) => {
   const [visibleJobs, setVisibleJobs] = useState(8);
   const [selectedType, setSelectedType] = useState("All");
   const [selectedLocation, setSelectedLocation] = useState("All");
   const [selectedTitle, setSelectedTitle] = useState("All");
+
   const navigate = useNavigate();
 
   const filteredJobs = jobs.filter((job) =>

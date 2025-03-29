@@ -5,7 +5,8 @@ import "../../styles/pages/admin/EventManagement.scss"
 import NavbarAdmin from '../../components/admin/NavbarAdmin';
 import Footer from '../../components/Footer';
 
-const EventManagement = () => {
+const EventManagement = ({ events: initialEvents }) => {
+    const [events, setEvents] = useState(initialEvents || []); // Manage events locally
     const [formData, setFormData] = useState({
         title: "",
         location: "",
@@ -14,33 +15,6 @@ const EventManagement = () => {
         content: "",
     });
     const [selectedEvent, setSelectedEvent] = useState(null);
-
-    const [events, setEvents] = useState([
-        {
-            id: 1,
-            title: "Talkshow với chuyên gia AI Trương Đức...",
-            location: "Hội trường A1, Đại Học Khoa Học Huế",
-            organizer: "Nguyễn Hoàng Hà",
-            date: "2025-12-12", 
-            content: "AI (artificial intelligence) – Trí tuệ nhân tạo hay trí thông minh nhân tạo có thể được định nghĩa như một ngành của khoa học máy tính liên quan đến việc tự động hóa các hành vi thông minh, hay được hiểu như là trí tuệ của máy móc được tạo ra bởi con người"
-        },
-        {
-            id: 2,
-            title: "Kiến tập tại công ty phần mềm FPT lớn nhất miền trung",
-            location: "FPT Software Complex, Đà Nẵng",
-            organizer: "Nguyễn Hoàng Hà",
-            date: "2025-12-12", 
-            content: "AI (artificial intelligence) – Trí tuệ nhân tạo hay trí thông minh nhân tạo có thể được định nghĩa như một ngành của khoa học máy tính liên quan đến việc tự động hóa các hành vi thông minh, hay được hiểu như là trí tuệ của máy móc được tạo ra bởi con người"
-        },
-        {
-            id: 3,
-            title: "Gặp mặt cựu sinh viên là tổng giám đốc công ty...",
-            location: "Hội trường A1, Đại Học Khoa Học Huế",
-            organizer: "Nguyễn Hoàng Hà",
-            date: "2025-12-12",
-            content: "AI (artificial intelligence) – Trí tuệ nhân tạo hay trí thông minh nhân tạo có thể được định nghĩa như một ngành của khoa học máy tính liên quan đến việc tự động hóa các hành vi thông minh, hay được hiểu như là trí tuệ của máy móc được tạo ra bởi con người"
-        },
-    ]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -61,7 +35,7 @@ const EventManagement = () => {
                     ? { ...event, title, location, organizer, date, content }
                     : event
             );
-            setEvents(updatedEvents);
+            setEvents(updatedEvents); // Update local state
             alert("Đã cập nhật sự kiện!");
         } else {
             const newEvent = {
@@ -72,7 +46,7 @@ const EventManagement = () => {
                 date,
                 content,
             };
-            setEvents([...events, newEvent]);
+            setEvents([...events, newEvent]); // Add new event to local state
             alert("Đã thêm sự kiện mới!");
         }
         clearForm();
@@ -81,7 +55,7 @@ const EventManagement = () => {
     const handleDelete = () => {
         if (selectedEvent) {
             const updatedEvents = events.filter((event) => event.id !== selectedEvent.id);
-            setEvents(updatedEvents);
+            setEvents(updatedEvents); // Update local state
             alert("Đã xoá sự kiện!");
         } else {
             alert("Không có sự kiện nào được chọn để xoá!");

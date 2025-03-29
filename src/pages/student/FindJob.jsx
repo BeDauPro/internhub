@@ -1,15 +1,14 @@
-import React, { useEffect, useState } from 'react'
-import Navbar from '../../components/students/Navbar'
-import Footer from '../../components/Footer'
-import JobCard from './JobCard'
-import '../../styles/pages/student/findjob.scss'
-import '../../styles/pages/student/overview.scss'
-import FptIntern from '../../images/fptintern.jpg'
-import Intern from '../../images/intern.jpg'
-import imgLogin from '../../images/login.jpg'
-import { jobs } from './JobCard';
+import React, { useState, useEffect } from 'react';
+import Navbar from '../../components/students/Navbar';
+import Footer from '../../components/Footer';
+import JobCard from './JobCard';
+import '../../styles/pages/student/findjob.scss';
+import '../../styles/pages/student/overview.scss';
+import FptIntern from '../../images/fptintern.jpg';
+import Intern from '../../images/intern.jpg';
+import imgLogin from '../../images/login.jpg';
 
-const HeroSection = ({ onSearch }) => {
+const HeroSection = ({ onSearch, jobs }) => {
     const [searchInput, setSearchInput] = useState('');
     const [selectedLocation, setSelectedLocation] = useState('');
 
@@ -40,7 +39,7 @@ const HeroSection = ({ onSearch }) => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    const uniqueLocations = [...new Set(jobs.map(job => job.location))]; 
+    const uniqueLocations = [...new Set(jobs.map(job => job.location))];
 
     return (
         <section className="hero-section" style={{ marginBottom: '10vh' }}>
@@ -150,7 +149,7 @@ const Overview = () => {
     );
 };
 
-const FindJob = () => {
+const FindJob = ({ jobs }) => {
     const [searchResults, setSearchResults] = useState(null);
     const jobCardRef = React.useRef(null);
 
@@ -165,10 +164,10 @@ const FindJob = () => {
     return (
         <div className="find-job">
             <Navbar />
-            <HeroSection onSearch={handleSearch} />
+            <HeroSection onSearch={handleSearch} jobs={jobs} />
             <Overview />
             <div ref={jobCardRef}>
-                <JobCard searchResults={searchResults} />
+                <JobCard searchResults={searchResults} jobs={jobs} />
             </div>
             <Footer />
         </div>

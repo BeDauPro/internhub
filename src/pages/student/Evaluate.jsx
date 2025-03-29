@@ -1,18 +1,12 @@
 import React, { useState } from 'react';
-import '../../styles/pages/student/Evaluate.scss'
+import '../../styles/pages/student/Evaluate.scss';
 import { AiOutlineSend } from 'react-icons/ai';
 import fptLogo from '../../images/fpt.jpg';
 
-const Evaluate = () => {
+const Evaluate = ({ initialReviews }) => {
+    const [reviews, setReviews] = useState(initialReviews || []);
     const [rating, setRating] = useState('');
     const [comment, setComment] = useState('');
-    const [reviews, setReviews] = useState([
-        {
-            company: "FPT Software",
-            overallScore: "10/10",
-            reviewText: "Có chí tiến thủ, siêng năng, cầu tiến và luôn hoàn thành task đúng thời hạn. Tiếp tục phát huy tinh thần và chuẩn bị thật kỹ kiến thức để phỏng vấn vào vị trí fresher sắp tới em nhé."
-        }
-    ]);
 
     const handleSubmit = () => {
         if (!rating || !comment) {
@@ -61,7 +55,7 @@ const Evaluate = () => {
                 </button>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default Evaluate
+export default Evaluate;
