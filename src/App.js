@@ -28,9 +28,12 @@ import {
   fetchJobs,
   fetchEvents,
   fetchReview,
-  fetchEmployerReview
+  fetchEmployerReview,
+  fetchApplicationEmployer
 } from "./services/api";
 import JobCard from "./pages/student/JobCard";
+import ApplicationEmployer from "./pages/employer/ApplicationEmployer";
+import StudentManagement from "./pages/admin/StudentManagement";
 
 const App = () => {
   const [profile, setProfile] = useState(null);
@@ -41,7 +44,8 @@ const App = () => {
   const [events, setEvents] =useState([]);
   const [reviews, setReviews] = useState([]);
   const [EmployerReview, setEmployerReview] = useState([]);
-
+  const [applicationEmployer, setApplicationEmployer] = useState([]);
+  const [managementStudents, setManagementStudents] = useState([]);
   useEffect(() => {
     //duoc goi, lay du lieu tu API gia lap
     const fetchData = async () => {
@@ -53,6 +57,8 @@ const App = () => {
       const eventData = await fetchEvents();
       const reviewData = await fetchReview();
       const EmployerReviewData = await fetchEmployerReview();
+      const applicationEmployer = await fetchApplicationEmployer();
+      const studentData = await fetchApplicationEmployer();
       //cap nhat lai
       setProfile(studentProfile);
       setEProfile(employerProfile);
@@ -62,6 +68,8 @@ const App = () => {
       setEvents(eventData);
       setReviews(reviewData);
       setEmployerReview(EmployerReviewData);
+      setApplicationEmployer(applicationEmployer);
+      setManagementStudents(studentData);
     };
     fetchData();
     //dependency array se chay 1 lan
@@ -100,6 +108,8 @@ const App = () => {
         <Route path="/eventstudent" element={<EventStudent events={events} />} />
         <Route path="/applicationhistory" element={<ApplicationsHistory applications={applications} />} />
         <Route path="/jobcard" element={<JobCard/>} jobs={jobs}/>
+        <Route path="/applicationemployer" element={<ApplicationEmployer applicationData={applicationEmployer} />} />
+        <Route path="/studentmanagement" element={<StudentManagement studentsData={managementStudents} />} />
       </Routes>
     </Router>
   );

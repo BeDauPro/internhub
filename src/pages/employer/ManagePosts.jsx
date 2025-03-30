@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import '../../styles/components/jobcard.scss';
+import '../../styles/pages/employer/manageposts.scss';
 import NavbarEmployer from '../../components/employer/NavbarEmployer';
 import Footer from '../../components/Footer';
 import { useNavigate } from "react-router-dom";
 
-const ManagePosts = ({ jobs }) => { // Use jobs prop directly
+const ManagePosts = ({ jobs }) => {
   const [visibleJobs, setVisibleJobs] = useState(8);
   const [selectedType, setSelectedType] = useState("All");
   const [selectedLocation, setSelectedLocation] = useState("All");
@@ -39,13 +40,37 @@ const ManagePosts = ({ jobs }) => { // Use jobs prop directly
   return (
     <>
       <NavbarEmployer />
-      <div className="JobListContainer" style={{ marginTop: '20vh' }}>
-        <div className="header">
-          <h2>Quản lý bài đăng</h2>
-          <button className="addNewPost" onClick={handleAddNewPost}>
-            <span className="icon">+</span> Add New Posts
-          </button>
+      <header className="manageposts-header w3-display-container w3-grayscale-min" style={{ height: '100vh', position: 'relative' }}>
+        <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'black', opacity: 0.5, zIndex: 1 }}></div>
+        <div className="w3-display-left w3-text-white" style={{ padding: '48px', fontFamily: 'Georgia, serif', fontSize: '1.2em', position: 'relative', zIndex: 2,margin: '100px'}}>
+          <span className="w3-jumbo w3-hide-small" style={{ fontSize: '2em', fontWeight: 'bold' }}>Quản lý bài đăng của bạn</span><br />
+          <span className="w3-xxlarge w3-hide-large w3-hide-medium" style={{ fontSize: '3em', fontWeight: 'bold' }}>Quản lý bài đăng của bạn</span><br />
+          <span className="w3-large" style={{ fontSize: '1.5em' }}>Tạo, chỉnh sửa và quản lý các bài đăng tuyển dụng của bạn một cách dễ dàng.</span>
+          <p>
+            <button 
+              className="w3-button w3-white w3-padding-large w3-large w3-margin-top" 
+              style={{ 
+                backgroundColor: '#007BFF',
+                color: 'white', 
+                fontWeight: 'bold', 
+                padding: '10px', 
+                borderRadius: '15px', 
+                boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.2), inset 0px -2px 4px rgba(255, 255, 255, 0.2)',
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'transform 0.2s ease'
+              }} 
+              onClick={handleAddNewPost}
+              onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'} 
+              onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+            >
+              Thêm bài đăng mới
+            </button>
+          </p>
         </div>
+
+      </header>
+      <div className="JobListContainer" style={{ marginTop: '30px' }}>
         <div className="filters">
           <select value={selectedType} onChange={(e) => setSelectedType(e.target.value)}>
             <option value="All">Tất cả loại hình</option>

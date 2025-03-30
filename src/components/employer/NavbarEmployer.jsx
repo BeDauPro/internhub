@@ -18,7 +18,7 @@ const NavbarEmployer = () => {
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav mx-auto">
               <li className="nav-item"><a className="nav-link" href="#" onClick={() => navigate("/manageposts")}>Quản lý bài đăng</a></li>
-              <li className="nav-item"><a className="nav-link" href="#">Các ứng viên</a></li>
+              <li className="nav-item"><a className="nav-link" href="#" onClick={() => navigate("/applicationemployer")}>Các ứng viên</a></li>
             </ul>
 
             <div className="d-flex align-items-center">
