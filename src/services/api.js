@@ -101,6 +101,62 @@ export const fetchApplications = async () => {
       dateRange: '23/2/2025',
       status: 'Hoàn thành',
     },
+    {
+      id: '1234',
+      position: 'Flutter Mobile App Intern',
+      company: 'FPT Software',
+      dateRange: '21/2/2025',
+      status: 'Chờ phản hồi',
+    },
+    {
+      id: '1243',
+      position: 'Flutter Mobile App Intern',
+      company: 'FPT Software',
+      dateRange: '25/2/2025',
+      status: 'Phỏng vấn',
+    },
+    {
+      id: '1252',
+      position: 'Flutter Mobile App Intern',
+      company: 'FPT Software',
+      dateRange: '29/2/2025',
+      status: 'Thực tập',
+    },
+    {
+      id: '1261',
+      position: 'Flutter Mobile App Intern',
+      company: 'FPT Software',
+      dateRange: '23/2/2025',
+      status: 'Hoàn thành',
+    },
+    {
+      id: '1239',
+      position: 'Flutter Mobile App Intern',
+      company: 'FPT Software',
+      dateRange: '21/2/2025',
+      status: 'Chờ phản hồi',
+    },
+    {
+      id: '1248',
+      position: 'Flutter Mobile App Intern',
+      company: 'FPT Software',
+      dateRange: '25/2/2025',
+      status: 'Phỏng vấn',
+    },
+    {
+      id: '1257',
+      position: 'Flutter Mobile App Intern',
+      company: 'FPT Software',
+      dateRange: '29/2/2025',
+      status: 'Thực tập',
+    },
+    {
+      id: '1266',
+      position: 'Flutter Mobile App Intern',
+      company: 'FPT Software',
+      dateRange: '23/2/2025',
+      status: 'Hoàn thành',
+    },
   ];
 };
 
@@ -385,6 +441,70 @@ export const fetchApplicationEmployer = async () => {
       student: 'Lê Minh',
       date: '15/2/2025',
       status: 'Hoàn thành'
-    }
-  ]
-}
+    },
+    {
+      id: '1236',
+      position: 'Flutter Mobile App Intern',
+      company: 'FPT Software',
+      student: 'Nguyễn Đức',
+      date: '26/2/2025',
+      status: 'Chờ phản hồi'
+    },
+    {
+      id: '3162',
+      position: 'Java Back-end',
+      company: 'Viettel',
+      student: 'Minh Toàn',
+      date: '26/1/2025',
+      status: 'Phỏng vấn'
+    },
+    {
+      id: '1995',
+      position: 'Flutter Mobile App Intern',
+      company: 'FPT Software',
+      student: 'Trần Hoa',
+      date: '20/2/2025',
+      status: 'Thực tập'
+    },
+    {
+      id: '1026',
+      position: 'React Developer',
+      company: 'LG Company',
+      student: 'Lê Minh',
+      date: '15/2/2025',
+      status: 'Hoàn thành'
+    },
+    {
+      id: '1283',
+      position: 'Flutter Mobile App Intern',
+      company: 'FPT Software',
+      student: 'Nguyễn Đức',
+      date: '26/2/2025',
+      status: 'Chờ phản hồi'
+    },
+    {
+      id: '382',
+      position: 'Java Back-end',
+      company: 'Viettel',
+      student: 'Minh Toàn',
+      date: '26/1/2025',
+      status: 'Phỏng vấn'
+    },
+    {
+      id: '1205',
+      position: 'Flutter Mobile App Intern',
+      company: 'FPT Software',
+      student: 'Trần Hoa',
+      date: '20/2/2025',
+      status: 'Thực tập'
+    },
+    {
+      id: '1256',
+      position: 'React Developer',
+      company: 'LG Company',
+      student: 'Lê Minh',
+      date: '15/3/2025',
+      status: 'Hoàn thành'
+    },
+  ];
+};

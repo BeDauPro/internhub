@@ -43,8 +43,8 @@ const ManagePosts = ({ jobs }) => {
       <header className="manageposts-header w3-display-container w3-grayscale-min" style={{ height: '100vh', position: 'relative' }}>
         <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'black', opacity: 0.5, zIndex: 1 }}></div>
         <div className="w3-display-left w3-text-white" style={{ padding: '48px', fontFamily: 'Georgia, serif', fontSize: '1.2em', position: 'relative', zIndex: 2,margin: '100px'}}>
-          <span className="w3-jumbo w3-hide-small" style={{ fontSize: '2em', fontWeight: 'bold' }}>Quản lý bài đăng của bạn</span><br />
-          <span className="w3-xxlarge w3-hide-large w3-hide-medium" style={{ fontSize: '3em', fontWeight: 'bold' }}>Quản lý bài đăng của bạn</span><br />
+          <span className="w3-jumbo w3-hide-small" style={{ fontSize: '2em', fontWeight: 'bold'}}>Quản lý bài đăng của bạn</span><br />
+          <span className="w3-xxlarge w3-hide-large w3-hide-medium" style={{ fontSize: '3em', fontWeight: 'bold' }}>Sẵn sàng tìm kiếm nguồn nhân lực mới</span><br />
           <span className="w3-large" style={{ fontSize: '1.5em' }}>Tạo, chỉnh sửa và quản lý các bài đăng tuyển dụng của bạn một cách dễ dàng.</span>
           <p>
             <button 
@@ -58,7 +58,8 @@ const ManagePosts = ({ jobs }) => {
                 boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.2), inset 0px -2px 4px rgba(255, 255, 255, 0.2)',
                 border: 'none',
                 cursor: 'pointer',
-                transition: 'transform 0.2s ease'
+                transition: 'transform 0.2s ease',
+                marginTop: '10px'
               }} 
               onClick={handleAddNewPost}
               onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'} 

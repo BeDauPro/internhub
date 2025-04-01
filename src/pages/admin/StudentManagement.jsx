@@ -10,6 +10,10 @@ const StudentManagement = ({ studentsData }) => {
 
     const [managementStudent, setManagementStudent] = useState([]);
     const [showFilterDropdown, setShowFilterDropdown] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1); 
+    const studentsPerPage = 10; 
+    const [studentIdFilter, setStudentIdFilter] = useState(""); // New state for student ID filter
+    const [sortOrder, setSortOrder] = useState(""); // New state for sorting order
 
     useEffect(() => {
         if (studentsData) {
@@ -25,9 +29,40 @@ const StudentManagement = ({ studentsData }) => {
             </div>
         );
     }
-
+    
     const toggleFilterDropdown = () => {
         setShowFilterDropdown(!showFilterDropdown);
+    };
+
+    const handleStudentIdFilterChange = (e) => {
+        setStudentIdFilter(e.target.value);
+    };
+
+    const handleSortOrderChange = (e) => {
+        setSortOrder(e.target.value);
+    };
+
+    // Filter and sort students
+    const filteredAndSortedStudents = managementStudent
+        .filter(student => studentIdFilter === "" || student.id.includes(studentIdFilter))
+        .sort((a, b) => {
+            if (sortOrder === "asc") {
+                return a.id.localeCompare(b.id);
+            } else if (sortOrder === "desc") {
+                return b.id.localeCompare(a.id);
+            }
+            return 0;
+        });
+
+    // Pagination logic
+    const indexOfLastStudent = currentPage * studentsPerPage;
+    const indexOfFirstStudent = indexOfLastStudent - studentsPerPage;
+    const currentStudents = filteredAndSortedStudents.slice(indexOfFirstStudent, indexOfLastStudent);
+
+    const totalPages = Math.ceil(filteredAndSortedStudents.length / studentsPerPage);
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
     };
 
     return (
@@ -42,7 +77,23 @@ const StudentManagement = ({ studentsData }) => {
                     </button>
                     {showFilterDropdown && (
                         <div className="filter-dropdown">
-                            <p>Không có bộ lọc nào khả dụng.</p>
+                            <div className="filter-group">
+                                <label>Lọc theo ID sinh viên:</label>
+                                <input
+                                    type="text"
+                                    placeholder="Nhập ID sinh viên (e.g., 21T1020310)"
+                                    value={studentIdFilter}
+                                    onChange={handleStudentIdFilterChange}
+                                />
+                            </div>
+                            <div className="filter-group">
+                                <label>Sắp xếp theo ID:</label>
+                                <select value={sortOrder} onChange={handleSortOrderChange}>
+                                    <option value="">Mặc định</option>
+                                    <option value="asc">Tăng dần</option>
+                                    <option value="desc">Giảm dần</option>
+                                </select>
+                            </div>
                         </div>
                     )}
                 </div>
@@ -56,8 +107,8 @@ const StudentManagement = ({ studentsData }) => {
                         <div className="header-cell file-cell">Hồ sơ</div>
                     </div>
 
-                    {managementStudent.length > 0 ? (
-                        managementStudent.map((student, index) => (
+                    {currentStudents.length > 0 ? (
+                        currentStudents.map((student, index) => (
                             <div className="table-row" key={index}>
                                 <div className="cell id-cell">{student.id}</div>
                                 <div className="cell company-cell">{student.company}</div>
@@ -79,6 +130,18 @@ const StudentManagement = ({ studentsData }) => {
                             <p>Không tìm thấy kết quả phù hợp.</p>
                         </div>
                     )}
+                </div>
+
+                <div className="pagination">
+                    {Array.from({ length: totalPages }, (_, index) => (
+                        <button
+                            key={index}
+                            className={`pagination-button ${currentPage === index + 1 ? 'active' : ''}`}
+                            onClick={() => handlePageChange(index + 1)}
+                        >
+                            {index + 1}
+                        </button>
+                    ))}
                 </div>
             </div>
             <Footer />

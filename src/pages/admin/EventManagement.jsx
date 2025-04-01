@@ -6,7 +6,7 @@ import NavbarAdmin from '../../components/admin/NavbarAdmin';
 import Footer from '../../components/Footer';
 
 const EventManagement = ({ events: initialEvents }) => {
-    const [events, setEvents] = useState(initialEvents || []); // Manage events locally
+    const [events, setEvents] = useState(initialEvents || []);
     const [formData, setFormData] = useState({
         title: "",
         location: "",
@@ -28,15 +28,16 @@ const EventManagement = ({ events: initialEvents }) => {
             alert("Vui lòng điền đầy đủ thông tin sự kiện!");
             return;
         }
-
+        //nếu selectedEvent khác null thì cập nhật sk, ngược lại thêm sự kiện mới
         if (selectedEvent) {
+            //duyệt qua các sự kiện
             const updatedEvents = events.map((event) =>
+                //nếu sự kiện đang được chọn trùng với sự kiện đang được chỉnh sửa thì cập nhât thông tin
                 event.id === selectedEvent.id
-                    ? { ...event, title, location, organizer, date, content }
-                    : event
+                    ? { ...event, title, location, organizer, date, content }// Cập nhật sự kiện được chọn
+                    : event // Giữ nguyên các sự kiện khác
             );
-            setEvents(updatedEvents); // Update local state
-            alert("Đã cập nhật sự kiện!");
+            setEvents(updatedEvents);
         } else {
             const newEvent = {
                 id: events.length + 1,
@@ -47,7 +48,6 @@ const EventManagement = ({ events: initialEvents }) => {
                 content,
             };
             setEvents([...events, newEvent]); // Add new event to local state
-            alert("Đã thêm sự kiện mới!");
         }
         clearForm();
     };

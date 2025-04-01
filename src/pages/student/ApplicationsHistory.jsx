@@ -12,6 +12,8 @@ const ApplicationsHistory = ({ applications }) => {
         timeSort: ''
     });
     const [showFilterDropdown, setShowFilterDropdown] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1); // Current page state
+    const applicationsPerPage = 10; // Maximum applications per page
 
     // Status priority order
     const statusPriority = {
@@ -64,6 +66,17 @@ const ApplicationsHistory = ({ applications }) => {
             }
             return 0;
         });
+
+    // Pagination logic
+    const indexOfLastApplication = currentPage * applicationsPerPage;
+    const indexOfFirstApplication = indexOfLastApplication - applicationsPerPage;
+    const currentApplications = filteredAndSortedApplications.slice(indexOfFirstApplication, indexOfLastApplication);
+
+    const totalPages = Math.ceil(filteredAndSortedApplications.length / applicationsPerPage);
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
 
     const toggleFilterDropdown = () => {
         setShowFilterDropdown(!showFilterDropdown);
@@ -118,8 +131,8 @@ const ApplicationsHistory = ({ applications }) => {
                         <div className="header-cell date-cell">Thời gian</div>
                         <div className="header-cell status-cell">Trạng thái</div>
                     </div>
-                    {filteredAndSortedApplications.length > 0 ? (
-                        filteredAndSortedApplications.map((app, index) => (
+                    {currentApplications.length > 0 ? (
+                        currentApplications.map((app, index) => (
                             <div className="table-row" key={index}>
                                 <div className="cell id-cell">{app.id}</div>
                                 <div className="cell position-cell" onClick={() => navigate("/jobdetail")}>{app.position}</div>
@@ -137,6 +150,19 @@ const ApplicationsHistory = ({ applications }) => {
                             <p>Không tìm thấy kết quả phù hợp.</p>
                         </div>
                     )}
+                </div>
+
+                {/* Pagination controls */}
+                <div className="pagination">
+                    {Array.from({ length: totalPages }, (_, index) => (
+                        <button
+                            key={index}
+                            className={`pagination-button ${currentPage === index + 1 ? 'active' : ''}`}
+                            onClick={() => handlePageChange(index + 1)}
+                        >
+                            {index + 1}
+                        </button>
+                    ))}
                 </div>
             </div>
             <Footer />

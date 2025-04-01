@@ -284,3 +284,30 @@
         }
     }
 }
+
+// Pagination styles
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+
+    .pagination-button {
+        background-color: white;
+        border: 1px solid #14367A;
+        color: #14367A;
+        padding: 8px 12px;
+        margin: 0 5px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+
+        &.active {
+            background-color: #14367A;
+            color: white;
+        }
+
+        &:hover {
+            background-color: #e3f2fd;
+        }
+    }
+}

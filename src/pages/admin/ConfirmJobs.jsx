@@ -5,21 +5,18 @@ import { useNavigate } from 'react-router-dom';
 import NavbarAdmin from '../../components/admin/NavbarAdmin';
 import Footer from '../../components/Footer';
 
-const ConfirmJobs = ({ searchResults, jobs }) => {
+const ConfirmJobs = ({ jobs }) => {
   const [visibleJobs, setVisibleJobs] = useState(8);
   const [selectedType, setSelectedType] = useState("All");
   const [selectedLocation, setSelectedLocation] = useState("All");
   const [selectedTitle, setSelectedTitle] = useState("All");
 
   const navigate = useNavigate();
-
+  //duyệt qua ds jobs và giữ lại công việc phù hợp với filter
   const filteredJobs = jobs.filter((job) =>
     (selectedType === "All" || job.type === selectedType) &&
     (selectedLocation === "All" || job.location === selectedLocation) &&
-    (selectedTitle === "All" || job.title === selectedTitle) &&
-    (!searchResults ||
-      (!searchResults.searchInput || job.title.toLowerCase().includes(searchResults.searchInput.toLowerCase())) &&
-      (!searchResults.selectedLocation || job.location === searchResults.selectedLocation))
+    (selectedTitle === "All" || job.title === selectedTitle)
   );
 
   const handleLoadMore = () => {
@@ -40,6 +37,7 @@ const ConfirmJobs = ({ searchResults, jobs }) => {
 
         <select value={selectedLocation} onChange={(e) => setSelectedLocation(e.target.value)}>
           <option value="All">Tất cả địa điểm</option>
+          {/* lọc danh sách địa điểm không trùng nhau */}
           {[...new Set(jobs.map((job) => job.location))].map((location) => (
             <option key={location} value={location}>
               {location}
@@ -58,6 +56,7 @@ const ConfirmJobs = ({ searchResults, jobs }) => {
       </div>
 
       <div className="jobList">
+        {/* cắt ds công việv theo số lượng cần hiển thị */}
         {filteredJobs.slice(0, visibleJobs).map((job) => (
           <div key={job.id} className="jobCard animate-slide-up">
             <div className="jobHeader" onClick={() => navigate("/jobdetail")}>
@@ -82,6 +81,7 @@ const ConfirmJobs = ({ searchResults, jobs }) => {
           </div>
         ))}
       </div>
+      {/* Nếu có nhiều hơn số jobs đang hiển thị thì nút loadMore mới xuất hiện */}
       {visibleJobs < filteredJobs.length && (
         <button className="loadMore" onClick={handleLoadMore}>
           Xem nhiều hơn

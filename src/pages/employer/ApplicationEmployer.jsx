@@ -7,8 +7,8 @@ import NavbarEmployer from '../../components/employer/NavbarEmployer';
 
 const ApplicationEmployer = ({ applicationData }) => {
     const navigate = useNavigate(); 
-    
-    // Move all hooks to the top level
+    const [currentPage, setCurrentPage] = useState(1); // Current page state
+    const applicationsPerPage = 10; // Maximum applications per page
     const [applications, setApplications] = useState([]);
     const [filters, setFilters] = useState({
         dateRange: '',
@@ -133,142 +133,165 @@ const ApplicationEmployer = ({ applicationData }) => {
         setOpenStatusId(null); // Close the dropdown after status change
     };
 
+    // Pagination logic
+    const indexOfLastApplication = currentPage * applicationsPerPage;
+    const indexOfFirstApplication = indexOfLastApplication - applicationsPerPage;
+    const currentApplications = filteredApplications.slice(indexOfFirstApplication, indexOfLastApplication);
+
+    const totalPages = Math.ceil(filteredApplications.length / applicationsPerPage);
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
+
     return (
         <>
-        <NavbarEmployer/>
-             <div className="application-management-container">
-                    <h1 className="page-title">QUẢN LÝ CÁC ỨNG VIÊN</h1>
-        
-                    <div className="filter-section">
-                        <button className="filter-button" onClick={toggleFilterDropdown}>
-                            <FaFilter /> Bộ lọc
-                        </button>
-        
-                        {showFilterDropdown && (
-                            <div className="filter-dropdown">
-                                <div className="filter-group">
-                                    <label>Thời gian:</label>
-                                    <select 
-                                        name="dateRange" 
-                                        value={filters.dateRange} 
-                                        onChange={handleFilterChange}
-                                    >
-                                        <option value="all">Tất cả</option>
-                                        <option value="today">Hôm nay</option>
-                                        <option value="lastWeek">7 ngày qua</option>
-                                        <option value="lastMonth">30 ngày qua</option>
-                                        <option value="custom">Tùy chỉnh</option>
-                                    </select>
-                                </div>
-        
-                                {filters.dateRange === 'custom' && (
-                                    <>
-                                        <div className="filter-group">
-                                            <label>Từ ngày:</label>
-                                            <input 
-                                                type="date" 
-                                                name="startDate" 
-                                                value={filters.startDate} 
-                                                onChange={handleFilterChange}
-                                            />
-                                        </div>
-                                        <div className="filter-group">
-                                            <label>Đến ngày:</label>
-                                            <input 
-                                                type="date" 
-                                                name="endDate" 
-                                                value={filters.endDate} 
-                                                onChange={handleFilterChange}
-                                            />
-                                        </div>
-                                    </>
-                                )}
+            <NavbarEmployer />
+            <div className="application-management-container">
+                <h1 className="page-title">QUẢN LÝ CÁC ỨNG VIÊN</h1>
+
+                <div className="filter-section">
+                    <button className="filter-button" onClick={toggleFilterDropdown}>
+                        <FaFilter /> Bộ lọc
+                    </button>
+                    {showFilterDropdown && (
+                        <div className="filter-dropdown">
+                            <div className="filter-group">
+                                <label>Thời gian:</label>
+                                <select 
+                                    name="dateRange" 
+                                    value={filters.dateRange} 
+                                    onChange={handleFilterChange}
+                                >
+                                    <option value="all">Tất cả</option>
+                                    <option value="today">Hôm nay</option>
+                                    <option value="lastWeek">7 ngày qua</option>
+                                    <option value="lastMonth">30 ngày qua</option>
+                                    <option value="custom">Tùy chỉnh</option>
+                                </select>
                             </div>
-                        )}
-                    </div>
-        
-                    <div className="applications-table">
-                        <div className="table-header">
-                            <div className="header-cell id-cell">ID</div>
-                            <div className="header-cell position-cell">Việc làm</div>
-                            <div className="header-cell student-cell">Sinh viên</div>
-                            <div className="header-cell date-cell">Ngày nộp đơn</div>
-                            <div className="header-cell file-cell">Hồ sơ</div>
-                            <div className="header-cell status-cell">Trạng thái</div>
+
+                            {filters.dateRange === 'custom' && (
+                                <>
+                                    <div className="filter-group">
+                                        <label>Từ ngày:</label>
+                                        <input 
+                                            type="date" 
+                                            name="startDate" 
+                                            value={filters.startDate} 
+                                            onChange={handleFilterChange}
+                                        />
+                                    </div>
+                                    <div className="filter-group">
+                                        <label>Đến ngày:</label>
+                                        <input 
+                                            type="date" 
+                                            name="endDate" 
+                                            value={filters.endDate} 
+                                            onChange={handleFilterChange}
+                                        />
+                                    </div>
+                                </>
+                            )}
                         </div>
-        
-                        {filteredApplications.length > 0 ? (
-                            filteredApplications.map((app, index) => (
-                                <div className="table-row" key={index}>
-                                    <div className="cell id-cell">{app.id}</div>
-                                    <div className="cell position-cell">{app.position}</div>
-                                    <div className="cell student-cell">{app.student}</div>
-                                    <div className="cell date-cell">{app.date}</div>
-                                    <div className="cell file-cell">
-                                        <button 
-                                            className="file-button" 
-                                            onClick={() => navigate("/studentprofile")}
-                                            title="Xem hồ sơ"
-                                        >
-                                            <FaFileAlt />
-                                        </button>
-                                    </div>
-                                    <div className="cell status-cell">
+                    )}
+                </div>
+
+                <div className="applications-table">
+                    <div className="table-header">
+                        <div className="header-cell id-cell">ID</div>
+                        <div className="header-cell position-cell">Việc làm</div>
+                        <div className="header-cell student-cell">Sinh viên</div>
+                        <div className="header-cell date-cell">Ngày nộp đơn</div>
+                        <div className="header-cell file-cell">Hồ sơ</div>
+                        <div className="header-cell status-cell">Trạng thái</div>
+                    </div>
+
+                    {currentApplications.length > 0 ? (
+                        currentApplications.map((app, index) => (
+                            <div className="table-row" key={index}>
+                                <div className="cell id-cell">{app.id}</div>
+                                <div className="cell position-cell">{app.position}</div>
+                                <div className="cell student-cell">{app.student}</div>
+                                <div className="cell date-cell">{app.date}</div>
+                                <div className="cell file-cell">
+                                    <button 
+                                        className="file-button" 
+                                        onClick={() => navigate("/studentprofile")}
+                                        title="Xem hồ sơ"
+                                    >
+                                        <FaFileAlt />
+                                    </button>
+                                </div>
+                                <div className="cell status-cell">
+                                    <div 
+                                        className="status-dropdown"
+                                        ref={el => statusRefs.current[app.id] = el}
+                                    >
                                         <div 
-                                            className="status-dropdown"
-                                            ref={el => statusRefs.current[app.id] = el}
+                                            className={`status-badge ${getStatusStyle(app.status)}`}
+                                            onClick={(e) => toggleStatusDropdown(app.id, e)}
                                         >
-                                            <div 
-                                                className={`status-badge ${getStatusStyle(app.status)}`}
-                                                onClick={(e) => toggleStatusDropdown(app.id, e)}
-                                            >
-                                                {app.status} <span className="dropdown-arrow">▼</span>
-                                            </div>
-                                            
-                                            {openStatusId === app.id && (
-                                                <div className="status-dropdown-menu">
-                                                    <div 
-                                                        className="status-option waiting"
-                                                        onClick={(e) => handleStatusChange(app.id, 'Chờ phản hồi', e)}
-                                                    >
-                                                        <span className="status-dot waiting-dot"></span>
-                                                        Chờ phản hồi
-                                                    </div>
-                                                    <div 
-                                                        className="status-option interview"
-                                                        onClick={(e) => handleStatusChange(app.id, 'Phỏng vấn', e)}
-                                                    >
-                                                        <span className="status-dot interview-dot"></span>
-                                                        Phỏng vấn
-                                                    </div>
-                                                    <div 
-                                                        className="status-option internship"
-                                                        onClick={(e) => handleStatusChange(app.id, 'Thực tập', e)}
-                                                    >
-                                                        <span className="status-dot internship-dot"></span>
-                                                        Thực tập
-                                                    </div>
-                                                    <div 
-                                                        className="status-option completed"
-                                                        onClick={(e) => handleStatusChange(app.id, 'Hoàn thành', e)}
-                                                    >
-                                                        <span className="status-dot completed-dot"></span>
-                                                        Hoàn thành
-                                                    </div>
-                                                </div>
-                                            )}
+                                            {app.status} <span className="dropdown-arrow">▼</span>
                                         </div>
+                                        
+                                        {openStatusId === app.id && (
+                                            <div className="status-dropdown-menu">
+                                                <div 
+                                                    className="status-option waiting"
+                                                    onClick={(e) => handleStatusChange(app.id, 'Chờ phản hồi', e)}
+                                                >
+                                                    <span className="status-dot waiting-dot"></span>
+                                                    Chờ phản hồi
+                                                </div>
+                                                <div 
+                                                    className="status-option interview"
+                                                    onClick={(e) => handleStatusChange(app.id, 'Phỏng vấn', e)}
+                                                >
+                                                    <span className="status-dot interview-dot"></span>
+                                                    Phỏng vấn
+                                                </div>
+                                                <div 
+                                                    className="status-option internship"
+                                                    onClick={(e) => handleStatusChange(app.id, 'Thực tập', e)}
+                                                >
+                                                    <span className="status-dot internship-dot"></span>
+                                                    Thực tập
+                                                </div>
+                                                <div 
+                                                    className="status-option completed"
+                                                    onClick={(e) => handleStatusChange(app.id, 'Hoàn thành', e)}
+                                                >
+                                                    <span className="status-dot completed-dot"></span>
+                                                    Hoàn thành
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
-                            ))
-                        ) : (
-                            <div className="no-results">
-                                <p>Không tìm thấy kết quả phù hợp.</p>
                             </div>
-                        )}
-                    </div>
+                        ))
+                    ) : (
+                        <div className="no-results">
+                            <p>Không tìm thấy kết quả phù hợp.</p>
+                        </div>
+                    )}
                 </div>
-        <Footer/>
+
+                {/* Pagination controls */}
+                <div className="pagination">
+                    {Array.from({ length: totalPages }, (_, index) => (
+                        <button
+                            key={index}
+                            className={`pagination-button ${currentPage === index + 1 ? 'active' : ''}`}
+                            onClick={() => handlePageChange(index + 1)}
+                        >
+                            {index + 1}
+                        </button>
+                    ))}
+                </div>
+            </div>
+            <Footer />
         </>
     );
 };
