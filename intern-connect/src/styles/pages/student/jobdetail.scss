@@ -1,0 +1,224 @@
+.job-detail-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+
+    .job-detail-container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        margin-top: 150px;
+    }
+}
+
+.job-detail-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #f9f9f9, #e3f2fd);
+    flex: 1;
+    margin-top: 100px; 
+
+    .job-header {
+        display: flex;
+        width: 100%;
+        max-width: 900px;
+        gap: 20px;
+        justify-content: space-between;
+
+        .company-info,
+        .job-summary {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 10px 20px;
+            border-bottom: 2px solid #001f54;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+            &:hover {
+                transform: translateY(-5px);
+                box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.2);
+            }
+        }
+
+        .company-info {
+            width: 50%;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: flex-start;
+
+            .company-logo {
+                width: 80px;
+                height: 80px;
+                border: 2px solid #001f54;
+                border-radius: 50%;
+                object-fit: cover;
+                transition: transform 0.3s ease;
+
+                &:hover {
+                    transform: scale(1.1);
+                }
+            }
+
+            .company-details {
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                align-items: flex-start;
+                margin-left: 10px;
+
+                p {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                }
+
+                h2 {
+                    font-size: 18px;
+                    font-weight: bold;
+                }
+            }
+        }
+
+        .job-summary {
+            width: 50%;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: flex-start;
+
+            .job-summary-1 {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                align-items: flex-start;
+
+                p {
+                    display: flex;
+                    align-items: center;
+                    gap: 5px;
+                }
+            }
+
+            .job-type {
+                display: inline-block;
+                align-self: flex-start;
+                background-color: #007bff;
+                color: white;
+                padding: 5px 10px;
+                border-radius: 5px;
+                font-size: 14px;
+                transition: background-color 0.3s ease;
+
+                &:hover {
+                    background-color: #0056b3;
+                }
+            }
+        }
+    }
+
+    .job-details {
+        width: 100%;
+        max-width: 900px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        margin-top: 20px;
+        border-bottom: 2px solid #001f54;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+        &:hover {
+            transform: translateY(-5px);
+            box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        h3 {
+            font-size: 18px;
+            font-weight: bold;
+            color: #001f54;
+            margin-bottom: 10px;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 5px;
+        }
+    }
+
+    .job-footer {
+        width: 100%;
+        max-width: 900px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        padding: 15px 20px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+        border-bottom: 2px solid #001f54;
+        font-size: 16px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+        &:hover {
+            transform: translateY(-5px);
+            box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.2);
+        }
+    }
+
+    .apply-btn {
+        background-color: #001f54;
+        color: white;
+        padding: 12px 25px;
+        border-radius: 8px;
+        cursor: pointer;
+        border: none;
+        font-size: 16px;
+        font-weight: bold;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        &:hover {
+            background-color: #003080;
+            transform: scale(1.05);
+        }
+    }
+}
+
+.position-cell {
+    cursor: pointer;
+}
+
+.success-alert {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #28a745;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  font-size: 16px;
+  font-weight: bold;
+  z-index: 1000;
+  animation: fadeInOut 5s ease-in-out;
+}
+
+@keyframes fadeInOut {
+  0%, 50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}

@@ -1,0 +1,38 @@
+﻿<Properties StartupConfiguration="{041E3534-1384-414A-9671-F6F7C0CDA538}|Default">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.ItemProperties.InternHub PreferredExecutionTarget="/Applications/Google Chrome.app" />
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.Workbench ActiveDocument="InternHub/Program.cs">
+    <Files>
+      <File FileName="InternHub/Program.cs" Line="91" Column="1" />
+      <File FileName="InternHub/Models/ViewModels/LoginViewModel.cs" Line="1" Column="1" />
+      <File FileName="InternHub/Controllers/AuthenticationController.cs" Line="47" Column="46" />
+      <File FileName="InternHub/Models/AppDbContext.cs" Line="28" Column="1" />
+      <File FileName="InternHub/Services/AuthService.cs" Line="18" Column="55" />
+      <File FileName="InternHub/Models/RefreshToken.cs" Line="1" Column="1" />
+      <File FileName="InternHub/Models/ApplicationUser.cs" Line="8" Column="17" />
+      <File FileName="InternHub/Controllers/WeatherForecastController.cs" Line="7" Column="24" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="InternHubWebAPI" expanded="True">
+            <Node name="InternHub">
+              <Node name="Dependencies" expanded="True" />
+              <Node name="Controllers" expanded="True" />
+              <Node name="Migrations" expanded="True" />
+              <Node name="Models" expanded="True" />
+              <Node name="Properties" expanded="True" />
+              <Node name="Services" expanded="True" />
+              <Node name="Program.cs" selected="True" />
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+</Properties>
