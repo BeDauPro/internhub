@@ -1,0 +1,229 @@
+.student-management-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    width: 100%;
+    max-width: 1200px;
+    margin: 100px auto;
+
+    .page-title {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    .filter-section {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        margin-bottom: 20px;
+        position: relative;
+
+        .filter-button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background-color: white;
+            border: 1px solid #14367A;
+            color: #14367A;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+
+            &:hover {
+                background-color: #e3f2fd;
+            }
+
+            svg {
+                font-size: 12px;
+            }
+        }
+
+        .filter-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            z-index: 10;
+            width: 250px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.15);
+            padding: 15px;
+            margin-top: 5px;
+
+            .filter-group {
+                margin-bottom: 12px;
+
+                &:last-child {
+                    margin-bottom: 0;
+                }
+
+                label {
+                    display: block;
+                    margin-bottom: 5px;
+                    font-weight: 500;
+                    color: #333;
+                    font-size: 14px;
+                }
+
+                select,
+                input {
+                    width: 100%;
+                    padding: 8px 10px;
+                    border: 1px solid #ddd;
+                    border-radius: 4px;
+                    font-size: 14px;
+
+                    &:focus {
+                        outline: none;
+                        border-color: #14367A;
+                    }
+                }
+            }
+        }
+    }
+
+    .students-table {
+        width: 100%;
+        background: white;
+        border-radius: 10px;
+        overflow: visible;
+        box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+
+        .table-header {
+            display: flex;
+            background-color: #14367A;
+            color: white;
+            font-weight: bold;
+
+            .header-cell {
+                padding: 15px;
+                text-align: center;
+            }
+        }
+
+        .table-row {
+            display: flex;
+            border-bottom: 1px solid #e0e0e0;
+            transition: background-color 0.3s ease;
+
+            &:hover {
+                background-color: #f5f9ff;
+            }
+
+            &:last-child {
+                border-bottom: none;
+            }
+
+            .cell {
+                padding: 15px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+            }
+        }
+
+        .no-results {
+            padding: 30px;
+            text-align: center;
+            color: #666;
+            font-style: italic;
+        }
+
+        .id-cell {
+            flex: 1;
+        }
+
+        .position-cell {
+            flex: 2;
+        }
+
+        .student-cell {
+            flex: 1.5;
+        }
+
+        .date-cell {
+            flex: 1.5;
+        }
+
+        .company-cell {
+            flex: 1.5; // Adjust width for the "Công ty" column
+        }
+
+        .file-cell {
+            flex: 0.8;
+
+            .file-button {
+                background: none;
+                border: none;
+                color: #14367A;
+                cursor: pointer;
+                font-size: 18px;
+                transition: transform 0.2s ease;
+
+                &:hover {
+                    transform: scale(1.2);
+                }
+            }
+        }
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+
+        .pagination-button {
+            background-color: white;
+            border: 1px solid #14367A;
+            color: #14367A;
+            padding: 8px 12px;
+            margin: 0 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+
+            &.active {
+                background-color: #14367A;
+                color: white;
+            }
+
+            &:hover {
+                background-color: #e3f2fd;
+            }
+        }
+    }
+
+    // Media queries for responsive design
+    @media (max-width: 768px) {
+        .students-table {
+            .table-header,
+            .table-row {
+                font-size: 14px;
+            }
+
+            .cell,
+            .header-cell {
+                padding: 10px 5px;
+            }
+        }
+    }
+
+    @media (max-width: 576px) {
+        .students-table {
+            overflow-x: auto;
+
+            .table-header,
+            .table-row {
+                min-width: 600px;
+            }
+        }
+    }
+}

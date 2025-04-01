@@ -1,0 +1,126 @@
+.overview-container {
+    padding: 50px 0px;
+ 
+    .text-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      .subtitle {
+        color: #2980b9;
+        font-weight: bold;
+        text-transform: uppercase;
+      }
+  
+      .title {
+        font-size: 32px;
+        font-weight: bold;
+        color: #123082;
+        margin: 10px 0;
+      }
+  
+      .description {
+        font-size: 16px;
+        color: #555;
+        margin-bottom: 30px;
+      }
+  
+
+      .stats {
+        display: flex;
+        gap: 10px;
+        
+        .stat-box {
+          display: flex;
+          align-items: center;
+          background: #f8f9fa;
+          padding: 15px;
+          border-radius: 10px;
+          width: 100%;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          gap: 15px;
+  
+          .icon {
+            font-size: 30px;
+            color: #2980b9;
+          }
+  
+          h4 {
+            font-weight: bold;
+            font-size: 18px;
+            margin: 0;
+          }
+  
+          p {
+            margin: 0;
+            font-size: 14px;
+            color: #777;
+          }
+        }
+      }
+    }
+  
+
+    .image-container {
+      position: relative;
+      text-align: center;
+  
+      .main-image {
+        width: 100%;
+        border-radius: 10px;
+      }
+  
+      .small-image {
+        width: 40%;
+        position: absolute;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+  
+      .top-left {
+        top: 10%;
+        left: -20%;
+      }
+  
+      .bottom-left {
+        bottom: -10%;
+        left: 10%;
+      }
+    }
+
+    .image-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      .main-image {
+          width: 100%;
+          border-radius: 12px;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+          transition: transform 0.3s ease;
+      }
+
+      .main-image:hover {
+          transform: scale(1.05);
+      }
+
+      .sub-images {
+          display: flex;
+          justify-content: center;
+          gap: 16px;
+
+          img {
+              width: 48%;
+              height: auto;
+              border-radius: 12px;
+              box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+              transition: transform 0.3s ease;
+          }
+
+          img:hover {
+              transform: scale(1.05);
+          }
+      }
+  }
+
+  }
