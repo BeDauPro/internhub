@@ -19,29 +19,46 @@ namespace InternHub.Migrations
                 .HasAnnotation("ProductVersion", "6.0.36")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
+            modelBuilder.Entity("InternHub.Models.Admin", b =>
+                {
+                    b.Property<int>("AdminId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("AdminId");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Admins", (string)null);
+                });
+
             modelBuilder.Entity("InternHub.Models.Application", b =>
                 {
                     b.Property<int>("ApplicationId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("ApplicationStatus")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<DateTime>("AppliedAt")
+                    b.Property<DateTime>("ApplicationDate")
                         .HasColumnType("datetime(6)");
 
                     b.Property<int>("JobPostingId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Resume")
+                    b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("StudentId")
-                        .IsRequired()
-                        .HasColumnType("varchar(255)");
+                    b.Property<int>("StudentId")
+                        .HasColumnType("int");
 
                     b.HasKey("ApplicationId");
 
@@ -61,6 +78,9 @@ namespace InternHub.Migrations
                     b.Property<DateTime>("ApplicationDate")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<int?>("ApplicationId")
+                        .HasColumnType("int");
+
                     b.Property<string>("CompanyName")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -68,15 +88,37 @@ namespace InternHub.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<int>("EmployerId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsLocked")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<int>("JobPostingId")
+                        .HasColumnType("int");
+
                     b.Property<string>("JobTitle")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("StudentId")
+                    b.Property<string>("Remarks")
                         .IsRequired()
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("StudentId")
+                        .HasColumnType("int");
 
                     b.HasKey("WorkHistoryId");
+
+                    b.HasIndex("ApplicationId");
+
+                    b.HasIndex("EmployerId");
+
+                    b.HasIndex("JobPostingId");
 
                     b.HasIndex("StudentId");
 
@@ -102,16 +144,16 @@ namespace InternHub.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("varchar(256)");
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("FullName")
-                        .IsRequired()
-                        .HasColumnType("longtext");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("tinyint(1)");
@@ -156,6 +198,63 @@ namespace InternHub.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("ApplicationUser");
+                });
+
+            modelBuilder.Entity("InternHub.Models.Employer", b =>
+                {
+                    b.Property<int>("EmployerId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("CompanyDescription")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("CompanyLogo")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("CompanyName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("EmployeeSize")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FoundedYear")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Industry")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Website")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("EmployerId");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Employers", (string)null);
                 });
 
             modelBuilder.Entity("InternHub.Models.Event", b =>
@@ -167,12 +266,8 @@ namespace InternHub.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("CreatorId")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("CreatorUserId")
-                        .IsRequired()
-                        .HasColumnType("longtext");
+                    b.Property<int>("CreatedByAdminId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("EventDate")
                         .HasColumnType("datetime(6)");
@@ -195,7 +290,7 @@ namespace InternHub.Migrations
 
                     b.HasKey("EventId");
 
-                    b.HasIndex("CreatorId");
+                    b.HasIndex("CreatedByAdminId");
 
                     b.ToTable("Events", (string)null);
                 });
@@ -206,9 +301,8 @@ namespace InternHub.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("EmployerId")
-                        .IsRequired()
-                        .HasColumnType("varchar(255)");
+                    b.Property<int>("EmployerId")
+                        .HasColumnType("int");
 
                     b.Property<string>("ExperienceRequired")
                         .IsRequired()
@@ -261,8 +355,11 @@ namespace InternHub.Migrations
 
             modelBuilder.Entity("InternHub.Models.Notification", b =>
                 {
-                    b.Property<int>("NotificationId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("AdminId")
                         .HasColumnType("int");
 
                     b.Property<string>("Content")
@@ -276,23 +373,18 @@ namespace InternHub.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("RecipientEmployerId")
-                        .IsRequired()
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("RecipientStudentId")
-                        .IsRequired()
-                        .HasColumnType("varchar(255)");
-
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.HasKey("NotificationId");
+                    b.Property<int>("StudentId")
+                        .HasColumnType("int");
 
-                    b.HasIndex("RecipientEmployerId");
+                    b.HasKey("Id");
 
-                    b.HasIndex("RecipientStudentId");
+                    b.HasIndex("AdminId");
+
+                    b.HasIndex("StudentId");
 
                     b.ToTable("Notifications", (string)null);
                 });
@@ -331,6 +423,77 @@ namespace InternHub.Migrations
                     b.ToTable("RefreshTokens");
                 });
 
+            modelBuilder.Entity("InternHub.Models.Student", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Bio")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("CVFile")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("DateOfBirth")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<decimal?>("GPA")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("GithubProfile")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Languages")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("ProfilePicture")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("SchoolEmail")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Skills")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Students", (string)null);
+                });
+
             modelBuilder.Entity("InternHub.Models.StudentReview", b =>
                 {
                     b.Property<int>("ReviewId")
@@ -341,26 +504,20 @@ namespace InternHub.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("EmployerId")
-                        .IsRequired()
-                        .HasColumnType("varchar(255)");
+                    b.Property<int>("EmployerId")
+                        .HasColumnType("int");
 
-                    b.Property<int>("JobPostingId")
+                    b.Property<int?>("JobPostingId")
                         .HasColumnType("int");
 
                     b.Property<int>("OverallRating")
                         .HasColumnType("int");
 
-                    b.Property<string>("ReviewType")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
                     b.Property<DateTime>("ReviewedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("StudentId")
-                        .IsRequired()
-                        .HasColumnType("varchar(255)");
+                    b.Property<int>("StudentId")
+                        .HasColumnType("int");
 
                     b.HasKey("ReviewId");
 
@@ -368,7 +525,8 @@ namespace InternHub.Migrations
 
                     b.HasIndex("JobPostingId");
 
-                    b.HasIndex("StudentId");
+                    b.HasIndex("StudentId", "EmployerId")
+                        .IsUnique();
 
                     b.ToTable("StudentReviews", (string)null);
                 });
@@ -501,117 +659,42 @@ namespace InternHub.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("InternHub.Models.ViewModels.User", b =>
+                {
+                    b.HasBaseType("InternHub.Models.ApplicationUser");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("UserType")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasDiscriminator().HasValue("User");
+                });
+
             modelBuilder.Entity("InternHub.Models.Admin", b =>
                 {
-                    b.HasBaseType("InternHub.Models.ApplicationUser");
+                    b.HasOne("InternHub.Models.ViewModels.User", "User")
+                        .WithOne("Admin")
+                        .HasForeignKey("InternHub.Models.Admin", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.ToTable("Admins", (string)null);
-                });
-
-            modelBuilder.Entity("InternHub.Models.Employer", b =>
-                {
-                    b.HasBaseType("InternHub.Models.ApplicationUser");
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("CompanyDescription")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("CompanyLogo")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("CompanyName")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<int>("EmployeeSize")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("FoundedYear")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Industry")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Website")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.ToTable("Employers", (string)null);
-                });
-
-            modelBuilder.Entity("InternHub.Models.Student", b =>
-                {
-                    b.HasBaseType("InternHub.Models.ApplicationUser");
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Bio")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("CVFile")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<DateTime?>("DateOfBirth")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<decimal?>("GPA")
-                        .HasColumnType("decimal(65,30)");
-
-                    b.Property<string>("Gender")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("GithubProfile")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Languages")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("ProfilePicture")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("SchoolEmail")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Skills")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.ToTable("Students", (string)null);
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("InternHub.Models.Application", b =>
                 {
                     b.HasOne("InternHub.Models.JobPosting", "JobPosting")
-                        .WithMany()
+                        .WithMany("Applications")
                         .HasForeignKey("JobPostingId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("InternHub.Models.Student", "Student")
-                        .WithMany()
+                        .WithMany("Applications")
                         .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -623,28 +706,61 @@ namespace InternHub.Migrations
 
             modelBuilder.Entity("InternHub.Models.ApplicationHistory", b =>
                 {
-                    b.HasOne("InternHub.Models.Student", "Student")
+                    b.HasOne("InternHub.Models.Application", null)
+                        .WithMany("ApplicationHistories")
+                        .HasForeignKey("ApplicationId");
+
+                    b.HasOne("InternHub.Models.Employer", "Employer")
                         .WithMany()
+                        .HasForeignKey("EmployerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("InternHub.Models.JobPosting", "JobPosting")
+                        .WithMany()
+                        .HasForeignKey("JobPostingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("InternHub.Models.Student", "Student")
+                        .WithMany("ApplicationHistories")
                         .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Employer");
+
+                    b.Navigation("JobPosting");
+
                     b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("InternHub.Models.Employer", b =>
+                {
+                    b.HasOne("InternHub.Models.ViewModels.User", "User")
+                        .WithOne("Employer")
+                        .HasForeignKey("InternHub.Models.Employer", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("InternHub.Models.Event", b =>
                 {
-                    b.HasOne("InternHub.Models.ApplicationUser", "Creator")
-                        .WithMany()
-                        .HasForeignKey("CreatorId");
+                    b.HasOne("InternHub.Models.Admin", "Admin")
+                        .WithMany("Events")
+                        .HasForeignKey("CreatedByAdminId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.Navigation("Creator");
+                    b.Navigation("Admin");
                 });
 
             modelBuilder.Entity("InternHub.Models.JobPosting", b =>
                 {
                     b.HasOne("InternHub.Models.Employer", "Employer")
-                        .WithMany()
+                        .WithMany("JobPostings")
                         .HasForeignKey("EmployerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -654,21 +770,21 @@ namespace InternHub.Migrations
 
             modelBuilder.Entity("InternHub.Models.Notification", b =>
                 {
-                    b.HasOne("InternHub.Models.Employer", "RecipientEmployer")
-                        .WithMany()
-                        .HasForeignKey("RecipientEmployerId")
+                    b.HasOne("InternHub.Models.Admin", "Admin")
+                        .WithMany("Notifications")
+                        .HasForeignKey("AdminId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("InternHub.Models.Student", "Student")
+                        .WithMany("Notifications")
+                        .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("InternHub.Models.Student", "RecipientStudent")
-                        .WithMany()
-                        .HasForeignKey("RecipientStudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Admin");
 
-                    b.Navigation("RecipientEmployer");
-
-                    b.Navigation("RecipientStudent");
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("InternHub.Models.RefreshToken", b =>
@@ -682,29 +798,36 @@ namespace InternHub.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("InternHub.Models.Student", b =>
+                {
+                    b.HasOne("InternHub.Models.ViewModels.User", "User")
+                        .WithOne("Student")
+                        .HasForeignKey("InternHub.Models.Student", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("InternHub.Models.StudentReview", b =>
                 {
                     b.HasOne("InternHub.Models.Employer", "Employer")
-                        .WithMany()
+                        .WithMany("Reviews")
                         .HasForeignKey("EmployerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("InternHub.Models.JobPosting", "JobPosting")
-                        .WithMany()
-                        .HasForeignKey("JobPostingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("InternHub.Models.JobPosting", null)
+                        .WithMany("Reviews")
+                        .HasForeignKey("JobPostingId");
 
                     b.HasOne("InternHub.Models.Student", "Student")
-                        .WithMany()
+                        .WithMany("Reviews")
                         .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Employer");
-
-                    b.Navigation("JobPosting");
 
                     b.Navigation("Student");
                 });
@@ -762,28 +885,50 @@ namespace InternHub.Migrations
 
             modelBuilder.Entity("InternHub.Models.Admin", b =>
                 {
-                    b.HasOne("InternHub.Models.ApplicationUser", null)
-                        .WithOne()
-                        .HasForeignKey("InternHub.Models.Admin", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Events");
+
+                    b.Navigation("Notifications");
+                });
+
+            modelBuilder.Entity("InternHub.Models.Application", b =>
+                {
+                    b.Navigation("ApplicationHistories");
                 });
 
             modelBuilder.Entity("InternHub.Models.Employer", b =>
                 {
-                    b.HasOne("InternHub.Models.ApplicationUser", null)
-                        .WithOne()
-                        .HasForeignKey("InternHub.Models.Employer", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("JobPostings");
+
+                    b.Navigation("Reviews");
+                });
+
+            modelBuilder.Entity("InternHub.Models.JobPosting", b =>
+                {
+                    b.Navigation("Applications");
+
+                    b.Navigation("Reviews");
                 });
 
             modelBuilder.Entity("InternHub.Models.Student", b =>
                 {
-                    b.HasOne("InternHub.Models.ApplicationUser", null)
-                        .WithOne()
-                        .HasForeignKey("InternHub.Models.Student", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.Navigation("ApplicationHistories");
+
+                    b.Navigation("Applications");
+
+                    b.Navigation("Notifications");
+
+                    b.Navigation("Reviews");
+                });
+
+            modelBuilder.Entity("InternHub.Models.ViewModels.User", b =>
+                {
+                    b.Navigation("Admin")
+                        .IsRequired();
+
+                    b.Navigation("Employer")
+                        .IsRequired();
+
+                    b.Navigation("Student")
                         .IsRequired();
                 });
 #pragma warning restore 612, 618
