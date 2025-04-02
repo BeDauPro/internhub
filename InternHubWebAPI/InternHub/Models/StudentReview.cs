@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace InternHub.Models
 {
@@ -9,30 +10,24 @@ namespace InternHub.Models
         [Key]
         public int ReviewId { get; set; }
 
-        [Required]
+        public int OverallRating { get; set; }
+        public string Comments { get; set; }
+        public DateTime ReviewedAt { get; set; } = DateTime.UtcNow;
+
         [ForeignKey("Student")]
-        public string StudentId { get; set; }
+        public int StudentId { get; set; }
         public virtual Student Student { get; set; }
 
-        [Required]
         [ForeignKey("Employer")]
-        public string EmployerId { get; set; }
+        public int EmployerId { get; set; }
         public virtual Employer Employer { get; set; }
 
-        [Required]
-        [ForeignKey("JobPosting")]
-        public int JobPostingId { get; set; }
-        public virtual JobPosting JobPosting { get; set; }
-
-        [Required]
-        public int OverallRating { get; set; }
-
-        public string Comments { get; set; }
-
-        [Required]
-        public string ReviewType { get; set; } // company, job, student
-
-        public DateTime ReviewedAt { get; set; } = DateTime.UtcNow;
+        public static void Configure(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<StudentReview>()
+                .HasIndex(sr => new { sr.StudentId, sr.EmployerId })
+                .IsUnique();
+        }
     }
 
 }
