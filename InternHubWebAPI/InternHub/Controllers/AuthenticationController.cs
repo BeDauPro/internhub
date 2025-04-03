@@ -1,10 +1,12 @@
-﻿using InternHub.Contacts;
+﻿using System.Security.Cryptography;
+using InternHub.Contacts;
 using InternHub.Models;
 using InternHub.Models.ViewModels;
 using InternHub.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Web;
 
 namespace InternHub.Controllers
 {
@@ -17,12 +19,14 @@ namespace InternHub.Controllers
         private readonly IConfiguration _configuration;
         private readonly AuthService _authService;
         private readonly IEmailSender _emailSender;
+        private readonly AppDbContext _context; // Add AppDbContext
 
         public AuthenticationController(UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager,
             IConfiguration configuration,
             AuthService authService,
-            IEmailSender emailSender
+            IEmailSender emailSender,
+            AppDbContext context
             )
         {
             _userManager = userManager;
@@ -30,6 +34,7 @@ namespace InternHub.Controllers
             _configuration = configuration;
             _authService = authService;
             _emailSender = emailSender;
+            _context = context;
         }
 
         [HttpPost("register-user")]
@@ -84,6 +89,72 @@ namespace InternHub.Controllers
 
             return Ok("Email verified successfully!");
         }
+
+        [HttpGet("forgot-password")]
+        public async Task<IActionResult> ForgotPassword(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return BadRequest("User not found");
+            }
+
+            // Tạo token reset mật khẩu
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+            // Lưu token vào cơ sở dữ liệu (nếu cần thiết, nếu bạn không muốn lưu token, có thể bỏ qua bước này)
+            user.PasswordResetToken = token;
+            user.ResetTokenExpires = DateTime.Now.AddHours(1);  // Đặt thời gian hết hạn cho token
+            await _userManager.UpdateAsync(user);
+
+            // Gửi token qua email
+            var resetLink = $"{_configuration["JWT:PasswordResetUrl"]}?email={email}&token={Uri.EscapeDataString(token)}";
+            var message = $"Click the link to reset your password: {resetLink}";
+            await _emailSender.SendEmailAsync(user.Email, "Password Reset", message);
+
+            return Ok("Password reset link has been sent to your email.");
+        }
+
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordViewModel reset)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var user = await _userManager.FindByEmailAsync(reset.Email);
+            if (user == null)
+            {
+                return BadRequest(new { error = "User not found." });
+            }
+
+            // Giải mã token trước khi xác thực
+            string decodedToken = HttpUtility.UrlDecode(reset.Token);
+
+            // Kiểm tra token từ cơ sở dữ liệu
+            if (user.PasswordResetToken != decodedToken || user.ResetTokenExpires < DateTime.UtcNow)
+            {
+                return BadRequest(new { error = "Invalid or expired token." });
+            }
+
+            // Reset mật khẩu
+            var resetResult = await _userManager.ResetPasswordAsync(user, decodedToken, reset.NewPassword);
+            if (!resetResult.Succeeded)
+            {
+                return BadRequest(new { error = "Password reset failed.", details = resetResult.Errors });
+            }
+            
+            // Xóa token sau khi đặt lại mật khẩu thành công
+            user.PasswordResetToken = null;
+            user.ResetTokenExpires = null;
+            await _userManager.UpdateAsync(user);
+
+            return Ok("Password has been reset successfully.");
+        }
+
+
 
         [HttpPost("login-user")]
         public async Task<IActionResult> Login([FromBody] LoginViewModel payload)
