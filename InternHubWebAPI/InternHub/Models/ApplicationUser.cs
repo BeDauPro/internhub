@@ -8,6 +8,8 @@ namespace InternHub.Models
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public string? Custom { get; set; }
         public string? VerificationToken { get; set; } 
+        public string? PasswordResetToken { get; set; } 
+        public DateTime? ResetTokenExpires { get; set; } 
     }
 }
 
