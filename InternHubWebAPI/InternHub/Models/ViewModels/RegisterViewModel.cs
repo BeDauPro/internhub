@@ -1,16 +1,25 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using InternHub.Attributes;
 
 namespace InternHub.Models.ViewModels
 {
 	public class RegisterViewModel
 	{
-        [Required(ErrorMessage = "Username is required!")]
+        [Required]
         public string UserName { get; set; }
-        [Required(ErrorMessage = "Email is required!")]
+
+        [Required, StudentEmail]
         public string Email { get; set; }
-        [Required(ErrorMessage = "Password is required!")]
+
+        [Required, StrongPassword]
         public string Password { get; set; }
+
+        [Required, Compare("Password")]
+        public string ConfirmPassword { get; set; }
+
+        [Required]
+        public string Role { get; set; }
     }
 }
 
