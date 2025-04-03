@@ -141,7 +141,6 @@ namespace InternHub.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Custom")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Discriminator")
@@ -187,6 +186,9 @@ namespace InternHub.Migrations
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("varchar(256)");
+
+                    b.Property<string>("VerificationToken")
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 

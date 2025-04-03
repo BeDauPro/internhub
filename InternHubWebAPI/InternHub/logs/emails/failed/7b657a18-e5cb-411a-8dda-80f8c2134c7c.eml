@@ -1,0 +1,10 @@
+From: InternHub <21t1020310@husc.edu.vn>
+Date: Thu, 03 Apr 2025 14:33:27 +0700
+Subject: Email Verification
+Message-Id: <AER5Z943TPU4.FEB5WZ61NK6F1@ducs-mac-air-m1.local>
+Sender: InternHub <21t1020310@husc.edu.vn>
+To: 21t1020311@husc.edu.vn
+MIME-Version: 1.0
+Content-Type: text/html; charset=utf-8
+
+Please verify your email by clicking the link: http://localhost:4200/verify-email?token=60d53c2a-b6f3-498c-a69c-752a6c9929c8
