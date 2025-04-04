@@ -19,7 +19,7 @@ namespace InternHub.Controllers
         private readonly IConfiguration _configuration;
         private readonly AuthService _authService;
         private readonly IEmailSender _emailSender;
-        private readonly AppDbContext _context; // Add AppDbContext
+        private readonly AppDbContext _context;
 
         public AuthenticationController(UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager,
