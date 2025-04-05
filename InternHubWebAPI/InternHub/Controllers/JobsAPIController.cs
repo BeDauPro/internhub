@@ -12,7 +12,7 @@ namespace InternHub.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize] 
+    [Authorize(Roles = "Student")]
     
     public class JobsApiController : ControllerBase
     {
@@ -25,6 +25,7 @@ namespace InternHub.Controllers
 
         // GET: api/JobsApi
         [HttpGet]
+        
         public async Task<ActionResult<IEnumerable<JobPostingViewModel>>> GetAllJobs()
         {
             try

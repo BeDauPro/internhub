@@ -20,6 +20,8 @@ namespace InternHub.Models
         public string SkillsRequired { get; set; }
         public string LanguagesRequired { get; set; }
         public int Vacancies { get; set; }
+        public DateTime ApplicationDeadline { get; set; }
+
         public DateTime PostedAt { get; set; } = DateTime.UtcNow;
 
         // Khóa ngoại liên kết với Employer
