@@ -4,12 +4,12 @@ using InternHub.Attributes;
 
 namespace InternHub.Models.ViewModels
 {
-	public class RegisterViewModel
-	{
+    public class RegisterViewModel
+    {
         [Required]
         public string UserName { get; set; }
 
-        [Required, StudentEmail]
+        [Required]
         public string Email { get; set; }
 
         [Required, StrongPassword]
@@ -17,9 +17,6 @@ namespace InternHub.Models.ViewModels
 
         [Required, Compare("Password")]
         public string ConfirmPassword { get; set; }
-
-        [Required]
-        public string Role { get; set; }
     }
 }
 
