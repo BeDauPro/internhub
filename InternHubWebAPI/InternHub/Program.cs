@@ -78,13 +78,32 @@ builder.Services.AddAuthentication(config =>
     options.TokenValidationParameters = new TokenValidationParameters()
     {
         ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"])), 
 
         ValidateIssuer = true,
-        ValidIssuer = builder.Configuration["JWT:Issuer"],
+        ValidIssuer = builder.Configuration["JWT:Issuer"], 
+
         ValidateAudience = true,
         ValidAudience = builder.Configuration["JWT:Audience"],
-        ValidateLifetime = true
+
+        ValidateLifetime = true 
+    };
+
+  
+    options.Events = new JwtBearerEvents
+    {
+        OnChallenge = context =>
+        {
+            context.HandleResponse();
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            context.Response.ContentType = "application/json";
+            var result = System.Text.Json.JsonSerializer.Serialize(new
+            {
+                error = "Unauthorized",
+                message = "Bearer token is missing or invalid."
+            });
+            return context.Response.WriteAsync(result);
+        }
     };
 });
 
@@ -121,6 +140,20 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    string[] roles = new[] { "Admin", "Employer", "Student" };
+
+    foreach (var role in roles)
+    {
+        if (!await roleManager.RoleExistsAsync(role))
+        {
+            await roleManager.CreateAsync(new IdentityRole(role));
+        }
+    }
+}
+
 // Middleware
 if (app.Environment.IsDevelopment())
 {
@@ -130,7 +163,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication();  // Đảm bảo chỉ gọi một lần
+app.UseAuthentication();  
 app.UseAuthorization();
 
 app.MapControllers();

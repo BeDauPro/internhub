@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Web;
+using System.Text.RegularExpressions;
 
 namespace InternHub.Controllers
 {
@@ -51,21 +52,50 @@ namespace InternHub.Controllers
                 return BadRequest(new { error = $"User {registerVm.Email} already exists!" });
             }
 
-            var verificationToken = Guid.NewGuid().ToString(); 
+            var verificationToken = Guid.NewGuid().ToString();
 
             var newUser = new ApplicationUser()
             {
                 UserName = registerVm.UserName,
                 Email = registerVm.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
-                VerificationToken = verificationToken 
+                VerificationToken = verificationToken
             };
 
+            // Xác định vai trò dựa trên email
+            string role;
+            if (newUser.Email == "khoacntt@husc.edu.vn")
+            {
+                role = "Admin";
+            }
+            else if (Regex.IsMatch(newUser.Email, @"^[a-zA-Z0-9._%+-]+@company\.com$"))
+            {
+                role = "Employer";
+            }
+            else if (new Attributes.StudentEmailAttribute().IsValid(newUser.Email))
+            {
+                role = "Student";
+            }
+            else
+            {
+                return BadRequest(new { error = "Invalid email format for any role." });
+            }
+
+            // Kiểm tra định dạng email nếu vai trò là Student
+            if (role == "Student" && !new Attributes.StudentEmailAttribute().IsValid(newUser.Email))
+            {
+                return BadRequest(new { error = "Email phải có định dạng: [2 số]t[7 số]@husc.edu.vn." });
+            }
+
+            // Lưu người dùng vào cơ sở dữ liệu trước
             var result = await _userManager.CreateAsync(newUser, registerVm.Password);
             if (!result.Succeeded)
             {
                 return BadRequest(new { error = "User could not be created!", details = result.Errors });
             }
+
+            // Thêm vai trò cho người dùng
+            await _userManager.AddToRoleAsync(newUser, role);
 
             var verificationLink = $"{_configuration["JWT:EmailVerificationUrl"]}?token={verificationToken}";
             var message = $"Please verify your email by clicking the link: {verificationLink}";
@@ -170,14 +200,26 @@ namespace InternHub.Controllers
                 return Unauthorized(new { error = "Invalid email or password" });
             }
 
-            var roles = await _userManager.GetRolesAsync(user);
-            var role = roles.FirstOrDefault() ?? "User";
+            string role;
+            if (user.Email == "khoacntt@husc.edu.vn")
+            {
+                role = "Admin";
+            }
+            else if (new Attributes.StudentEmailAttribute().IsValid(user.Email))
+            {
+                role = "Student";
+            }
+            else
+            {
+                role = "Employer";
+            }
+
             var tokenValue = await _authService.GenerateJwtToken(user, role);
 
             return Ok(new
             {
                 token = tokenValue,
-                role = roles.FirstOrDefault()
+                role = role
             });
         }
     }
