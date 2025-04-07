@@ -16,9 +16,40 @@ const NavbarAdmin = () => {
             </button>
             <div className="collapse navbar-collapse" id="navbarNav">
               <ul className="navbar-nav mx-auto">
-                <li className="nav-item"><a className="nav-link" href="#" onClick={() => navigate("/confirmjobs")}>Quản lý bài đăng</a></li>
-                <li className="nav-item"><a className="nav-link" href="#" onClick={() => navigate("/studentmanagement")}>Sinh viên thực tập</a></li>
-                <li className="nav-item"><a className="nav-link" href="#" onClick={() => navigate("/eventmanagement")}>Quản lý sự kiện</a></li>
+                <li className="nav-item dropdown">
+                  <a
+                    className="nav-link dropdown-toggle"
+                    href="#"
+                    id="businessManagementDropdown"
+                    role="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    <i className="bi bi-briefcase me-2"></i>Quản lý doanh nghiệp
+                  </a>
+                  <ul className="dropdown-menu" aria-labelledby="businessManagementDropdown">
+                  <li>
+                      <a className="dropdown-item" href="#" onClick={() => navigate("/accountmanagement")}>
+                        Tài khoản doanh nghiệp
+                      </a>
+                    </li>
+                    <li>
+                      <a className="dropdown-item" href="#" onClick={() => navigate("/confirmjobs")}>
+                        Danh sách công việc
+                      </a>
+                    </li>    
+                  </ul>
+                </li>
+                <li className="nav-item">
+                  <a className="nav-link" href="#" onClick={() => navigate("/studentmanagement")}>
+                    Sinh viên thực tập
+                  </a>
+                </li>
+                <li className="nav-item">
+                  <a className="nav-link" href="#" onClick={() => navigate("/eventmanagement")}>
+                    Quản lý sự kiện
+                  </a>
+                </li>
               </ul>
   
               <div className="d-flex align-items-center">

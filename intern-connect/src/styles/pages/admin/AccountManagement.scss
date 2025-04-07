@@ -1,0 +1,254 @@
+.account-management-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    width: 100%;
+    max-width: 1200px;
+    margin: 100px auto;
+
+    .page-title {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    .accounts-table {
+        width: 100%;
+        background: white;
+        border-radius: 10px;
+        overflow: visible;
+        box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+
+        .table-header {
+            display: flex;
+            background-color: #14367A;
+            color: white;
+            font-weight: bold;
+
+            .header-cell {
+                padding: 15px;
+                text-align: center;
+            }
+        }
+
+        .table-row {
+            display: flex;
+            border-bottom: 1px solid #e0e0e0;
+            transition: background-color 0.3s ease;
+
+            &:hover {
+                background-color: #f5f9ff;
+            }
+
+            &:last-child {
+                border-bottom: none;
+            }
+
+            .cell {
+                padding: 15px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+            }
+        }
+
+        .no-results {
+            padding: 30px;
+            text-align: center;
+            color: #666;
+            font-style: italic;
+        }
+
+        .username-cell {
+            flex: 1.5;
+        }
+
+        .email-cell {
+            flex: 2;
+        }
+
+        .createdAt-cell {
+            flex: 1.5;
+        }
+
+        .action-cell {
+            flex: 1;
+
+            .action-button {
+                background: none;
+                border: none;
+                color: #14367A;
+                cursor: pointer;
+                font-size: 18px;
+                margin: 0 5px;
+                transition: transform 0.2s ease;
+
+                &:hover {
+                    transform: scale(1.2);
+                }
+            }
+        }
+
+        .password-cell {
+            flex: 1.5;
+        }
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+
+        .pagination-button {
+            background-color: white;
+            border: 1px solid #14367A;
+            color: #14367A;
+            padding: 8px 12px;
+            margin: 0 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+
+            &.active {
+                background-color: #14367A;
+                color: white;
+            }
+
+            &:hover {
+                background-color: #e3f2fd;
+            }
+        }
+    }
+    .actions-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        width: 100%;
+        flex-wrap: wrap; // Thêm để tránh tràn khi màn nhỏ
+    
+        .search-form {
+            flex: 1;
+            min-width: 250px; // đảm bảo không bị thu quá nhỏ
+            margin-right: 20px;
+    
+            .input-group {
+                display: flex;
+                width: 100%;
+    
+                .form-control {
+                    flex: 1;
+                    padding: 10px 15px;
+                    border: 1px solid #ccc;
+                    border-radius: 5px 0 0 5px;
+                    font-size: 14px;
+    
+                    &:focus {
+                        outline: none;
+                        border-color: #14367a;
+                    }
+                }
+    
+                .input-group-btn {
+                    .btn {
+                        background-color: #14367a;
+                        color: white;
+                        border: none;
+                        padding: 12px 15px;
+                        border-radius: 0 5px 5px 0;
+                        cursor: pointer;
+                        font-size: 14px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        transition: background-color 0.3s ease;
+    
+                        &:hover {
+                            background-color: #0f2a5a;
+                        }
+    
+                        svg {
+                            font-size: 16px;
+                        }
+                    }
+                }
+            }
+        }
+    
+        .add-account-button {
+            white-space: nowrap;
+            padding: 10px 20px;
+            background-color: #14367a;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+    
+            &:hover {
+                background-color: #0f2a5a;
+            }
+        }
+    }    
+
+    // Media queries for responsive design
+    @media (max-width: 768px) {
+        .accounts-table {
+            .table-header,
+            .table-row {
+                font-size: 14px;
+            }
+
+            .cell,
+            .header-cell {
+                padding: 10px 5px;
+            }
+        }
+    }
+
+    @media (max-width: 576px) {
+        .accounts-table {
+            overflow-x: auto;
+
+            .table-header,
+            .table-row {
+                min-width: 600px;
+            }
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .actions-section {
+      flex-direction: column;
+      align-items: stretch;
+  
+      .search-form {
+        margin-right: 0;
+        margin-bottom: 10px;
+      }
+  
+      .add-account-button {
+        align-self: flex-end;
+      }
+    }
+  }
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    background: #14367a; // Updated to match the theme
+    padding: 10px 15px;
+    border-radius: 25px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+    max-width: 500px; // Adjusted for better responsiveness
+    left: 25%;
+    position: relative; // Changed from fixed to relative for better layout control
+    margin: 0 auto 10px; // Centered with margin
+    transition: all 0.3s ease;
+}
