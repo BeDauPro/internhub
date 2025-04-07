@@ -508,3 +508,80 @@ export const fetchApplicationEmployer = async () => {
     },
   ];
 };
+
+export const fetchAccountManagement = async () => {
+  return [
+    {
+      username: "admin1",
+      email: "admin1@example.com",
+      password: "password123",
+      createdAt: "2023-01-01",
+    },
+    {
+      username: "admin2",
+      email: "admin2@example.com",
+      password: "password456",
+      createdAt: "2023-02-15",
+    },
+    {
+      username: "admin3",
+      email: "admin3@example.com",
+      password: "password789",
+      createdAt: "2023-03-10",
+    },
+    {
+      username: "admin4",
+      email: "admin4@example.com",
+      password: "password321",
+      createdAt: "2023-04-20",
+    },
+    {
+      username: "admin5",
+      email: "admin1@example.com",
+      password: "password123",
+      createdAt: "2023-01-01",
+    },
+    {
+      username: "admin6",
+      email: "admin2@example.com",
+      password: "password456",
+      createdAt: "2023-02-15",
+    },
+    {
+      username: "admin7",
+      email: "admin3@example.com",
+      password: "password789",
+      createdAt: "2023-03-10",
+    },
+    {
+      username: "admin8",
+      email: "admin4@example.com",
+      password: "password321",
+      createdAt: "2023-04-20",
+    },
+    {
+      username: "admin9",
+      email: "admin1@example.com",
+      password: "password123",
+      createdAt: "2023-01-01",
+    },
+    {
+      username: "admin10",
+      email: "admin2@example.com",
+      password: "password456",
+      createdAt: "2023-02-15",
+    },
+    {
+      username: "admin11",
+      email: "admin3@example.com",
+      password: "password789",
+      createdAt: "2023-03-10",
+    },
+    {
+      username: "admin12",
+      email: "admin4@example.com",
+      password: "password321",
+      createdAt: "2023-04-20",
+    },
+  ];
+};

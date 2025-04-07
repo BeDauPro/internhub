@@ -34,6 +34,8 @@ import {
 import JobCard from "./pages/student/JobCard";
 import ApplicationEmployer from "./pages/employer/ApplicationEmployer";
 import StudentManagement from "./pages/admin/StudentManagement";
+import AccountManagement from "./pages/admin/AccountManagement";
+import CreateAccount from "./pages/admin/CreateAccount";
 
 const App = () => {
   const [profile, setProfile] = useState(null);
@@ -46,6 +48,7 @@ const App = () => {
   const [EmployerReview, setEmployerReview] = useState([]);
   const [applicationEmployer, setApplicationEmployer] = useState([]);
   const [managementStudents, setManagementStudents] = useState([]);
+  const [accounts, setAccounts] = useState([]); // Add this line to define setAccounts
   useEffect(() => {
     //duoc goi, lay du lieu tu API gia lap
     const fetchData = async () => {
@@ -110,6 +113,14 @@ const App = () => {
         <Route path="/jobcard" element={<JobCard/>} jobs={jobs}/>
         <Route path="/applicationemployer" element={<ApplicationEmployer applicationData={applicationEmployer} />} />
         <Route path="/studentmanagement" element={<StudentManagement studentsData={managementStudents} />} />
+        <Route
+          path="/accountmanagement"
+          element={<AccountManagement accounts={accounts} onAddAccount={(account) => setAccounts((prev) => [account, ...prev])} />}
+        />
+        <Route
+          path="/createaccount"
+          element={<CreateAccount onAddAccount={(account) => setAccounts((prev) => [account, ...prev])} />}
+        />
       </Routes>
     </Router>
   );
