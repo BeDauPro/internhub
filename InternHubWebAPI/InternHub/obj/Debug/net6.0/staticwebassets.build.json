@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "5hwwjhrYrvps7VzT4JQhKXMNmN8ahnwyHDEvbEb+UDM=",
+  "Hash": "LB9XuezsXeAEVUk1kjRxroH+UvsMhjazi31Y9YINDb8=",
   "Source": "InternHub",
   "BasePath": "_content/InternHub",
   "Mode": "Default",
@@ -34,6 +34,23 @@
       "OriginalItemSpec": "wwwroot/uploads/cv/6745a7c2-5c51-4985-9b35-e5072678cd6c.pdf"
     },
     {
+      "Identity": "/Users/macbookair2020m1/Projects/InternHub/InternHubWebAPI/InternHub/wwwroot/uploads/cv/6a4415c8-1a5f-4ead-a079-ddebb8d86666.pdf",
+      "SourceId": "InternHub",
+      "SourceType": "Discovered",
+      "ContentRoot": "/Users/macbookair2020m1/Projects/InternHub/InternHubWebAPI/InternHub/wwwroot/",
+      "BasePath": "_content/InternHub",
+      "RelativePath": "uploads/cv/6a4415c8-1a5f-4ead-a079-ddebb8d86666.pdf",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/uploads/cv/6a4415c8-1a5f-4ead-a079-ddebb8d86666.pdf"
+    },
+    {
       "Identity": "/Users/macbookair2020m1/Projects/InternHub/InternHubWebAPI/InternHub/wwwroot/uploads/cv/cda4f2f1-b088-4bb0-9215-483e4233f01d.pdf",
       "SourceId": "InternHub",
       "SourceType": "Discovered",
@@ -49,6 +66,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot/uploads/cv/cda4f2f1-b088-4bb0-9215-483e4233f01d.pdf"
+    },
+    {
+      "Identity": "/Users/macbookair2020m1/Projects/InternHub/InternHubWebAPI/InternHub/wwwroot/uploads/images/5b107f5f-84d7-48f3-ba3d-d00dfc74f777.jpg",
+      "SourceId": "InternHub",
+      "SourceType": "Discovered",
+      "ContentRoot": "/Users/macbookair2020m1/Projects/InternHub/InternHubWebAPI/InternHub/wwwroot/",
+      "BasePath": "_content/InternHub",
+      "RelativePath": "uploads/images/5b107f5f-84d7-48f3-ba3d-d00dfc74f777.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/uploads/images/5b107f5f-84d7-48f3-ba3d-d00dfc74f777.jpg"
     },
     {
       "Identity": "/Users/macbookair2020m1/Projects/InternHub/InternHubWebAPI/InternHub/wwwroot/uploads/images/72358f0c-8e41-4dd6-a2f6-72a9cd7319b6.jpg",
