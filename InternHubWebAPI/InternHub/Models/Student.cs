@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using InternHub.Models.Enums;
 using InternHub.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
 
@@ -29,7 +30,7 @@ namespace InternHub.Models
         public string GithubProfile { get; set; }
         public string CVFile { get; set; }
 
-        public string Status { get; set; } = "pending"; // pending, reviewed, internship, completed
+        public StudentStatus Status { get; set; } 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         [ForeignKey("User")]

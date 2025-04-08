@@ -1,5 +1,6 @@
 ﻿using InternHub.DTOs.Student;
 using InternHub.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InternHub.Controllers
@@ -16,7 +17,7 @@ namespace InternHub.Controllers
             _studentService = studentService;
             _env = env;
         }
-
+        [Authorize(Roles = "Student,Employer")]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -31,6 +32,7 @@ namespace InternHub.Controllers
             return student == null ? NotFound() : Ok(student);
         }
 
+        [Authorize(Roles = "Student")]
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] CreateStudentDto dto)
         {
@@ -38,13 +40,30 @@ namespace InternHub.Controllers
             return Ok(created);
         }
 
+        [Authorize(Roles = "Student,Employer")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromForm] UpdateStudentDto dto)
         {
-            var updated = await _studentService.UpdateAsync(id, dto, _env);
-            return updated == null ? NotFound() : Ok(updated);
+            var isEmployer = User.IsInRole("Employer");
+            var isStudent = User.IsInRole("Student");
+
+            if (isEmployer && dto.HasNonStatusFields())
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new { message = "Employer chỉ được phép cập nhật status sinh viên." });
+            }
+
+            if (isStudent && dto.Status != null)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new { message = "Bạn không có quyền cập nhật trạng thái sinh viên." });
+            }
+
+            var updated = await _studentService.UpdateAsync(id, dto, _env, isEmployer);
+            if (updated == null) return NotFound();
+            return Ok(updated);
         }
 
+
+        [Authorize(Roles = "Student")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
