@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Text.Json.Serialization;
+using AutoMapper;
+using InternHub.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +31,8 @@ builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailS
 
 // Đăng ký dịch vụ gửi email
 builder.Services.AddTransient<IEmailSender, SendMailService>();
+
+builder.Services.AddScoped<IStudentService, StudentService>();
 
 // Thêm Swagger
 builder.Services.AddControllers();
@@ -57,6 +62,14 @@ builder.Services.Configure<IdentityOptions>(options => {
     options.SignIn.RequireConfirmedEmail = true;            // Cấu hình xác thực địa chỉ email (email phải tồn tại)
     options.SignIn.RequireConfirmedPhoneNumber = false;     // Xác thực số điện thoại
 });
+
+builder.Services.AddControllers()
+    .AddJsonOptions(opt =>
+    {
+        opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
+
+builder.Services.AddAutoMapper(typeof(Program));
 
 // Configure JWT Authentication
 var jwtKey = builder.Configuration["JWT:Secret"];

@@ -19,6 +19,8 @@
     <PackageReference Include="MimeKit" Version="4.11.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.9.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.9.0" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="6.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.36" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,6 +29,9 @@
     <None Remove="Services\" />
     <None Remove="Attributes\" />
     <None Remove="Contacts\" />
+    <None Remove="uploads\" />
+    <None Remove="uploads\images\" />
+    <None Remove="uploads\cv\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
@@ -34,5 +39,8 @@
     <Folder Include="Services\" />
     <Folder Include="Attributes\" />
     <Folder Include="Contacts\" />
+    <Folder Include="uploads\" />
+    <Folder Include="uploads\images\" />
+    <Folder Include="uploads\cv\" />
   </ItemGroup>
 </Project>

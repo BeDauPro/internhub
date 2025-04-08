@@ -1,11 +1,88 @@
 {
   "Version": 1,
-  "Hash": "SLD5DKNPAjFS92JY+Cm3BjynRamRYkNihS+616iz/eo=",
+  "Hash": "5hwwjhrYrvps7VzT4JQhKXMNmN8ahnwyHDEvbEb+UDM=",
   "Source": "InternHub",
   "BasePath": "_content/InternHub",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
-  "DiscoveryPatterns": [],
-  "Assets": []
+  "DiscoveryPatterns": [
+    {
+      "Name": "InternHub/wwwroot",
+      "Source": "InternHub",
+      "ContentRoot": "/Users/macbookair2020m1/Projects/InternHub/InternHubWebAPI/InternHub/wwwroot/",
+      "BasePath": "_content/InternHub",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "/Users/macbookair2020m1/Projects/InternHub/InternHubWebAPI/InternHub/wwwroot/uploads/cv/6745a7c2-5c51-4985-9b35-e5072678cd6c.pdf",
+      "SourceId": "InternHub",
+      "SourceType": "Discovered",
+      "ContentRoot": "/Users/macbookair2020m1/Projects/InternHub/InternHubWebAPI/InternHub/wwwroot/",
+      "BasePath": "_content/InternHub",
+      "RelativePath": "uploads/cv/6745a7c2-5c51-4985-9b35-e5072678cd6c.pdf",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/uploads/cv/6745a7c2-5c51-4985-9b35-e5072678cd6c.pdf"
+    },
+    {
+      "Identity": "/Users/macbookair2020m1/Projects/InternHub/InternHubWebAPI/InternHub/wwwroot/uploads/cv/cda4f2f1-b088-4bb0-9215-483e4233f01d.pdf",
+      "SourceId": "InternHub",
+      "SourceType": "Discovered",
+      "ContentRoot": "/Users/macbookair2020m1/Projects/InternHub/InternHubWebAPI/InternHub/wwwroot/",
+      "BasePath": "_content/InternHub",
+      "RelativePath": "uploads/cv/cda4f2f1-b088-4bb0-9215-483e4233f01d.pdf",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/uploads/cv/cda4f2f1-b088-4bb0-9215-483e4233f01d.pdf"
+    },
+    {
+      "Identity": "/Users/macbookair2020m1/Projects/InternHub/InternHubWebAPI/InternHub/wwwroot/uploads/images/72358f0c-8e41-4dd6-a2f6-72a9cd7319b6.jpg",
+      "SourceId": "InternHub",
+      "SourceType": "Discovered",
+      "ContentRoot": "/Users/macbookair2020m1/Projects/InternHub/InternHubWebAPI/InternHub/wwwroot/",
+      "BasePath": "_content/InternHub",
+      "RelativePath": "uploads/images/72358f0c-8e41-4dd6-a2f6-72a9cd7319b6.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/uploads/images/72358f0c-8e41-4dd6-a2f6-72a9cd7319b6.jpg"
+    },
+    {
+      "Identity": "/Users/macbookair2020m1/Projects/InternHub/InternHubWebAPI/InternHub/wwwroot/uploads/images/7617dd71-ac9b-4e2b-82e2-145f9b766cb1.jpg",
+      "SourceId": "InternHub",
+      "SourceType": "Discovered",
+      "ContentRoot": "/Users/macbookair2020m1/Projects/InternHub/InternHubWebAPI/InternHub/wwwroot/",
+      "BasePath": "_content/InternHub",
+      "RelativePath": "uploads/images/7617dd71-ac9b-4e2b-82e2-145f9b766cb1.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/uploads/images/7617dd71-ac9b-4e2b-82e2-145f9b766cb1.jpg"
+    }
+  ]
 }

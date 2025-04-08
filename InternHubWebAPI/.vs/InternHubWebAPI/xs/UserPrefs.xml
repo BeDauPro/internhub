@@ -2,31 +2,30 @@
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.Workbench ActiveDocument="InternHub/Program.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="InternHub/Controllers/StudentProfileController.cs">
     <Files>
-      <File FileName="InternHub/Program.cs" Line="91" Column="1" />
-      <File FileName="InternHub/Models/ViewModels/LoginViewModel.cs" />
-      <File FileName="InternHub/Controllers/AuthenticationController.cs" />
-      <File FileName="InternHub/Models/AppDbContext.cs" />
-      <File FileName="InternHub/Services/AuthService.cs" />
-      <File FileName="InternHub/Models/RefreshToken.cs" />
-      <File FileName="InternHub/Models/ApplicationUser.cs" />
-      <File FileName="InternHub/Controllers/WeatherForecastController.cs" />
+      <File FileName="InternHub/Controllers/StudentProfileController.cs" Line="115" Column="1" />
+      <File FileName="InternHub/DTOs/Student/StudentDto.cs" Line="5" Column="28" />
+      <File FileName="InternHub/Program.cs" Line="69" Column="49" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
-          <Node name="InternHubWebAPI" expanded="True">
-            <Node name="InternHub" expanded="True">
-              <Node name="Program.cs" selected="True" />
+          <Node name="InternHubWebAPI">
+            <Node name="InternHub">
+              <Node name="Dependencies" expanded="True" />
+              <Node name="Contacts" expanded="True" />
+              <Node name="uploads" expanded="True">
+                <Node name="cv" selected="True" />
+              </Node>
             </Node>
           </Node>
         </State>
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
-  <MonoDevelop.Ide.ItemProperties.InternHub PreferredExecutionTarget="/Applications/Google Chrome.app" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MultiItemStartupConfigurations />
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.ItemProperties.InternHub PreferredExecutionTarget="/Applications/Google Chrome.app" />
 </Properties>
