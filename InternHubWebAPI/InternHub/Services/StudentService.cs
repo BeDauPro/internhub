@@ -2,6 +2,7 @@ using AutoMapper;
 using InternHub.DTOs.Student;
 using InternHub.Models;
 using InternHub.Models.Enums;
+using InternHub.Models.ViewModels;
 using InternHub.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -62,44 +63,54 @@ namespace InternHub.Services
             return _mapper.Map<StudentDto>(student);
         }
 
-        public async Task<StudentDto> UpdateAsync(int id, UpdateStudentDto dto, IWebHostEnvironment env)
+        public async Task<StudentDto> UpdateAsync(int id, UpdateStudentDto dto, IWebHostEnvironment env, bool isEmployer)
         {
             var student = await _context.Students.FindAsync(id);
             if (student == null) return null;
 
-            // Chỉ cập nhật nếu DTO có giá trị
-            if (!string.IsNullOrWhiteSpace(dto.FullName)) student.FullName = dto.FullName;
-            if (!string.IsNullOrWhiteSpace(dto.SchoolEmail)) student.SchoolEmail = dto.SchoolEmail;
-            if (!string.IsNullOrWhiteSpace(dto.Bio)) student.Bio = dto.Bio;
-            if (!string.IsNullOrWhiteSpace(dto.Address)) student.Address = dto.Address;
-            if (!string.IsNullOrWhiteSpace(dto.GithubProfile)) student.GithubProfile = dto.GithubProfile;
-            if (!string.IsNullOrWhiteSpace(dto.Gender)) student.Gender = dto.Gender;
-            if (!string.IsNullOrWhiteSpace(dto.Skills)) student.Skills = dto.Skills;
-            if (!string.IsNullOrWhiteSpace(dto.Languages)) student.Languages = dto.Languages;
-            if (!string.IsNullOrWhiteSpace(dto.UserId)) student.UserId = dto.UserId;
-            if (dto.GPA.HasValue) student.GPA = dto.GPA.Value;
-            if (dto.DateOfBirth.HasValue) student.DateOfBirth = dto.DateOfBirth.Value;
-
-            string webRootPath = env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
-
-            if (dto.ProfilePicture != null)
+            if (isEmployer)
             {
-                string imagePath = Path.Combine("uploads", "images", Guid.NewGuid() + Path.GetExtension(dto.ProfilePicture.FileName));
-                string fullImagePath = Path.Combine(webRootPath, imagePath);
-                Directory.CreateDirectory(Path.GetDirectoryName(fullImagePath)!);
-                using var stream = new FileStream(fullImagePath, FileMode.Create);
-                await dto.ProfilePicture.CopyToAsync(stream);
-                student.ProfilePicture = imagePath;
+                if (dto.Status != null)
+                {
+                    student.Status = dto.Status.Value;
+                }
             }
-
-            if (dto.CVFile != null)
+            else
             {
-                string cvPath = Path.Combine("uploads", "cv", Guid.NewGuid() + Path.GetExtension(dto.CVFile.FileName));
-                string fullCvPath = Path.Combine(webRootPath, cvPath);
-                Directory.CreateDirectory(Path.GetDirectoryName(fullCvPath)!);
-                using var stream = new FileStream(fullCvPath, FileMode.Create);
-                await dto.CVFile.CopyToAsync(stream);
-                student.CVFile = cvPath;
+                // Chỉ Student mới vào nhánh này
+                if (!string.IsNullOrWhiteSpace(dto.FullName)) student.FullName = dto.FullName;
+                if (!string.IsNullOrWhiteSpace(dto.SchoolEmail)) student.SchoolEmail = dto.SchoolEmail;
+                if (!string.IsNullOrWhiteSpace(dto.Bio)) student.Bio = dto.Bio;
+                if (!string.IsNullOrWhiteSpace(dto.Address)) student.Address = dto.Address;
+                if (!string.IsNullOrWhiteSpace(dto.GithubProfile)) student.GithubProfile = dto.GithubProfile;
+                if (!string.IsNullOrWhiteSpace(dto.Gender)) student.Gender = dto.Gender;
+                if (!string.IsNullOrWhiteSpace(dto.Skills)) student.Skills = dto.Skills;
+                if (!string.IsNullOrWhiteSpace(dto.Languages)) student.Languages = dto.Languages;
+                if (!string.IsNullOrWhiteSpace(dto.UserId)) student.UserId = dto.UserId;
+                if (dto.GPA.HasValue) student.GPA = dto.GPA.Value;
+                if (dto.DateOfBirth.HasValue) student.DateOfBirth = dto.DateOfBirth.Value;
+
+                string webRootPath = env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+
+                if (dto.ProfilePicture != null)
+                {
+                    string imagePath = Path.Combine("uploads", "images", Guid.NewGuid() + Path.GetExtension(dto.ProfilePicture.FileName));
+                    string fullImagePath = Path.Combine(webRootPath, imagePath);
+                    Directory.CreateDirectory(Path.GetDirectoryName(fullImagePath)!);
+                    using var stream = new FileStream(fullImagePath, FileMode.Create);
+                    await dto.ProfilePicture.CopyToAsync(stream);
+                    student.ProfilePicture = imagePath;
+                }
+
+                if (dto.CVFile != null)
+                {
+                    string cvPath = Path.Combine("uploads", "cv", Guid.NewGuid() + Path.GetExtension(dto.CVFile.FileName));
+                    string fullCvPath = Path.Combine(webRootPath, cvPath);
+                    Directory.CreateDirectory(Path.GetDirectoryName(fullCvPath)!);
+                    using var stream = new FileStream(fullCvPath, FileMode.Create);
+                    await dto.CVFile.CopyToAsync(stream);
+                    student.CVFile = cvPath;
+                }
             }
 
             await _context.SaveChangesAsync();

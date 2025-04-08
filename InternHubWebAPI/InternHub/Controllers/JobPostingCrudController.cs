@@ -4,11 +4,13 @@ using Microsoft.AspNetCore.Mvc;
 using InternHub.Models.ViewModels;
 using InternHub.Services;
 using InternHub.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace InternHub.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles ="Employee")]
     public class JobPostingCrudController : ControllerBase
     {
         private readonly IJobPostingService _jobPostingService;

@@ -12,7 +12,7 @@ namespace InternHub.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Student")]
+    [Authorize(Roles = "Student, Admin, Employee")]
     
     public class JobsApiController : ControllerBase
     {

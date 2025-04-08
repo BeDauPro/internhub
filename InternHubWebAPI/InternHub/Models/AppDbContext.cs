@@ -58,7 +58,7 @@ namespace InternHub.Models
                 .HasForeignKey(a => a.EmployerId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-        // Mối quan hệ giữa Application và JobPosting
+            // Mối quan hệ giữa Application và JobPosting
             modelBuilder.Entity<Application>()
                 .HasOne(a => a.JobPosting)
                 .WithMany(jp => jp.Applications)
@@ -70,7 +70,9 @@ namespace InternHub.Models
 
             // Nếu Student đã có trạng thái "internship", các Employer khác không thể chỉnh sửa
             modelBuilder.Entity<Student>()
-                .HasQueryFilter(s => s.Status != "internship");
+                .Property(s => s.Status)
+                .HasConversion<string>();
+
 
             // Notification chỉ được gửi bởi Admin và chỉ dành cho Student
             modelBuilder.Entity<Notification>()
