@@ -20,6 +20,12 @@ namespace InternHub.Services
         // CREATE
         public async Task<JobPostingResponseDto> CreateJobPostingAsync(CreateJobPostingDto createDto)
         {
+            // Kiểm tra ApplicationDeadline phải trong tương lai
+            if (createDto.ApplicationDeadline <= DateTime.UtcNow)
+            {
+                throw new Exception("Thời hạn nộp hồ sơ phải là ngày trong tương lai");
+            }
+
             // Tìm hoặc tạo Employer
             Employer employer;
 
@@ -78,6 +84,7 @@ namespace InternHub.Services
                 SkillsRequired = createDto.SkillsRequired,
                 LanguagesRequired = createDto.LanguagesRequired,
                 Vacancies = createDto.Vacancies,
+                ApplicationDeadline = createDto.ApplicationDeadline, // Thêm ApplicationDeadline
                 PostedAt = DateTime.UtcNow,
                 EmployerId = employer.EmployerId
             };
@@ -101,12 +108,22 @@ namespace InternHub.Services
                 return null;
             }
 
+            // Kiểm tra nếu đã hết hạn thì xóa
+            if (jobPosting.ApplicationDeadline <= DateTime.UtcNow)
+            {
+                await DeleteExpiredJobPosting(jobPosting);
+                return null;
+            }
+
             return MapToResponseDto(jobPosting, jobPosting.Employer);
         }
 
         // READ ALL
         public async Task<IEnumerable<JobPostingResponseDto>> GetAllJobPostingsAsync()
         {
+            // Trước tiên, xóa các bài đăng đã hết hạn
+            await DeleteAllExpiredJobPostings();
+
             var jobPostings = await _context.JobPostings
                 .Include(j => j.Employer)
                 .ToListAsync();
@@ -117,6 +134,9 @@ namespace InternHub.Services
         // READ FILTERED
         public async Task<IEnumerable<JobPostingResponseDto>> GetFilteredJobPostingsAsync(string category, string location, string workType)
         {
+            // Trước tiên, xóa các bài đăng đã hết hạn
+            await DeleteAllExpiredJobPostings();
+
             var query = _context.JobPostings
                 .Include(j => j.Employer)
                 .AsQueryable();
@@ -152,6 +172,19 @@ namespace InternHub.Services
                 return null;
             }
 
+            // Kiểm tra nếu đã hết hạn thì xóa
+            if (jobPosting.ApplicationDeadline <= DateTime.UtcNow)
+            {
+                await DeleteExpiredJobPosting(jobPosting);
+                return null;
+            }
+
+            // Kiểm tra ApplicationDeadline phải trong tương lai
+            if (updateDto.ApplicationDeadline <= DateTime.UtcNow)
+            {
+                throw new Exception("Thời hạn nộp hồ sơ phải là ngày trong tương lai");
+            }
+
             // Cập nhật thông tin JobPosting
             jobPosting.JobTitle = updateDto.JobTitle ?? jobPosting.JobTitle;
             jobPosting.JobDesc = updateDto.JobDesc ?? jobPosting.JobDesc;
@@ -162,6 +195,7 @@ namespace InternHub.Services
             jobPosting.ExperienceRequired = updateDto.ExperienceRequired ?? jobPosting.ExperienceRequired;
             jobPosting.SkillsRequired = updateDto.SkillsRequired ?? jobPosting.SkillsRequired;
             jobPosting.LanguagesRequired = updateDto.LanguagesRequired ?? jobPosting.LanguagesRequired;
+            jobPosting.ApplicationDeadline = updateDto.ApplicationDeadline; // Cập nhật ApplicationDeadline
             jobPosting.Vacancies = updateDto.Vacancies > 0 ? updateDto.Vacancies : jobPosting.Vacancies;
 
             // Cập nhật thông tin Employer nếu cần
@@ -231,6 +265,7 @@ namespace InternHub.Services
                 SkillsRequired = jobPosting.SkillsRequired,
                 LanguagesRequired = jobPosting.LanguagesRequired,
                 Vacancies = jobPosting.Vacancies,
+                ApplicationDeadline = jobPosting.ApplicationDeadline, // Thêm ApplicationDeadline
                 PostedAt = jobPosting.PostedAt,
                 EmployerId = jobPosting.EmployerId,
                 CompanyName = employer?.CompanyName,
@@ -238,6 +273,28 @@ namespace InternHub.Services
                 Address = employer?.Address,
                 Industry = employer?.Industry
             };
+        }
+
+        // Xóa một bài đăng đã hết hạn
+        private async Task DeleteExpiredJobPosting(JobPosting jobPosting)
+        {
+            _context.JobPostings.Remove(jobPosting);
+            await _context.SaveChangesAsync();
+        }
+
+        // Xóa tất cả các bài đăng đã hết hạn
+        private async Task DeleteAllExpiredJobPostings()
+        {
+            var now = DateTime.UtcNow;
+            var expiredJobs = await _context.JobPostings
+                .Where(j => j.ApplicationDeadline <= now)
+                .ToListAsync();
+
+            if (expiredJobs.Any())
+            {
+                _context.JobPostings.RemoveRange(expiredJobs);
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }
