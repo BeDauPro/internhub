@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using InternHub.Models.Enums;
 
 namespace InternHub.Models
 {
@@ -9,7 +10,6 @@ namespace InternHub.Models
     {
         [Key]
         public int JobPostingId { get; set; }
-
         public string JobTitle { get; set; }
         public string JobDesc { get; set; }
         public string JobCategory { get; set; }
@@ -21,13 +21,16 @@ namespace InternHub.Models
         public string LanguagesRequired { get; set; }
         public int Vacancies { get; set; }
         public DateTime ApplicationDeadline { get; set; }
-
         public DateTime PostedAt { get; set; } = DateTime.UtcNow;
 
         // Khóa ngoại liên kết với Employer
         [ForeignKey("Employer")]
         public int EmployerId { get; set; }
         public virtual Employer Employer { get; set; }
+
+        // Trạng thái duyệt bài đăng - phải là nullable
+        public JobpostingStatus? Status { get; set; }
+
         // Các mối quan hệ với Application và StudentReview
         public virtual ICollection<Application> Applications { get; set; }
         public virtual ICollection<StudentReview> Reviews { get; set; }
