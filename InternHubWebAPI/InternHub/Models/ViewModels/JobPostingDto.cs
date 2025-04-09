@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using InternHub.Models.Enums;
 
 namespace InternHub.Models.ViewModels
 {
@@ -17,7 +18,8 @@ namespace InternHub.Models.ViewModels
         public string JobCategory { get; set; }
         public string Location { get; set; }
         public string WorkType { get; set; }
-        public DateTime ApplicationDeadline { get; set; } // Thêm trường ApplicationDeadline
+        public JobpostingStatus? Status { get; set; }
+        public DateTime ApplicationDeadline { get; set; }
 
         // Thông tin từ bảng Employer
         public string CompanyLogo { get; set; }
@@ -78,7 +80,6 @@ namespace InternHub.Models.ViewModels
                     return new ValidationResult(ErrorMessage);
                 }
             }
-
             return ValidationResult.Success;
         }
     }

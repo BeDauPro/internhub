@@ -400,7 +400,8 @@ namespace InternHub.Migrations
                     Vacancies = table.Column<int>(type: "int", nullable: false),
                     ApplicationDeadline = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     PostedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    EmployerId = table.Column<int>(type: "int", nullable: false)
+                    EmployerId = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {

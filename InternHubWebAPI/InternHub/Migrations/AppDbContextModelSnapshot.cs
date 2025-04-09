@@ -350,6 +350,9 @@ namespace InternHub.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<int?>("Status")
+                        .HasColumnType("int");
+
                     b.Property<int>("Vacancies")
                         .HasColumnType("int");
 

@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InternHub.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250407093539_studentprofile")]
-    partial class studentprofile
+    [Migration("20250409092702_Initdatabase")]
+    partial class Initdatabase
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -351,6 +351,9 @@ namespace InternHub.Migrations
                     b.Property<string>("SkillsRequired")
                         .IsRequired()
                         .HasColumnType("longtext");
+
+                    b.Property<int?>("Status")
+                        .HasColumnType("int");
 
                     b.Property<int>("Vacancies")
                         .HasColumnType("int");
