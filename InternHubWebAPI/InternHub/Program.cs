@@ -33,6 +33,7 @@ builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailS
 builder.Services.AddTransient<IEmailSender, SendMailService>();
 
 builder.Services.AddScoped<IStudentService, StudentService>();
+builder.Services.AddScoped<IEmployerService, EmployerService>();
 
 // Thêm Swagger
 builder.Services.AddControllers();

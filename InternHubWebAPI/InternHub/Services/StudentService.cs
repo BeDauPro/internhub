@@ -33,7 +33,7 @@ namespace InternHub.Services
 
         public async Task<StudentDto> CreateAsync(CreateStudentDto dto, IWebHostEnvironment env)
         {
-            var student = _mapper.Map<Student>(dto);
+            var student = _mapper.Map<Student>(dto); 
 
             string webRootPath = env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
 

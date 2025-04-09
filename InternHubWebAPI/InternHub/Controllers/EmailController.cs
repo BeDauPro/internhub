@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using InternHub.Contacts;
-using InternHub.Models; // Thêm namespace chứa AppDbContext
+using InternHub.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InternHub.Controllers
