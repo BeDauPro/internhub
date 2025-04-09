@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using InternHub.Models;
 using InternHub.Models.ViewModels;
+using InternHub.Models.Enums;
 
 namespace InternHub.Services
 {
@@ -10,15 +11,18 @@ namespace InternHub.Services
         // CREATE
         Task<JobPostingResponseDto> CreateJobPostingAsync(CreateJobPostingDto createDto);
 
-        // READ (sẽ triển khai sau)
+        // READ
         Task<JobPostingResponseDto> GetJobPostingByIdAsync(int id);
-        Task<IEnumerable<JobPostingResponseDto>> GetAllJobPostingsAsync();
+        Task<IEnumerable<JobPostingResponseDto>> GetAllJobPostingsAsync(string userRole = null);
         Task<IEnumerable<JobPostingResponseDto>> GetFilteredJobPostingsAsync(string category, string location, string workType);
 
-        // UPDATE (sẽ triển khai sau)
+        // UPDATE
         Task<JobPostingResponseDto> UpdateJobPostingAsync(int id, UpdateJobPostingDto updateDto);
 
-        // DELETE (sẽ triển khai sau)
+        // Phương thức cập nhật trạng thái bài đăng 
+        Task<JobPostingResponseDto> UpdateJobPostingStatusAsync(int id, JobpostingStatus? status);
+
+        // DELETE
         Task<bool> DeleteJobPostingAsync(int id);
     }
 }

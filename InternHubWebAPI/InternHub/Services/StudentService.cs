@@ -27,8 +27,9 @@ namespace InternHub.Services
             return _mapper.Map<List<StudentDto>>(students);
         }
 
-        public async Task<StudentDto?> GetByUserIdAsync(string userID){
-            var student = await _context.Students.FirstOrDefaultAsync(e=> e.UserId == userID);
+        public async Task<StudentDto?> GetByUserIdAsync(string userID)
+        {
+            var student = await _context.Students.FirstOrDefaultAsync(e => e.UserId == userID);
             return student == null ? null : _mapper.Map<StudentDto>(student);
         }
 
@@ -40,7 +41,9 @@ namespace InternHub.Services
 
         public async Task<StudentDto> CreateAsync(CreateStudentDto dto, string userId, IWebHostEnvironment env)
         {
-            var student = _mapper.Map<Student>(dto); 
+            var student = _mapper.Map<Student>(dto);
+            student.UserId = userId;
+
             string webRootPath = env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
 
             if (dto.ProfilePicture != null && dto.ProfilePicture.ContentType.StartsWith("image"))
@@ -68,6 +71,7 @@ namespace InternHub.Services
 
             return _mapper.Map<StudentDto>(student);
         }
+
 
         public async Task<StudentDto> UpdateAsync(int id, UpdateStudentDto dto, IWebHostEnvironment env, bool isEmployer, string userId)
         {

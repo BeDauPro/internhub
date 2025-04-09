@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using InternHub.Models.Enums;
 
 namespace InternHub.Models.ViewModels
 {
@@ -17,6 +18,8 @@ namespace InternHub.Models.ViewModels
         public string JobCategory { get; set; }
         public string Location { get; set; }
         public string WorkType { get; set; }
+        public JobpostingStatus? Status { get; set; }
+        public DateTime ApplicationDeadline { get; set; }
 
         // Thông tin từ bảng Employer
         public string CompanyLogo { get; set; }
@@ -37,6 +40,11 @@ namespace InternHub.Models.ViewModels
         [Required(ErrorMessage = "Tên công ty là bắt buộc")]
         public new string CompanyName { get; set; }
 
+        [Required(ErrorMessage = "Thời hạn nộp hồ sơ là bắt buộc")]
+        [DataType(DataType.DateTime)]
+        [FutureDate(ErrorMessage = "Thời hạn nộp hồ sơ phải là ngày trong tương lai")]
+        public new DateTime ApplicationDeadline { get; set; }
+
         // ID của Employer nếu đã tồn tại
         public int? EmployerId { get; set; }
     }
@@ -45,6 +53,10 @@ namespace InternHub.Models.ViewModels
     public class UpdateJobPostingDto : JobPostingBaseDto
     {
         public int JobPostingId { get; set; }
+
+        [DataType(DataType.DateTime)]
+        [FutureDate(ErrorMessage = "Thời hạn nộp hồ sơ phải là ngày trong tương lai")]
+        public new DateTime ApplicationDeadline { get; set; }
     }
 
     // DTO cho thông tin trả về sau khi Create/Update/Get
@@ -53,5 +65,22 @@ namespace InternHub.Models.ViewModels
         public int JobPostingId { get; set; }
         public int EmployerId { get; set; }
         public DateTime PostedAt { get; set; }
+        public bool IsExpired => DateTime.UtcNow > ApplicationDeadline;
+    }
+
+    // Custom validation attribute để kiểm tra ngày trong tương lai
+    public class FutureDateAttribute : ValidationAttribute
+    {
+        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+        {
+            if (value is DateTime dateTime)
+            {
+                if (dateTime <= DateTime.UtcNow)
+                {
+                    return new ValidationResult(ErrorMessage);
+                }
+            }
+            return ValidationResult.Success;
+        }
     }
 }

@@ -28,7 +28,8 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
 
 // Đọc cấu hình email
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
-
+//quản lí bài đăng admin
+builder.Services.AddScoped<IJobPostingService, JobPostingService>();
 // Đăng ký dịch vụ gửi email
 builder.Services.AddTransient<IEmailSender, SendMailService>();
 
