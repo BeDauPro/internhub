@@ -27,3 +27,5 @@ bin/
 obj/
 *.dll
 *.pdb
+
+.vs/
