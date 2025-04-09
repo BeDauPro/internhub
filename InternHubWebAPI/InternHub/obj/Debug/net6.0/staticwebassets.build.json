@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "LB9XuezsXeAEVUk1kjRxroH+UvsMhjazi31Y9YINDb8=",
+  "Hash": "7LIi/qXODKM6D/WaNMJfXoUh5xOhpcgLzex9Gpo3vcc=",
   "Source": "InternHub",
   "BasePath": "_content/InternHub",
   "Mode": "Default",
@@ -83,6 +83,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot/uploads/images/5b107f5f-84d7-48f3-ba3d-d00dfc74f777.jpg"
+    },
+    {
+      "Identity": "/Users/macbookair2020m1/Projects/InternHub/InternHubWebAPI/InternHub/wwwroot/uploads/images/69aaf04f-ca70-4898-8908-e0b6eeb8ab88.jpg",
+      "SourceId": "InternHub",
+      "SourceType": "Discovered",
+      "ContentRoot": "/Users/macbookair2020m1/Projects/InternHub/InternHubWebAPI/InternHub/wwwroot/",
+      "BasePath": "_content/InternHub",
+      "RelativePath": "uploads/images/69aaf04f-ca70-4898-8908-e0b6eeb8ab88.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/uploads/images/69aaf04f-ca70-4898-8908-e0b6eeb8ab88.jpg"
     },
     {
       "Identity": "/Users/macbookair2020m1/Projects/InternHub/InternHubWebAPI/InternHub/wwwroot/uploads/images/72358f0c-8e41-4dd6-a2f6-72a9cd7319b6.jpg",

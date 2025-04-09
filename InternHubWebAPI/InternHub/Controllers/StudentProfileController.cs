@@ -1,4 +1,5 @@
-﻿using InternHub.DTOs.Student;
+﻿using System.Security.Claims;
+using InternHub.DTOs.Student;
 using InternHub.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,26 +18,34 @@ namespace InternHub.Controllers
             _studentService = studentService;
             _env = env;
         }
-        [Authorize(Roles = "Student,Employer")]
+        [Authorize(Roles = "Employer")]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var students = await _studentService.GetAllAsync();
+            var students = await _studentService.GetAllAsync(isStudent: true);
             return Ok(students);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
-        {
-            var student = await _studentService.GetByIdAsync(id);
-            return student == null ? NotFound() : Ok(student);
+        // [HttpGet("{id}")]
+        // public async Task<IActionResult> GetById(int id)
+        // {
+        //     var student = await _studentService.GetByIdAsync(id);
+        //     return student == null ? NotFound() : Ok(student);
+        // }
+        [HttpGet("me")]
+        [Authorize(Roles = "Student")]
+        public async Task<IActionResult> GetMyProfile(){
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var student = await _studentService.GetByUserIdAsync(userId);
+            return student == null ? NotFound(): Ok(student);
         }
 
         [Authorize(Roles = "Student")]
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] CreateStudentDto dto)
         {
-            var created = await _studentService.CreateAsync(dto, _env);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var created = await _studentService.CreateAsync(dto, userId, _env);
             return Ok(created);
         }
 
@@ -44,6 +53,7 @@ namespace InternHub.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromForm] UpdateStudentDto dto)
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var isEmployer = User.IsInRole("Employer");
             var isStudent = User.IsInRole("Student");
 
@@ -57,7 +67,7 @@ namespace InternHub.Controllers
                 return StatusCode(StatusCodes.Status403Forbidden, new { message = "Bạn không có quyền cập nhật trạng thái sinh viên." });
             }
 
-            var updated = await _studentService.UpdateAsync(id, dto, _env, isEmployer);
+            var updated = await _studentService.UpdateAsync(id, dto, _env, isEmployer, userId);
             if (updated == null) return NotFound();
             return Ok(updated);
         }
@@ -67,11 +77,13 @@ namespace InternHub.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var deleted = await _studentService.DeleteAsync(id);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var deleted = await _studentService.DeleteAsync(id, userId);
             return deleted ? NoContent() : NotFound();
         }
 
         [HttpGet("statuses")]
+        [Authorize(Roles ="Employer")]
         public IActionResult GetStatuses()
         {
             var statuses = _studentService.GetStatuses();
