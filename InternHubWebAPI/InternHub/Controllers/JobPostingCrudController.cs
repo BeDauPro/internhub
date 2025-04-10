@@ -23,7 +23,7 @@ namespace InternHub.Controllers
 
         // CREATE: api/JobPostingCrud
         [HttpPost]
-        [Authorize(Roles = "Employee")]
+        [Authorize(Roles = "Employer")]
         public async Task<ActionResult<JobPostingResponseDto>> CreateJobPosting([FromBody] CreateJobPostingDto createDto)
         {
             if (!ModelState.IsValid)
@@ -130,9 +130,9 @@ namespace InternHub.Controllers
                     {
                         userRole = "Student";
                     }
-                    else if (User.IsInRole("Employee"))
+                    else if (User.IsInRole("Employer"))
                     {
-                        userRole = "Employee";
+                        userRole = "Employer";
                     }
                 }
                 else
@@ -167,7 +167,7 @@ namespace InternHub.Controllers
 
         // UPDATE: api/JobPostingCrud/{id}
         [HttpPut("{id}")]
-        [Authorize(Roles = "Employee")]
+        [Authorize(Roles = "Employer")]
         public async Task<ActionResult> UpdateJobPosting(int id, [FromBody] UpdateJobPostingDto updateDto)
         {
             try
@@ -204,7 +204,7 @@ namespace InternHub.Controllers
 
         // DELETE: api/JobPostingCrud/{id}
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Employee,Admin")]
+        [Authorize(Roles = "Employer,Admin")]
         public async Task<ActionResult> DeleteJobPosting(int id)
         {
             try
