@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("InternHub")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f655ec7ee4e93401ffef544399098ced42d30f64")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5e3ca046f1c8312ca7ab3b12ad496152387a12c6")]
 [assembly: System.Reflection.AssemblyProductAttribute("InternHub")]
 [assembly: System.Reflection.AssemblyTitleAttribute("InternHub")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
