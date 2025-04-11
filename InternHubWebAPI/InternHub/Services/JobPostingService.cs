@@ -4,8 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using InternHub.Models;
-using InternHub.Models.ViewModels;
 using InternHub.Models.Enums;
+using InternHub.DTOs.JobPosting;
+using InternHub.Services.Interfaces;
 
 namespace InternHub.Services
 {
@@ -18,8 +19,8 @@ namespace InternHub.Services
             _context = context;
         }
 
-        // CREATE
-        public async Task<JobPostingResponseDto> CreateJobPostingAsync(CreateJobPostingDto createDto)
+        // CREATE - Tạo JobPosting mới (EmployerId được truyền từ controller)
+        public async Task<JobPostingResponseDto> CreateJobPostingAsync(CreateJobPostingDto createDto, int employerId)
         {
             // Kiểm tra ApplicationDeadline phải trong tương lai
             if (createDto.ApplicationDeadline <= DateTime.UtcNow)
@@ -27,58 +28,22 @@ namespace InternHub.Services
                 throw new Exception("Thời hạn nộp hồ sơ phải là ngày trong tương lai");
             }
 
-            // Tìm hoặc tạo Employer
-            Employer employer;
+            // Lấy thông tin Employer từ EmployerId (đã được lấy từ token)
+            var employer = await _context.Set<Employer>()
+                .FirstOrDefaultAsync(e => e.EmployerId == employerId);
 
-            if (createDto.EmployerId.HasValue)
+            if (employer == null)
             {
-                // Sử dụng Employer đã tồn tại
-                employer = await _context.Set<Employer>()
-                    .FirstOrDefaultAsync(e => e.EmployerId == createDto.EmployerId.Value);
-
-                if (employer == null)
-                {
-                    throw new Exception($"Không tìm thấy Employer với ID: {createDto.EmployerId}");
-                }
-
-                // Cập nhật thông tin Employer nếu cần
-                UpdateEmployerInfo(employer, createDto);
-            }
-            else
-            {
-                // Kiểm tra xem có Employer với tên công ty này chưa
-                employer = await _context.Set<Employer>()
-                    .FirstOrDefaultAsync(e => e.CompanyName == createDto.CompanyName);
-
-                if (employer == null)
-                {
-                    // Tạo Employer mới
-                    employer = new Employer
-                    {
-                        CompanyName = createDto.CompanyName,
-                        CompanyLogo = createDto.CompanyLogo,
-                        Address = createDto.Address,
-                        Industry = createDto.Industry,
-                        CreatedAt = DateTime.UtcNow
-                    };
-
-                    _context.Set<Employer>().Add(employer);
-                    await _context.SaveChangesAsync(); // Lưu để có EmployerId
-                }
-                else
-                {
-                    // Cập nhật thông tin Employer hiện có
-                    UpdateEmployerInfo(employer, createDto);
-                }
+                throw new Exception($"Không tìm thấy Employer với ID: {employerId}");
             }
 
-            // Tạo JobPosting mới với trạng thái mặc định là null (chờ duyệt)
+            // Tạo JobPosting mới với trạng thái mặc định là Pending
             var jobPosting = new JobPosting
             {
                 JobTitle = createDto.JobTitle,
                 JobDesc = createDto.JobDesc,
-                JobCategory = createDto.JobCategory ?? createDto.Industry,
-                Location = createDto.Location ?? createDto.Address,
+                JobCategory = !string.IsNullOrEmpty(createDto.JobCategory) ? createDto.JobCategory : employer.Industry,
+                Location = !string.IsNullOrEmpty(createDto.Location) ? createDto.Location : employer.Address,
                 Salary = createDto.Salary,
                 WorkType = createDto.WorkType,
                 ExperienceRequired = createDto.ExperienceRequired,
@@ -87,8 +52,8 @@ namespace InternHub.Services
                 Vacancies = createDto.Vacancies,
                 ApplicationDeadline = createDto.ApplicationDeadline,
                 PostedAt = DateTime.UtcNow,
-                EmployerId = employer.EmployerId
-                // Status mặc định là null (chờ duyệt)
+                EmployerId = employerId,
+                Status = JobpostingStatus.Pending // Mặc định là Pending
             };
 
             _context.JobPostings.Add(jobPosting);
@@ -98,8 +63,30 @@ namespace InternHub.Services
             return MapToResponseDto(jobPosting, employer);
         }
 
-        // READ ONE
-        public async Task<JobPostingResponseDto> GetJobPostingByIdAsync(int id)
+        // READ - Đọc JobPosting theo ID (chi tiết)
+        public async Task<JobPostingDetailDto> GetJobPostingByIdAsync(int id)
+        {
+            var jobPosting = await _context.JobPostings
+                .Include(j => j.Employer)
+                .FirstOrDefaultAsync(j => j.JobPostingId == id);
+
+            if (jobPosting == null)
+            {
+                return null;
+            }
+
+            // Kiểm tra nếu đã hết hạn thì xóa
+            if (jobPosting.ApplicationDeadline <= DateTime.UtcNow)
+            {
+                await DeleteExpiredJobPosting(jobPosting);
+                return null;
+            }
+
+            return MapToDetailDto(jobPosting, jobPosting.Employer);
+        }
+
+        // READ - Lấy thông tin đầy đủ của JobPosting (bao gồm Status và EmployerId)
+        public async Task<JobPostingResponseDto> GetFullJobPostingDetailsAsync(int id)
         {
             var jobPosting = await _context.JobPostings
                 .Include(j => j.Employer)
@@ -120,8 +107,8 @@ namespace InternHub.Services
             return MapToResponseDto(jobPosting, jobPosting.Employer);
         }
 
-        // READ ALL với bộ lọc theo vai trò người dùng
-        public async Task<IEnumerable<JobPostingResponseDto>> GetAllJobPostingsAsync(string userRole = null)
+        // READ - Lấy tất cả JobPosting theo vai trò
+        public async Task<IEnumerable<JobPostingListDto>> GetAllJobPostingsAsync(string userRole = null)
         {
             // Trước tiên, xóa các bài đăng đã hết hạn
             await DeleteAllExpiredJobPostings();
@@ -133,28 +120,29 @@ namespace InternHub.Services
             // Áp dụng bộ lọc dựa trên vai trò người dùng
             if (userRole == "Admin")
             {
-                // Admin xem tất cả bài đăng cần duyệt (Status là null)
-                query = query.Where(j => j.Status == null);
+                // Admin xem những bài đăng Pending
+                query = query.Where(j => j.Status == JobpostingStatus.Pending);
             }
-            else if (userRole == "Student" || userRole == "Employee")
+            else if (userRole == "Student" || userRole == null)
             {
-                // Student và Employee chỉ xem các bài đăng đã được chấp nhận
+                // Student và người không đăng nhập chỉ xem các bài đăng đã được chấp nhận
                 query = query.Where(j => j.Status == JobpostingStatus.Accept);
             }
-            // Nếu không có vai trò cụ thể hoặc là Employer, xem tất cả bài đăng
+            // Employer đã được xử lý trong phương thức GetEmployerJobPostingsAsync
 
             var jobPostings = await query.ToListAsync();
-            return jobPostings.Select(j => MapToResponseDto(j, j.Employer));
+            return jobPostings.Select(j => MapToListDto(j, j.Employer));
         }
 
-        // READ FILTERED
-        public async Task<IEnumerable<JobPostingResponseDto>> GetFilteredJobPostingsAsync(string category, string location, string workType)
+        // READ - Lấy JobPosting theo filter
+        public async Task<IEnumerable<JobPostingListDto>> GetFilteredJobPostingsAsync(string category, string location, string workType)
         {
             // Trước tiên, xóa các bài đăng đã hết hạn
             await DeleteAllExpiredJobPostings();
 
             var query = _context.JobPostings
                 .Include(j => j.Employer)
+                .Where(j => j.Status == JobpostingStatus.Accept) // Chỉ lấy những bài đăng đã được chấp nhận
                 .AsQueryable();
 
             if (!string.IsNullOrEmpty(category))
@@ -173,19 +161,47 @@ namespace InternHub.Services
             }
 
             var jobPostings = await query.ToListAsync();
-            return jobPostings.Select(j => MapToResponseDto(j, j.Employer));
+            return jobPostings.Select(j => MapToListDto(j, j.Employer));
         }
 
-        // UPDATE
-        public async Task<JobPostingResponseDto> UpdateJobPostingAsync(int id, UpdateJobPostingDto updateDto)
+        // READ - Admin lấy JobPosting có status Pending
+        public async Task<IEnumerable<JobPostingResponseDto>> GetPendingJobPostingsAsync()
+        {
+            // Trước tiên, xóa các bài đăng đã hết hạn
+            await DeleteAllExpiredJobPostings();
+
+            var pendingJobPostings = await _context.JobPostings
+                .Include(j => j.Employer)
+                .Where(j => j.Status == JobpostingStatus.Pending)
+                .ToListAsync();
+
+            return pendingJobPostings.Select(j => MapToResponseDto(j, j.Employer));
+        }
+
+        // READ - Employer lấy JobPosting của họ
+        public async Task<IEnumerable<JobPostingResponseDto>> GetEmployerJobPostingsAsync(int employerId)
+        {
+            // Trước tiên, xóa các bài đăng đã hết hạn
+            await DeleteAllExpiredJobPostings();
+
+            var employerJobPostings = await _context.JobPostings
+                .Include(j => j.Employer)
+                .Where(j => j.EmployerId == employerId)
+                .ToListAsync();
+
+            return employerJobPostings.Select(j => MapToResponseDto(j, j.Employer));
+        }
+
+        // UPDATE - Cập nhật JobPosting
+        public async Task<JobPostingResponseDto> UpdateJobPostingAsync(int id, UpdateJobPostingDto updateDto, int employerId)
         {
             var jobPosting = await _context.JobPostings
                 .Include(j => j.Employer)
                 .FirstOrDefaultAsync(j => j.JobPostingId == id);
 
-            if (jobPosting == null)
+            if (jobPosting == null || jobPosting.EmployerId != employerId)
             {
-                return null;
+                return null; // Không tìm thấy hoặc không có quyền cập nhật
             }
 
             // Kiểm tra nếu đã hết hạn thì xóa
@@ -202,44 +218,28 @@ namespace InternHub.Services
             }
 
             // Cập nhật thông tin JobPosting
-            jobPosting.JobTitle = updateDto.JobTitle ?? jobPosting.JobTitle;
-            jobPosting.JobDesc = updateDto.JobDesc ?? jobPosting.JobDesc;
-            jobPosting.JobCategory = updateDto.JobCategory ?? jobPosting.JobCategory;
-            jobPosting.Location = updateDto.Location ?? jobPosting.Location;
-            jobPosting.Salary = updateDto.Salary ?? jobPosting.Salary;
-            jobPosting.WorkType = updateDto.WorkType ?? jobPosting.WorkType;
-            jobPosting.ExperienceRequired = updateDto.ExperienceRequired ?? jobPosting.ExperienceRequired;
-            jobPosting.SkillsRequired = updateDto.SkillsRequired ?? jobPosting.SkillsRequired;
-            jobPosting.LanguagesRequired = updateDto.LanguagesRequired ?? jobPosting.LanguagesRequired;
+            if (!string.IsNullOrEmpty(updateDto.JobTitle)) jobPosting.JobTitle = updateDto.JobTitle;
+            if (!string.IsNullOrEmpty(updateDto.JobDesc)) jobPosting.JobDesc = updateDto.JobDesc;
+            if (!string.IsNullOrEmpty(updateDto.JobCategory)) jobPosting.JobCategory = updateDto.JobCategory;
+            if (!string.IsNullOrEmpty(updateDto.Location)) jobPosting.Location = updateDto.Location;
+            if (!string.IsNullOrEmpty(updateDto.Salary)) jobPosting.Salary = updateDto.Salary;
+            if (!string.IsNullOrEmpty(updateDto.WorkType)) jobPosting.WorkType = updateDto.WorkType;
+            if (!string.IsNullOrEmpty(updateDto.ExperienceRequired)) jobPosting.ExperienceRequired = updateDto.ExperienceRequired;
+            if (!string.IsNullOrEmpty(updateDto.SkillsRequired)) jobPosting.SkillsRequired = updateDto.SkillsRequired;
+            if (!string.IsNullOrEmpty(updateDto.LanguagesRequired)) jobPosting.LanguagesRequired = updateDto.LanguagesRequired;
             jobPosting.ApplicationDeadline = updateDto.ApplicationDeadline;
-            jobPosting.Vacancies = updateDto.Vacancies > 0 ? updateDto.Vacancies : jobPosting.Vacancies;
+            if (updateDto.Vacancies > 0) jobPosting.Vacancies = updateDto.Vacancies;
 
-            // Sau khi cập nhật, đặt lại trạng thái là chờ duyệt
-            jobPosting.Status = null;
-
-            // Cập nhật thông tin Employer nếu cần
-            var employer = jobPosting.Employer;
-            if (employer != null)
-            {
-                if (!string.IsNullOrEmpty(updateDto.CompanyName))
-                    employer.CompanyName = updateDto.CompanyName;
-                if (!string.IsNullOrEmpty(updateDto.CompanyLogo))
-                    employer.CompanyLogo = updateDto.CompanyLogo;
-                if (!string.IsNullOrEmpty(updateDto.Address))
-                    employer.Address = updateDto.Address;
-                if (!string.IsNullOrEmpty(updateDto.Industry))
-                    employer.Industry = updateDto.Industry;
-
-                _context.Set<Employer>().Update(employer);
-            }
+            // Sau khi cập nhật, đặt lại trạng thái là Pending để chờ duyệt
+            jobPosting.Status = JobpostingStatus.Pending;
 
             _context.JobPostings.Update(jobPosting);
             await _context.SaveChangesAsync();
 
-            return MapToResponseDto(jobPosting, employer);
+            return MapToResponseDto(jobPosting, jobPosting.Employer);
         }
 
-        // Phương thức cập nhật trạng thái bài đăng
+        // UPDATE - Admin cập nhật trạng thái JobPosting
         public async Task<JobPostingResponseDto> UpdateJobPostingStatusAsync(int id, JobpostingStatus? status)
         {
             var jobPosting = await _context.JobPostings
@@ -258,7 +258,7 @@ namespace InternHub.Services
                 return null;
             }
 
-            // Cập nhật trạng thái - đã là nullable nên không cần ép kiểu
+            // Cập nhật trạng thái
             jobPosting.Status = status;
             _context.JobPostings.Update(jobPosting);
             await _context.SaveChangesAsync();
@@ -266,13 +266,13 @@ namespace InternHub.Services
             return MapToResponseDto(jobPosting, jobPosting.Employer);
         }
 
-        // DELETE
-        public async Task<bool> DeleteJobPostingAsync(int id)
+        // DELETE - Xóa JobPosting
+        public async Task<bool> DeleteJobPostingAsync(int id, int employerId)
         {
             var jobPosting = await _context.JobPostings.FindAsync(id);
-            if (jobPosting == null)
+            if (jobPosting == null || jobPosting.EmployerId != employerId)
             {
-                return false;
+                return false; // Không tìm thấy hoặc không có quyền xóa
             }
 
             _context.JobPostings.Remove(jobPosting);
@@ -280,22 +280,65 @@ namespace InternHub.Services
             return true;
         }
 
-        // Helper methods
-        private void UpdateEmployerInfo(Employer employer, JobPostingBaseDto dto)
+        // Helper methods - Các phương thức mapping DTO
+
+        // Map to List DTO (Hiển thị dạng danh sách - Hình 1)
+        private JobPostingListDto MapToListDto(JobPosting jobPosting, Employer employer)
         {
-            // Chỉ cập nhật nếu có giá trị mới và không trống
-            if (!string.IsNullOrEmpty(dto.CompanyLogo) && dto.CompanyLogo != employer.CompanyLogo)
-                employer.CompanyLogo = dto.CompanyLogo;
-
-            if (!string.IsNullOrEmpty(dto.Address) && dto.Address != employer.Address)
-                employer.Address = dto.Address;
-
-            if (!string.IsNullOrEmpty(dto.Industry) && dto.Industry != employer.Industry)
-                employer.Industry = dto.Industry;
-
-            _context.Set<Employer>().Update(employer);
+            return new JobPostingListDto
+            {
+                JobPostingId = jobPosting.JobPostingId,
+                JobTitle = jobPosting.JobTitle,
+                WorkType = jobPosting.WorkType,
+                CompanyName = employer?.CompanyName,
+                CompanyLogo = employer?.CompanyLogo,
+                Location = jobPosting.Location,
+                Vacancies = jobPosting.Vacancies,
+                ApplicationDeadline = jobPosting.ApplicationDeadline,
+                PostedAt = jobPosting.PostedAt
+            };
         }
 
+        // Map to Detail DTO (Hiển thị chi tiết - Hình 2)
+        private JobPostingDetailDto MapToDetailDto(JobPosting jobPosting, Employer employer)
+        {
+            return new JobPostingDetailDto
+            {
+                JobPostingId = jobPosting.JobPostingId,
+                JobTitle = jobPosting.JobTitle,
+                JobDesc = jobPosting.JobDesc,
+                JobCategory = jobPosting.JobCategory,
+                Location = jobPosting.Location,
+                Salary = jobPosting.Salary,
+                WorkType = jobPosting.WorkType,
+                ExperienceRequired = jobPosting.ExperienceRequired,
+                SkillsRequired = jobPosting.SkillsRequired,
+                LanguagesRequired = jobPosting.LanguagesRequired,
+                Vacancies = jobPosting.Vacancies,
+                ApplicationDeadline = jobPosting.ApplicationDeadline,
+                PostedAt = jobPosting.PostedAt,
+                CompanyName = employer?.CompanyName,
+                CompanyLogo = employer?.CompanyLogo,
+                Address = employer?.Address,
+                Industry = employer?.Industry
+            };
+        }
+
+        public async Task<IEnumerable<JobPostingListDto>> GetEmployerJobPostingsListAsync(int employerId)
+        {
+            // Trước tiên, xóa các bài đăng đã hết hạn
+            await DeleteAllExpiredJobPostings();
+
+            var employerJobPostings = await _context.JobPostings
+                .Include(j => j.Employer)
+                .Where(j => j.EmployerId == employerId && j.Status == JobpostingStatus.Accept)
+                .ToListAsync();
+
+            // Return only the data needed for the list view (card format)
+            return employerJobPostings.Select(j => MapToListDto(j, j.Employer));
+        }
+
+        // Map to Response DTO (Đầy đủ thông tin bao gồm status và employerID - cho Admin và Employer)
         private JobPostingResponseDto MapToResponseDto(JobPosting jobPosting, Employer employer)
         {
             return new JobPostingResponseDto

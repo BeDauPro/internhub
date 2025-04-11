@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace InternHub.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class Initdatabase : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
