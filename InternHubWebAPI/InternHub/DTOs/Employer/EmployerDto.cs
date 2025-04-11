@@ -14,7 +14,7 @@ namespace InternHub.DTOs.Employer
         public string Industry { get; set; }
         public int EmployeeSize { get; set; }
         public int FoundedYear { get; set; }
-        //public string? UserId { get; set; }
+    
     }
 }
 

@@ -18,6 +18,19 @@ namespace InternHub.Controllers
             _studentService = studentService;
             _env = env;
         }
+        [HttpGet("admin/paged")]
+        public async Task<IActionResult> GetPagedStudents(
+            [FromQuery] string? fullName,
+            [FromQuery] string? schoolEmail,
+            [FromQuery] string? sortBy = "FullName",
+            [FromQuery] string? sortDirection = "asc",
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 10)
+        {
+            var result = await _studentService.GetStudentsAsync(fullName, schoolEmail, sortBy, sortDirection, pageNumber, pageSize);
+            return Ok(result);
+        }
+
         [Authorize(Roles = "Employer")]
         [HttpGet]
         public async Task<IActionResult> GetAll()
@@ -26,12 +39,6 @@ namespace InternHub.Controllers
             return Ok(students);
         }
 
-        // [HttpGet("{id}")]
-        // public async Task<IActionResult> GetById(int id)
-        // {
-        //     var student = await _studentService.GetByIdAsync(id);
-        //     return student == null ? NotFound() : Ok(student);
-        // }
         [HttpGet("me")]
         [Authorize(Roles = "Student")]
         public async Task<IActionResult> GetMyProfile(){

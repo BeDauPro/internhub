@@ -6,6 +6,8 @@ using InternHub.Models.ViewModels;
 using InternHub.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualBasic;
+using InternHub.DTOs.Common;
+using AutoMapper.QueryableExtensions;
 
 namespace InternHub.Services
 {
@@ -20,6 +22,50 @@ namespace InternHub.Services
             _mapper = mapper;
         }
 
+        public async Task<PagedResult<StudentDto>> GetStudentsAsync(string? fullName, string? schoolEmail, string? sortBy, string? sortDirection, int pageNumber, int pageSize)
+        {
+            var query = _context.Students.AsQueryable();
+
+            if (!string.IsNullOrEmpty(fullName))
+            {
+                query = query.Where(e => e.FullName.Contains(fullName));
+            }
+
+            if (!string.IsNullOrEmpty(schoolEmail))
+            {
+                query = query.Where(e => e.SchoolEmail.Contains(schoolEmail));
+            }
+
+            // Sorting
+            switch (sortBy?.ToLower())
+            {
+                case "fullname":
+                    query = sortDirection == "desc" ? query.OrderByDescending(e => e.FullName) : query.OrderBy(e => e.FullName);
+                    break;
+                case "schoolemail":
+                    query = sortDirection == "desc" ? query.OrderByDescending(e => e.SchoolEmail) : query.OrderBy(e => e.SchoolEmail);
+                    break;
+                default:
+                    query = query.OrderBy(e => e.Id);
+                    break;
+            }
+
+            var totalItems = await query.CountAsync();
+
+            var items = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ProjectTo<StudentDto>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+
+            return new PagedResult<StudentDto>
+            {
+                Items = items,
+                TotalItems = totalItems,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
+        }
         public async Task<List<StudentDto>> GetAllAsync(bool isStudent = false)
         {
             if (!isStudent) return new List<StudentDto>();

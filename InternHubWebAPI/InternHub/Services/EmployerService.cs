@@ -1,5 +1,7 @@
 ﻿using System;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using InternHub.DTOs.Common;
 using InternHub.DTOs.Employer;
 using InternHub.Models;
 using InternHub.Services.Interfaces;
@@ -8,25 +10,65 @@ using Microsoft.EntityFrameworkCore;
 namespace InternHub.Services
 {
     public class EmployerService : IEmployerService
-	{
+    {
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
 
-		public EmployerService(AppDbContext context, IMapper mapper)
-		{
-			_context = context;
-			_mapper = mapper;
-		}
+        public EmployerService(AppDbContext context, IMapper mapper)
+        {
+            _context = context;
+            _mapper = mapper;
+        }
+        public async Task<PagedResult<EmployerDto>> GetEmployersAsync(string? companyName, string? address, string? sortBy, string? sortDirection, int pageNumber, int pageSize)
+        {
+            var query = _context.Employers.AsQueryable();
 
-        public async Task<List<EmployerDto>> GetAllAsync(bool isAdmin = false)
-		{
-            if (!isAdmin) return new List<EmployerDto>();
-			var employers = await _context.Employers.ToListAsync();
-			return _mapper.Map<List<EmployerDto>>(employers);
-		}
+            if (!string.IsNullOrEmpty(companyName))
+            {
+                query = query.Where(e => e.CompanyName.Contains(companyName));
+            }
 
-		public async Task<EmployerDto?> GetByUserIdAsync(string userId)
-		{
+            if (!string.IsNullOrEmpty(address))
+            {
+                query = query.Where(e => e.Address.Contains(address));
+            }
+
+            // Sorting
+            switch (sortBy?.ToLower())
+            {
+                case "companyname":
+                    query = sortDirection == "desc" ? query.OrderByDescending(e => e.CompanyName) : query.OrderBy(e => e.CompanyName);
+                    break;
+                case "foundedyear":
+                    query = sortDirection == "desc" ? query.OrderByDescending(e => e.FoundedYear) : query.OrderBy(e => e.FoundedYear);
+                    break;
+                case "employeesize":
+                    query = sortDirection == "desc" ? query.OrderByDescending(e => e.EmployeeSize) : query.OrderBy(e => e.EmployeeSize);
+                    break;
+                default:
+                    query = query.OrderBy(e => e.EmployerId);
+                    break;
+            }
+
+            var totalItems = await query.CountAsync();
+
+            var items = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ProjectTo<EmployerDto>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+
+            return new PagedResult<EmployerDto>
+            {
+                Items = items,
+                TotalItems = totalItems,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
+        }
+
+        public async Task<EmployerDto?> GetByUserIdAsync(string userId)
+        {
             var employer = await _context.Employers.FirstOrDefaultAsync(e => e.UserId == userId);
             return employer == null ? null : _mapper.Map<EmployerDto>(employer);
         }
@@ -38,8 +80,8 @@ namespace InternHub.Services
         }
 
         public async Task<EmployerDto> CreateAsync(CreateEmployer dto, string userId, IWebHostEnvironment env)
-		{
-			var employer = _mapper.Map<Employer>(dto);
+        {
+            var employer = _mapper.Map<Employer>(dto);
             employer.UserId = userId;
             string webRootPath = env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
 
@@ -53,10 +95,10 @@ namespace InternHub.Services
                 employer.CompanyLogo = imagePath;
             }
 
-			_context.Employers.Add(employer);
-			await _context.SaveChangesAsync();
+            _context.Employers.Add(employer);
+            await _context.SaveChangesAsync();
 
-			return _mapper.Map<EmployerDto>(employer);
+            return _mapper.Map<EmployerDto>(employer);
         }
 
         public async Task<EmployerDto?> UpdateAsync(int id, UpdateEmployer dto, IWebHostEnvironment env, string userId)
