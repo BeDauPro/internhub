@@ -5,6 +5,7 @@ using InternHub.Models.Enums;
 using InternHub.Models.ViewModels;
 using InternHub.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
 
 namespace InternHub.Services
 {
@@ -19,21 +20,29 @@ namespace InternHub.Services
             _mapper = mapper;
         }
 
-        public async Task<List<StudentDto>> GetAllAsync()
+        public async Task<List<StudentDto>> GetAllAsync(bool isStudent = false)
         {
+            if (!isStudent) return new List<StudentDto>();
             var students = await _context.Students.ToListAsync();
             return _mapper.Map<List<StudentDto>>(students);
         }
 
-        public async Task<StudentDto> GetByIdAsync(int id)
+        public async Task<StudentDto?> GetByUserIdAsync(string userID)
+        {
+            var student = await _context.Students.FirstOrDefaultAsync(e => e.UserId == userID);
+            return student == null ? null : _mapper.Map<StudentDto>(student);
+        }
+
+        public async Task<StudentDto?> GetByIdAsync(int id)
         {
             var student = await _context.Students.FindAsync(id);
             return student == null ? null : _mapper.Map<StudentDto>(student);
         }
 
-        public async Task<StudentDto> CreateAsync(CreateStudentDto dto, IWebHostEnvironment env)
+        public async Task<StudentDto> CreateAsync(CreateStudentDto dto, string userId, IWebHostEnvironment env)
         {
             var student = _mapper.Map<Student>(dto);
+            student.UserId = userId;
 
             string webRootPath = env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
 
@@ -63,10 +72,12 @@ namespace InternHub.Services
             return _mapper.Map<StudentDto>(student);
         }
 
-        public async Task<StudentDto> UpdateAsync(int id, UpdateStudentDto dto, IWebHostEnvironment env, bool isEmployer)
+
+        public async Task<StudentDto> UpdateAsync(int id, UpdateStudentDto dto, IWebHostEnvironment env, bool isEmployer, string userId)
         {
             var student = await _context.Students.FindAsync(id);
-            if (student == null) return null;
+
+            if (student == null || student.UserId != userId) return null;
 
             if (isEmployer)
             {
@@ -117,10 +128,10 @@ namespace InternHub.Services
             return _mapper.Map<StudentDto>(student);
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id, string userId)
         {
             var student = await _context.Students.FindAsync(id);
-            if (student == null) return false;
+            if (student == null || student.UserId != userId) return false;
 
             _context.Students.Remove(student);
             await _context.SaveChangesAsync();

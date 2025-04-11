@@ -33,115 +33,64 @@ namespace InternHub.Controllers
 
         // CREATE: api/admin/Employer
         [HttpPost]
+        [HttpPost]
         public async Task<IActionResult> CreateEmployer([FromBody] EmployerAccountCreateDto createDto)
         {
             if (!ModelState.IsValid)
-            {
                 return BadRequest(ModelState);
-            }
 
-            // Kiểm tra thêm về username
             if (!createDto.UserName.EndsWith("company"))
-            {
-                ModelState.AddModelError("UserName", "Username phải kết thúc bằng 'company'");
-                return BadRequest(ModelState);
-            }
+                return BadRequest(new { error = "Username phải kết thúc bằng 'company'" });
 
             if (createDto.UserName.Contains("Đức"))
-            {
-                ModelState.AddModelError("UserName", "Username không được chứa chữ 'Đức'");
-                return BadRequest(ModelState);
-            }
+                return BadRequest(new { error = "Username không được chứa chữ 'Đức'" });
 
             if (createDto.UserName.Contains("\r") || createDto.UserName.Contains("\n"))
-            {
-                ModelState.AddModelError("UserName", "Username không được chứa dấu Enter");
-                return BadRequest(ModelState);
-            }
+                return BadRequest(new { error = "Username không được chứa dấu Enter" });
 
             try
             {
-                // Kiểm tra username và email đã tồn tại chưa
-                var existingUserByUsername = await _userManager.FindByNameAsync(createDto.UserName);
-                if (existingUserByUsername != null)
-                {
+                var existingUser = await _userManager.FindByNameAsync(createDto.UserName);
+                if (existingUser != null)
                     return BadRequest(new { error = $"Username '{createDto.UserName}' đã tồn tại!" });
-                }
 
-                var existingUserByEmail = await _userManager.FindByEmailAsync(createDto.Email);
-                if (existingUserByEmail != null)
-                {
+                var existingEmail = await _userManager.FindByEmailAsync(createDto.Email);
+                if (existingEmail != null)
                     return BadRequest(new { error = $"Email '{createDto.Email}' đã tồn tại!" });
-                }
 
-                using var transaction = await _context.Database.BeginTransactionAsync();
-
-                try
+                var newUser = new ApplicationUser
                 {
-                    // Tạo user mới
-                    var newUser = new ApplicationUser
-                    {
-                        UserName = createDto.UserName,
-                        Email = createDto.Email,
-                        PhoneNumber = createDto.Phone,
-                        EmailConfirmed = true, // Admin tạo nên không cần xác nhận email
-                        SecurityStamp = Guid.NewGuid().ToString()
-                    };
+                    UserName = createDto.UserName,
+                    Email = createDto.Email,
+                    PhoneNumber = createDto.Phone,
+                    EmailConfirmed = true,
+                    SecurityStamp = Guid.NewGuid().ToString()
+                };
 
-                    var result = await _userManager.CreateAsync(newUser, createDto.Password);
-                    if (!result.Succeeded)
-                    {
-                        return BadRequest(new
-                        {
-                            error = "Không thể tạo tài khoản người dùng",
-                            details = result.Errors
-                        });
-                    }
-
-                    // Gán role Employer
-                    await _userManager.AddToRoleAsync(newUser, "Employer");
-
-                    // Tạo bản ghi Employer với thông tin cơ bản
-                    var employer = new Employer
-                    {
-                        UserId = newUser.Id,
-                        Phone = createDto.Phone,
-                        CreatedAt = DateTime.UtcNow,
-                        // Đặt các giá trị mặc định cho các trường không NULL
-                        CompanyName = $"{createDto.UserName}", // Tạo tên công ty mặc định
-                        CompanyLogo = string.Empty,
-                        CompanyDescription = string.Empty,
-                        Address = string.Empty,
-                        Website = string.Empty,
-                        Industry = string.Empty,
-                        EmployeeSize = 0,
-                        FoundedYear = DateTime.Now.Year
-                    };
-
-                    _context.Set<Employer>().Add(employer);
-                    await _context.SaveChangesAsync();
-
-                    await transaction.CommitAsync();
-
-                    // Tạo response DTO
-                    var responseDto = new EmployerAccountResponseDto
-                    {
-                        Id = newUser.Id,
-                        UserName = newUser.UserName,
-                        Email = newUser.Email,
-                        Phone = newUser.PhoneNumber,
-                        CreatedAt = employer.CreatedAt,
-                        EmployerId = employer.EmployerId,
-                        Role = "Employer"
-                    };
-
-                    return CreatedAtAction(nameof(GetEmployer), new { id = employer.EmployerId }, responseDto);
-                }
-                catch (Exception)
+                var result = await _userManager.CreateAsync(newUser, createDto.Password);
+                if (!result.Succeeded)
                 {
-                    await transaction.RollbackAsync();
-                    throw;
+                    return BadRequest(new
+                    {
+                        error = "Không thể tạo tài khoản người dùng",
+                        details = result.Errors
+                    });
                 }
+
+                await _userManager.AddToRoleAsync(newUser, "Employer");
+
+                // Không tạo Employer ở đây
+
+                var responseDto = new
+                {
+                    Id = newUser.Id,
+                    UserName = newUser.UserName,
+                    Email = newUser.Email,
+                    Phone = newUser.PhoneNumber,
+                    Role = "Employer"
+                };
+
+                return Ok(responseDto);
             }
             catch (DbUpdateException dbEx)
             {
@@ -156,6 +105,7 @@ namespace InternHub.Controllers
                 return StatusCode(500, new { error = ex.Message });
             }
         }
+
 
         // READ ALL: api/admin/Employer
         [HttpGet]
