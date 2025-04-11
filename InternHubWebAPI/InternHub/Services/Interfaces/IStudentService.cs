@@ -1,9 +1,11 @@
+using InternHub.DTOs.Common;
 using InternHub.DTOs.Student;
 
 namespace InternHub.Services.Interfaces
 {
     public interface IStudentService
     {
+        Task<PagedResult<StudentDto>> GetStudentsAsync(string? fullName, string? schoolEmail, string? sortBy, string? sortDirection, int pageNumber, int pageSize);
         Task<List<StudentDto>> GetAllAsync(bool isStudent = false);
         Task<StudentDto?> GetByUserIdAsync(string userID);
         Task<StudentDto?> GetByIdAsync(int id);

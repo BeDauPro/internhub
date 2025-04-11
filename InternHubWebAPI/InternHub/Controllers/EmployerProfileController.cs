@@ -18,15 +18,29 @@ namespace InternHub.Controllers
             _employerService = employerService;
             _env = env;
         }
-
-        // GET: Only Admin can get all
-        [HttpGet]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetAll()
+        [HttpGet("admin/paged")]
+        public async Task<IActionResult> GetPagedEmployers([FromQuery] string? companyName, [FromQuery] string? address,
+                                                            [FromQuery] string? sortBy = "companyName", [FromQuery] string? sortDirection = "asc",
+                                                            [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
-            var employers = await _employerService.GetAllAsync(isAdmin: true);
+            var result = await _employerService.GetEmployersAsync(companyName, address, sortBy, sortDirection, pageNumber, pageSize);
+            return Ok(result);
+        }
+
+        [HttpGet("filter")]
+        [Authorize(Roles = "Student")]
+        public async Task<IActionResult> FilterEmployers(
+            [FromQuery] string? companyName,
+            [FromQuery] string? address,
+            [FromQuery] string? sortBy = "CompanyName",
+            [FromQuery] string? sortDirection = "asc",
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 10)
+        {
+            var employers = await _employerService.GetEmployersAsync(companyName, address, sortBy, sortDirection, pageNumber, pageSize);
             return Ok(employers);
         }
+
 
         // GET: Get own employer profile by userId
         [HttpGet("me")]

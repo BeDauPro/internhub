@@ -171,6 +171,20 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      policy =>
+                      {
+                          policy.WithOrigins("http://localhost:3000") // Địa chỉ FE
+                                .AllowAnyHeader()
+                                .AllowAnyMethod();
+                      });
+});
+
+
 // Middleware
 if (app.Environment.IsDevelopment())
 {
@@ -179,7 +193,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseCors(MyAllowSpecificOrigins);
 app.UseAuthentication();  
 app.UseAuthorization();
 

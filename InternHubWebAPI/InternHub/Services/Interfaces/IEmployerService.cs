@@ -1,11 +1,12 @@
 ﻿using System;
+using InternHub.DTOs.Common;
 using InternHub.DTOs.Employer;
 
 namespace InternHub.Services.Interfaces
 {
 	public interface IEmployerService
 	{
-        Task<List<EmployerDto>> GetAllAsync(bool isAdmin = false);
+       Task<PagedResult<EmployerDto>> GetEmployersAsync(string? companyName, string? address, string? sortBy, string? sortDirection, int pageNumber, int pageSize);
         Task<EmployerDto?> GetByUserIdAsync(string userId);
         Task<EmployerDto?> GetByIdAsync(int id);
         Task<EmployerDto> CreateAsync(CreateEmployer dto, string userId, IWebHostEnvironment env);
