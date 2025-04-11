@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using InternHub.Models;
 using InternHub.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -43,6 +44,14 @@ namespace InternHub.Services
                 new Claim(ClaimTypes.Role, role ?? "User")
 
             };
+            if (role == "Employer")
+            {
+                var employer = await _context.Employers.FirstOrDefaultAsync(e => e.UserId == user.Id);
+                if (employer != null)
+                {
+                    authClaims.Add(new Claim("EmployerId", employer.EmployerId.ToString()));
+                }
+            }
             var secret = _configuration["JWT:Secret"];
             if (string.IsNullOrEmpty(secret))
             {

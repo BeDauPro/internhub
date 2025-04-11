@@ -5,7 +5,7 @@ namespace InternHub.Models.ViewModels
  
     public class JobPostingViewModel 
     {
-        public int JobPostingId { get; set; }
+       
         public string JobTitle { get; set; }
         public string JobCategory { get; set; }
         public string Location { get; set; }

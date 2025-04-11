@@ -3,6 +3,7 @@
     public enum JobpostingStatus
     {
         Reject,
-        Accept
+        Accept,
+        Pending
     }
 }
