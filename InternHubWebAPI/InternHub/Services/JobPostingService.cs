@@ -7,6 +7,7 @@ using InternHub.Models;
 using InternHub.Models.Enums;
 using InternHub.DTOs.JobPosting;
 using InternHub.Services.Interfaces;
+using InternHub.DTOs.Common;
 
 namespace InternHub.Services
 {
@@ -323,7 +324,73 @@ namespace InternHub.Services
                 Industry = employer?.Industry
             };
         }
+        //Filter cho jobposting
+        public async Task<PagedResult<JobPostingListDto>> GetFilteredPagedJobPostingsAsync(
+            string? searchTerm = null,
+            string? workType = null,
+            string? location = null,
+            string? jobCategory = null,
+            string? sortDirection = "desc", // Mặc định là mới nhất -> cũ nhất
+            int pageNumber = 1,
+            int pageSize = 8)
+        {
+            // Xóa các bài đăng đã hết hạn
+            await DeleteAllExpiredJobPostings();
 
+            var query = _context.JobPostings
+                .Include(j => j.Employer)
+                .Where(j => j.Status == JobpostingStatus.Accept)
+                .AsQueryable();
+
+            // Áp dụng tìm kiếm theo searchTerm (JobTitle hoặc CompanyName)
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                query = query.Where(j => j.JobTitle.Contains(searchTerm) ||
+                                        j.Employer.CompanyName.Contains(searchTerm));
+            }
+
+            // Áp dụng lọc theo workType (Full-time, Part-time)
+            if (!string.IsNullOrEmpty(workType))
+            {
+                query = query.Where(j => j.WorkType == workType);
+            }
+
+            // Áp dụng lọc theo location (Đà Nẵng, Huế, Hà Nội)
+            if (!string.IsNullOrEmpty(location))
+            {
+                query = query.Where(j => j.Location.Contains(location));
+            }
+
+            // Áp dụng lọc theo jobCategory (Flutter, ReactJS, Full-stack)
+            if (!string.IsNullOrEmpty(jobCategory))
+            {
+                query = query.Where(j => j.JobCategory == jobCategory);
+            }
+
+            // Sắp xếp theo ngày đăng
+            query = sortDirection.ToLower() == "asc"
+                ? query.OrderBy(j => j.PostedAt)     // Cũ nhất -> Mới nhất
+                : query.OrderByDescending(j => j.PostedAt);  // Mới nhất -> Cũ nhất
+
+            // Đếm tổng số items
+            var totalItems = await query.CountAsync();
+
+            // Lấy items cho trang hiện tại
+            var items = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .Select(j => MapToListDto(j, j.Employer))
+                .ToListAsync();
+
+            // Trả về kết quả phân trang
+            return new PagedResult<JobPostingListDto>
+            {
+                Items = items,
+                TotalItems = totalItems,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
+        }
         public async Task<IEnumerable<JobPostingListDto>> GetEmployerJobPostingsListAsync(int employerId)
         {
             // Trước tiên, xóa các bài đăng đã hết hạn
