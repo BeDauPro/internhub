@@ -32,14 +32,15 @@
     <None Remove="uploads\" />
     <None Remove="uploads\images\" />
     <None Remove="uploads\cv\" />
+    <None Remove="DTOs\Employer\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\ViewModels\" />
-    <Folder Include="Services\" />
     <Folder Include="Attributes\" />
     <Folder Include="Contacts\" />
     <Folder Include="uploads\" />
     <Folder Include="uploads\images\" />
     <Folder Include="uploads\cv\" />
+    <Folder Include="DTOs\Employer\" />
   </ItemGroup>
 </Project>

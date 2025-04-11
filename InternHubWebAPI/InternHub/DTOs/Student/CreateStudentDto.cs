@@ -14,6 +14,6 @@ namespace InternHub.DTOs.Student
         public string? Skills { get; set; }
         public string? Languages { get; set; }
         public string? GithubProfile { get; set; }
-        public string? UserId { get; set; }
+        // public string? UserId { get; set; }
     }
 }

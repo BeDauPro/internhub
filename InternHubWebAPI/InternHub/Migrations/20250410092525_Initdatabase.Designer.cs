@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InternHub.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250409092702_Initdatabase")]
+    [Migration("20250410092525_Initdatabase")]
     partial class Initdatabase
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -223,6 +223,10 @@ namespace InternHub.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("CompanyDescription")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("CompanyEmail")
                         .IsRequired()
                         .HasColumnType("longtext");
 

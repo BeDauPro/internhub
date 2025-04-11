@@ -224,6 +224,10 @@ namespace InternHub.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<string>("CompanyEmail")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<string>("CompanyLogo")
                         .IsRequired()
                         .HasColumnType("longtext");

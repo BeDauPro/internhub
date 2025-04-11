@@ -10,7 +10,7 @@ namespace InternHub.Models
     {
         [Key]
         public int EmployerId { get; set; }
-
+        public string CompanyEmail { get; set; }
         public string CompanyName { get; set; }
         public string Phone { get; set; }
         public string CompanyLogo { get; set; }
