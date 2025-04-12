@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaFilter, FaFileAlt } from "react-icons/fa";
 import "../../styles/pages/admin/studentmanagement.scss";
-import NavbarAdmin from '../../components/admin/NavbarAdmin';
 import Footer from '../../components/Footer';
 
 const StudentManagement = ({ studentsData }) => {
@@ -67,7 +66,6 @@ const StudentManagement = ({ studentsData }) => {
 
     return (
         <>
-            <NavbarAdmin />
             <div className="student-management-container">
                 <h1 className="page-title">QUẢN LÝ SINH VIÊN SAU THỰC TẬP</h1>
 

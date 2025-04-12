@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { FaMapMarkerAlt, FaUser, FaCalendarAlt, FaAlignLeft } from 'react-icons/fa';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../../styles/pages/student/eventstudent.scss"
-import Navbar from '../../components/students/Navbar';
 import Footer from '../../components/Footer';
 
 const EventStudent = ({ events }) => {
@@ -21,7 +20,6 @@ const EventStudent = ({ events }) => {
 
     return (
         <>
-            <Navbar />
             <div className="container mt-4">
                 <div className="student-event-container">
                     <h2 className="text-center mb-4 event-title">Sự kiện</h2>

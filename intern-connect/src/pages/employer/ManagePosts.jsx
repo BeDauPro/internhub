@@ -39,7 +39,6 @@ const ManagePosts = ({ jobs }) => {
 
   return (
     <>
-      <NavbarEmployer />
       <header className="manageposts-header w3-display-container w3-grayscale-min" style={{ height: '100vh', position: 'relative' }}>
         <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'black', opacity: 0.5, zIndex: 1 }}></div>
         <div className="w3-display-left w3-text-white" style={{ padding: '48px', fontFamily: 'Georgia, serif', fontSize: '1.2em', position: 'relative', zIndex: 2,margin: '100px'}}>

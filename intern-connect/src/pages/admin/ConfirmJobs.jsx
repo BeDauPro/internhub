@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import '../../styles/components/jobcard.scss';
 import '../../styles/pages/admin/ConfirmJobs.scss';
 import { useNavigate } from 'react-router-dom';
-import NavbarAdmin from '../../components/admin/NavbarAdmin';
 import Footer from '../../components/Footer';
 
 const ConfirmJobs = ({ jobs }) => {
@@ -25,7 +24,6 @@ const ConfirmJobs = ({ jobs }) => {
 
   return (
     <>
-    <NavbarAdmin/>
     <div className="JobListContainer job-list-background" style={{ marginTop: '10vh' }}>
       <h2>Danh sách công việc cần xác nhận</h2>
       <div className="filters">

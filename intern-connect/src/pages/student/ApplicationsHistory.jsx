@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { FaFilter } from "react-icons/fa";
 import "../../styles/pages/student/applicationhistory.scss";
-import Navbar from '../../components/students/Navbar';
 import Footer from '../../components/Footer';
 import { useNavigate } from "react-router-dom";
 
@@ -84,7 +83,6 @@ const ApplicationsHistory = ({ applications }) => {
 
     return (
         <>
-            <Navbar />
             <div className="application-history-container">
                 <h1 className="page-title">LỊCH SỬ ỨNG TUYỂN</h1>
                 <div className="filter-section">

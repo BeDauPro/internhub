@@ -6,7 +6,6 @@ import { FaLocationDot, FaMoneyBill1 } from "react-icons/fa6";
 import { MdHomeRepairService } from "react-icons/md";
 import { FaUsers, FaCalendarAlt } from "react-icons/fa";
 import '../../styles/pages/employer/editjob.scss';
-import NavbarEmployer from '../../components/employer/NavbarEmployer';
 import Footer from '../../components/Footer';
 const EditJob = ({ editJob, onSave }) => {
     const navigate = useNavigate();
@@ -74,7 +73,6 @@ const EditJob = ({ editJob, onSave }) => {
 
     return (
         <>
-        <NavbarEmployer/>
         <div className="job-detail-container">
             <div className="job-header">
                 <div className="company-info">

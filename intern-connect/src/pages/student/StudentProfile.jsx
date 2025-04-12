@@ -4,7 +4,6 @@ import '../../styles/pages/student/studentprofile.scss';
 import { AiOutlineMail, AiOutlineHome, AiOutlinePhone, AiOutlineGithub, AiOutlineFileText } from "react-icons/ai";
 import { FaGraduationCap, FaBirthdayCake, FaMale, FaLanguage } from "react-icons/fa";
 import avatar from '../../images/avatar.jpg';
-import Navbar from '../../components/students/Navbar'
 import Footer from '../../components/Footer'
 import Evaluate from './Evaluate';
 
@@ -25,7 +24,6 @@ const StudentProfile = ({ profileData, reviews }) => {
 
     return (
         <>
-            <Navbar />
             <div className="profile-container">
                 <div className="profile-card">
                     <img className="profile-image" src={avatar} alt="Avatar" />

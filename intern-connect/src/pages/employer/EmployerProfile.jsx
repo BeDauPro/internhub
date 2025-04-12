@@ -4,7 +4,6 @@ import '../../styles/pages/employer/employerprofile.scss';
 import logo from '../../images/fpt.jpg';
 import { AiOutlineMail, AiOutlineHome, AiOutlinePhone, AiOutlineGroup, AiOutlineGlobal, AiOutlineFieldTime } from "react-icons/ai";
 import Review from './Review';
-import NavbarEmployer from '../../components/employer/NavbarEmployer';
 import Footer from '../../components/Footer';
 
 const EmployerProfile = ({ profileData ,EmployerReview}) => {
@@ -25,7 +24,6 @@ const EmployerProfile = ({ profileData ,EmployerReview}) => {
 
     return (
         <>
-            <NavbarEmployer />
             <div className="profile-container">
                 <div className="profile-card">
                     <img className="profile-image" src={logo} alt="Avatar" />

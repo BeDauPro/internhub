@@ -41,7 +41,7 @@ namespace InternHub.Services
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
                 new Claim(JwtRegisteredClaimNames.Sub, user.Email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.Role, role ?? "User")
+                new Claim("role", role ?? "User")
 
             };
             if (role == "Employer")

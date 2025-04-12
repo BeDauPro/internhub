@@ -49,7 +49,8 @@ namespace InternHub.Controllers
             var userExists = await _userManager.FindByEmailAsync(registerVm.Email);
             if (userExists != null)
             {
-                return BadRequest(new { error = $"User {registerVm.Email} already exists!" });
+                ModelState.AddModelError("Email", $"User {registerVm.Email} already exists");
+                return BadRequest(ModelState);
             }
 
             var verificationToken = Guid.NewGuid().ToString();
@@ -78,13 +79,15 @@ namespace InternHub.Controllers
             }
             else
             {
-                return BadRequest(new { error = "Invalid email format for any role." });
+                ModelState.AddModelError("Email", "Email không thuộc định dạng nào được hỗ trợ.");
+                return BadRequest(ModelState);
             }
 
             // Kiểm tra định dạng email nếu vai trò là Student
             if (role == "Student" && !new Attributes.StudentEmailAttribute().IsValid(newUser.Email))
             {
-                return BadRequest(new { error = "Email phải có định dạng: [2 số]t[7 số]@husc.edu.vn." });
+               ModelState.AddModelError("Email", "Email phải có định dạng: [2 số]t[7 số]@husc.edu.vn.");
+               return BadRequest(ModelState);
             }
 
             // Lưu người dùng vào cơ sở dữ liệu trước
@@ -175,7 +178,7 @@ namespace InternHub.Controllers
             {
                 return BadRequest(new { error = "Password reset failed.", details = resetResult.Errors });
             }
-            
+
             // Xóa token sau khi đặt lại mật khẩu thành công
             user.PasswordResetToken = null;
             user.ResetTokenExpires = null;
@@ -183,8 +186,6 @@ namespace InternHub.Controllers
 
             return Ok("Password has been reset successfully.");
         }
-
-
 
         [HttpPost("login-user")]
         public async Task<IActionResult> Login([FromBody] LoginViewModel payload)
@@ -219,7 +220,7 @@ namespace InternHub.Controllers
             return Ok(new
             {
                 token = tokenValue,
-                role = role
+                role = role // Đảm bảo `role` được trả về chính xác
             });
         }
     }

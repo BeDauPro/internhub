@@ -1,17 +1,46 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import "../styles/pages/login.scss"; 
+import { Link, useNavigate } from "react-router-dom";
+import "../styles/pages/login.scss";
 import "bootstrap/dist/css/bootstrap.min.css";
 import loginImage from "../images/login.jpg";
 import Button from '../components/Button';
+import { loginUser as loginApi } from '../services/authApi';
 
-const Login = ({ onLogin }) => {
+const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  const handleSubmit = (e) => {
+  const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onLogin();
+    setErrors({});
+    try {
+      const data = { email, password };
+      const response = await loginApi(data);
+      if (response.status === 200) {
+        const { token, role } = response.data;
+        localStorage.setItem("token", token.token);
+        localStorage.setItem("role", role);
+
+        alert("Đăng nhập thành công!");
+
+        if (role.toLowerCase() === "student") {
+          navigate("/findjob");
+        } else if (role.toLowerCase() === "admin") {
+          navigate("/studentmanagement");
+        } else {
+          navigate("/unauthorized");
+        }
+      } else {
+        alert("Đăng nhập thất bại. Vui lòng thử lại.");
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        alert("Email hoặc mật khẩu không đúng.");
+      } else {
+        alert("Đã xảy ra lỗi không xác định.");
+      }
+    }
   };
 
   return (
@@ -34,6 +63,9 @@ const Login = ({ onLogin }) => {
                   required
                 />
               </div>
+              {errors.Email && (
+                <div className="text-danger">{errors.Email[0]}</div>
+              )}
             </div>
 
             <div className="mb-3">
@@ -50,12 +82,13 @@ const Login = ({ onLogin }) => {
                   required
                 />
               </div>
+              {errors.Password && <div className="text-danger mt-1">{errors.Password}</div>}
             </div>
 
             <div className="text-end mb-3">
-              <a href="#" className="text-primary">Quên mật khẩu?</a>
+              <a href="#" className="text-primary" onClick={() => navigate("/forgotpassword")}>Quên mật khẩu?</a>
             </div>
-            <Button text="Sign in" variant="btn btn-primary w-100" type="submit"/>
+            <Button text="Sign in" variant="btn btn-primary w-100" type="submit" />
           </form>
 
           <p className="text-center mt-3">

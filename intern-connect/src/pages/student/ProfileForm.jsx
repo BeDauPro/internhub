@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import avatar from "../../images/avatar.jpg";
 import { AiOutlineMail, AiOutlineHome, AiOutlinePhone, AiOutlineGithub, AiOutlineFileText } from "react-icons/ai";
 import { FaGraduationCap, FaBirthdayCake, FaMale } from "react-icons/fa";
-import Navbar from '../../components/students/Navbar'
 import Footer from '../../components/Footer'
 
 const ProfileForm = ({ initialData, onSave }) => {
@@ -37,7 +36,6 @@ const ProfileForm = ({ initialData, onSave }) => {
 
   return (
     <>
-    <Navbar/>
     <div className="profile-edit-container">
       <div className="profile-edit-card">
         <img className="profile-edit-image" src={avatar} alt="Avatar" />

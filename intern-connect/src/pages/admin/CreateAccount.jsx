@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../styles/pages/admin/createaccount.scss";
-import NavbarAdmin from "../../components/admin/NavbarAdmin";
 import Footer from "../../components/Footer";
 
 const CreateAccount = ({ onAddAccount }) => {
@@ -36,7 +35,6 @@ const CreateAccount = ({ onAddAccount }) => {
 
   return (
     <>
-      <NavbarAdmin />
       <div className="create-account-container">
         <h1 className="page-title">Tạo tài khoản mới</h1>
         <form className="create-account-form" onSubmit={handleSubmit}>

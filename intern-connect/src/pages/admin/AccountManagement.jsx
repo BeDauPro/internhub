@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { FaEdit, FaTrash, FaSearch } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import NavbarAdmin from "../../components/admin/NavbarAdmin";
 import Footer from "../../components/Footer";
 import "../../styles/pages/admin/AccountManagement.scss";
 
@@ -29,7 +28,6 @@ const AccountManagement = ({ accounts, onAddAccount }) => {
 
   return (
     <>
-      <NavbarAdmin />
       <div className="account-management-container">
         <h1 className="page-title">QUẢN LÝ TÀI KHOẢN</h1>
         <div className="actions-section">

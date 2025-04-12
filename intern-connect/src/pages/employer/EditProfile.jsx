@@ -3,7 +3,6 @@ import { AiOutlineMail, AiOutlineHome, AiOutlinePhone, AiOutlineGroup, AiOutline
 import { useNavigate } from 'react-router-dom';
 import '../../styles/pages/employer/editprofile.scss';
 import logo from '../../images/fpt.jpg';
-import NavbarEmployer from '../../components/employer/NavbarEmployer';
 import Footer from '../../components/Footer';
 const EditProfile = ({ initialData, onSave }) => {
     const navigate = useNavigate();
@@ -38,7 +37,6 @@ const EditProfile = ({ initialData, onSave }) => {
     };
     return (
         <>
-        <NavbarEmployer/>
         <div className="profile-edit-container">
             <div className="profile-card">
                 <img className="profile-image" src={formData.logo || logo} alt="avatar" />
