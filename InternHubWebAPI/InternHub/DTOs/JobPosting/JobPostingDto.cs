@@ -42,15 +42,15 @@ namespace InternHub.DTOs.JobPosting
     public class UpdateJobPostingDto
     {
         // Thông tin từ bảng JobPosting có thể cập nhật
-        public string JobTitle { get; set; }
-        public string Salary { get; set; }
-        public string ExperienceRequired { get; set; }
-        public string JobDesc { get; set; }
-        public string SkillsRequired { get; set; }
-        public string LanguagesRequired { get; set; }
+        public string? JobTitle { get; set; }
+        public string? Salary { get; set; }
+        public string? ExperienceRequired { get; set; }
+        public string? JobDesc { get; set; }
+        public string? SkillsRequired { get; set; }
+        public string? LanguagesRequired { get; set; }
         public int Vacancies { get; set; }
-        public string JobCategory { get; set; }
-        public string Location { get; set; }
+        public string? JobCategory { get; set; }
+        public string? Location { get; set; }
         public string WorkType { get; set; }
 
         [DataType(DataType.DateTime)]

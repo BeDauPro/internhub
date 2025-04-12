@@ -18,16 +18,20 @@ namespace InternHub.Controllers
             _studentService = studentService;
             _env = env;
         }
+
+        //fillter cho quản lí sinh viên
         [HttpGet("admin/paged")]
         public async Task<IActionResult> GetPagedStudents(
-            [FromQuery] string? fullName,
-            [FromQuery] string? schoolEmail,
-            [FromQuery] string? sortBy = "FullName",
-            [FromQuery] string? sortDirection = "asc",
-            [FromQuery] int pageNumber = 1,
-            [FromQuery] int pageSize = 10)
+        [FromQuery] string? fullName,
+        [FromQuery] string? schoolEmail,
+        [FromQuery] string? status, // Thêm tham số để lọc theo status
+        [FromQuery] string? timeFilter, // Thêm tham số để lọc theo thời gian nộp đơn
+        [FromQuery] string? sortBy = "FullName",
+        [FromQuery] string? sortDirection = "asc",
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10)
         {
-            var result = await _studentService.GetStudentsAsync(fullName, schoolEmail, sortBy, sortDirection, pageNumber, pageSize);
+            var result = await _studentService.GetStudentsAsync(fullName, schoolEmail, status, timeFilter, sortBy, sortDirection, pageNumber, pageSize);
             return Ok(result);
         }
 
