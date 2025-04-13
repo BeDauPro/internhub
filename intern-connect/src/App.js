@@ -24,7 +24,6 @@ import PrivateRoute from "./components/auth/PrivateRoute";
 import useAuth from "./hooks/useAuth";
 import ForgotPassword from "./pages/ForgotPassword";
 import {
-  fetchStudentProfile,
   fetchEmployerProfile,
   fetchJobDetails,
   fetchApplications,
@@ -34,6 +33,7 @@ import {
   fetchEmployerReview,
   fetchApplicationEmployer
 } from "./services/api";
+import { fetchStudentProfile } from "./services/studentApi";
 import JobCard from "./pages/student/JobCard";
 import ApplicationEmployer from "./pages/employer/ApplicationEmployer";
 import StudentManagement from "./pages/admin/StudentManagement";
@@ -111,7 +111,8 @@ const App = () => {
         <Route
           element={<PrivateRoute isAuthenticated={isAuthenticated} allowedRoles={["Student"]} role={role} />}
         >
-          <Route path="/studentprofile" element={<StudentProfile profileData={profile} reviews={reviews} />} />
+          <Route path="/studentprofile" element={<StudentProfile/>} />
+          <Route path="/profileform" element={<ProfileForm initialData={profile} onSave={handleSave} />} />
           <Route path="/findjob" element={<FindJob jobs={jobs} />} />
           <Route path="/evaluate" element={<Evaluate initialReviews={reviews} />} />
           <Route path="/eventstudent" element={<EventStudent events={events} />} />

@@ -1,125 +1,143 @@
+// Biến màu sắc hiện đại
+$primary-color: #007bff;
+$secondary-color: #6c757d;
+$success-color: #28a745;
+$danger-color: #dc3545;
+$background-color: #f4f6f8;
+$card-bg: #ffffff;
+$card-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+
 .profile-edit-container {
   display: flex;
   flex-direction: column;
   justify-content: center;
   gap: 20px;
   padding: 20px;
-  font-family: Arial, sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: $background-color;
+  animation: fadeIn 0.5s ease-in;
 
   @media (min-width: 768px) {
     flex-direction: row;
   }
-  flex: 1;
-  margin-top: 100px; 
+
+  margin-top: 100px;
 }
 
 .profile-edit-card {
   width: 100%;
-  background: white;
-  border-radius: 15px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  padding: 20px;
+  background: $card-bg;
+  border-radius: 20px;
+  box-shadow: $card-shadow;
+  padding: 25px;
   text-align: center;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: 100%;
+  transition: transform 0.3s;
+  &:hover {
+    transform: translateY(-5px);
+  }
 
   @media (min-width: 768px) {
     width: 280px;
   }
 
   .profile-edit-image {
-    width: 100px;
-    height: 100px;
+    width: 110px;
+    height: 110px;
     border-radius: 50%;
-    margin: 0 auto 10px auto;
+    margin: 0 auto 15px auto;
+    object-fit: cover;
+    box-shadow: 0 0 5px rgba(0,0,0,0.15);
   }
 
   h2 {
-    font-size: 20px;
+    font-size: 22px;
     color: #001f54;
+    margin: 10px 0;
   }
 
   .student-id {
     font-size: 14px;
-    color: gray;
-    margin-bottom: 10px;
-    text-align: center;
+    color: $secondary-color;
+    margin-bottom: 15px;
   }
 
   .status {
-    margin: 10px 0;
     display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
     flex-direction: column;
+    align-items: center;
+    gap: 5px;
 
     .status-label {
       font-size: 14px;
-      color: gray;
+      color: $secondary-color;
     }
 
     .status-badge {
-      display: inline-block;
-      background: green;
+      background: $success-color;
       color: white;
-      padding: 5px 10px;
-      border-radius: 10px;
-      font-size: 12px;
-      margin-left: 5px;
+      padding: 6px 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 500;
     }
-    
-    
   }
 }
 
 .profile-edit-details {
-  background: white;
-  border-radius: 15px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  height: 100%;
+  background: $card-bg;
+  border-radius: 20px;
+  box-shadow: $card-shadow;
+  padding: 25px;
+  width: 100%;
+  transition: all 0.3s;
 
   @media (min-width: 768px) {
     width: 500px;
   }
 
   section {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 
     h3 {
       font-size: 18px;
       font-weight: bold;
       color: #001f54;
-      margin-bottom: 5px;
+      margin-bottom: 8px;
     }
 
     p {
-      font-size: 14px;
-      color: #333;
       display: flex;
       align-items: center;
-      justify-content: flex-start;
-      gap: 5px;
-      margin: 5px 0;
+      gap: 8px;
+      margin: 6px 0;
+      font-size: 14px;
 
       svg {
         font-size: 16px;
-        color: #001f54;
+        color: $primary-color;
       }
 
-      input, textarea {
+      input,
+      textarea {
         width: 100%;
-        padding: 1px;
+        padding: 8px;
         border: 1px solid #ccc;
-        border-radius: 5px;
-      }
+        border-radius: 8px;
+        font-size: 14px;
+        transition: border-color 0.2s;
 
+        &:focus {
+          border-color: $primary-color;
+          outline: none;
+        }
+      }
 
       textarea {
-        height: 60px;
+        height: 70px;
+        resize: vertical;
       }
     }
   }
@@ -127,55 +145,66 @@
 
 .profile-edit-actions {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   flex-direction: row-reverse;
-  .save-btn, .cancel-btn {
-    padding: 10px 15px;
+
+  .save-btn,
+  .cancel-btn {
+    padding: 10px 20px;
     border: none;
-    border-radius: 5px;
-    font-size: 16px;
+    border-radius: 8px;
+    font-size: 15px;
     cursor: pointer;
+    transition: background-color 0.3s;
   }
 
   .save-btn {
-    background-color: #007bff;
+    background-color: $primary-color;
     color: white;
+
+    &:hover {
+      background-color: darken($primary-color, 5%);
+    }
   }
 
   .cancel-btn {
-    background-color: #ccc;
-    color: black;
+    background-color: $secondary-color;
+    color: white;
+
+    &:hover {
+      background-color: darken($secondary-color, 5%);
+    }
   }
 }
 
 .contact-section {
   background: #f9f9f9;
-  padding: 15px;
-  border-radius: 10px;
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: $card-shadow;
   margin-top: 15px;
 
   h3 {
     font-size: 18px;
     font-weight: bold;
     color: #001f54;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
     text-align: center;
   }
 
   p {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 8px;
     background: white;
-    padding: 0 5px;
+    padding: 8px 10px;
     border-radius: 8px;
     border: 1px solid #ddd;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
 
     svg {
       font-size: 18px;
-      color: #001f54;
+      color: $primary-color;
     }
 
     input {
@@ -185,16 +214,12 @@
       font-size: 14px;
       padding: 5px;
       border-radius: 5px;
+
+      &[type="date"] {
+        cursor: pointer;
+      }
     }
 
-    input[type="date"] {
-      cursor: pointer;
-    }
-  }
-  p:last-child {
-    display: flex;
-    align-items: center;
-    
     select {
       flex: 1;
       border: none;
@@ -204,7 +229,7 @@
       border-radius: 5px;
       background: white;
       cursor: pointer;
-      appearance: none; // Ẩn style mặc định của trình duyệt
+      appearance: none;
       text-align: center;
 
       &:hover {
@@ -214,10 +239,38 @@
   }
 }
 
+// Toast message style suggestion (dùng react-toastify hoặc tương tự)
+.toast-container {
+  .Toastify__toast {
+    border-radius: 10px;
+    font-size: 14px;
+  }
+
+  .Toastify__toast--success {
+    background: $success-color;
+  }
+
+  .Toastify__toast--error {
+    background: $danger-color;
+  }
+}
+
+// Hiệu ứng fade-in nhẹ khi vào trang
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 body {
   display: flex;
   flex-direction: column;
-  min-height: 50vh;
+  min-height: 100vh;
   margin: 0;
+  background-color: $background-color;
 }
-

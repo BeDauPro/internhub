@@ -173,19 +173,12 @@ namespace InternHub.Services
         }
 
 
-        public async Task<StudentDto> UpdateAsync(int id, UpdateStudentDto dto, IWebHostEnvironment env, bool isEmployer, string userId)
+        public async Task<StudentDto> UpdateAsync(int id, UpdateStudentDto dto, IWebHostEnvironment env, string userId)
         {
             var student = await _context.Students.FindAsync(id);
 
             if (student == null || student.UserId != userId) return null;
 
-            if (isEmployer)
-            {
-                if (dto.Status != null)
-                {
-                    student.Status = dto.Status.Value;
-                }
-            }
             else
             {
                 // Chỉ Student mới vào nhánh này
@@ -200,6 +193,8 @@ namespace InternHub.Services
                 if (!string.IsNullOrWhiteSpace(dto.UserId)) student.UserId = dto.UserId;
                 if (dto.GPA.HasValue) student.GPA = dto.GPA.Value;
                 if (dto.DateOfBirth.HasValue) student.DateOfBirth = dto.DateOfBirth.Value;
+                if (!string.IsNullOrWhiteSpace(dto.Education)) student.Education = dto.Education;
+                if (!string.IsNullOrWhiteSpace(dto.Phone)) student.Phone = dto.Phone;
 
                 string webRootPath = env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
 
@@ -227,6 +222,17 @@ namespace InternHub.Services
             await _context.SaveChangesAsync();
             return _mapper.Map<StudentDto>(student);
         }
+
+        public async Task<bool> UpdateStatusAsync(int studentId, StudentStatus status)
+        {
+            var student = await _context.Students.FindAsync(studentId);
+            if (student == null) return false;
+
+            student.Status = status;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
 
         public async Task<bool> DeleteAsync(int id, string userId)
         {
