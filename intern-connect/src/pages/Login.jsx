@@ -28,6 +28,8 @@ const Login = () => {
           navigate("/findjob");
         } else if (role.toLowerCase() === "admin") {
           navigate("/studentmanagement");
+        } else if (role.toLowerCase() === "employer") {
+          navigate("/employerprofile");
         } else {
           navigate("/unauthorized");
         }

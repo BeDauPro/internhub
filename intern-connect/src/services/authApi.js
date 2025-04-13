@@ -14,10 +14,10 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use((config) => {
     const token = localStorage.getItem('token');
     if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`;
+        config.headers['Authorization'] = `Bearer ${token}`;
     }
     return config;
-  });
+});
   
 export const registerUser = async (data) => {
   try {
@@ -31,11 +31,19 @@ export const registerUser = async (data) => {
 export const loginUser = async (data) => {
   try {
     const response = await axiosInstance.post('/login-user', data);
+    
+    // 👇 Lưu token vào localStorage
+    const token = response.data.token;
+    if (token) {
+      localStorage.setItem('token', token);
+    }
+
     return response;
   } catch (err) {
     throw handleError(err);
   }
 };
+
 
 export const sendForgotPassword = async (email) => {
   try {

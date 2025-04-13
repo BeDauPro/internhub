@@ -30,6 +30,9 @@ namespace InternHub.Models
         public string GithubProfile { get; set; }
         public string CVFile { get; set; }
 
+        public string? Education { get; set; }
+        public string? Phone { get; set; }
+
         public StudentStatus Status { get; set; } 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

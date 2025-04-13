@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InternHub.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250410092525_Initdatabase")]
-    partial class Initdatabase
+    [Migration("20250413152939_MakeGithubProfileNullable")]
+    partial class MakeGithubProfileNullable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -467,6 +467,9 @@ namespace InternHub.Migrations
                     b.Property<DateTime?>("DateOfBirth")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<string>("Education")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("FullName")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -479,11 +482,13 @@ namespace InternHub.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("GithubProfile")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Languages")
                         .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Phone")
                         .HasColumnType("longtext");
 
                     b.Property<string>("ProfilePicture")

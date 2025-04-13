@@ -21,6 +21,7 @@ namespace InternHub.Controllers
 
         //fillter cho quản lí sinh viên
         [HttpGet("admin/paged")]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> GetPagedStudents(
         [FromQuery] string? fullName,
         [FromQuery] string? schoolEmail,
@@ -35,7 +36,7 @@ namespace InternHub.Controllers
             return Ok(result);
         }
 
-        [Authorize(Roles = "Employer")]
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -44,11 +45,17 @@ namespace InternHub.Controllers
         }
 
         [HttpGet("me")]
-        [Authorize(Roles = "Student")]
-        public async Task<IActionResult> GetMyProfile(){
+        [Authorize(Roles = "Student")] // Ensure the role matches the logged-in user's role
+        public async Task<IActionResult> GetMyProfile()
+        {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+            {
+                return Unauthorized(new { message = "User is not authenticated." });
+            }
+
             var student = await _studentService.GetByUserIdAsync(userId);
-            return student == null ? NotFound(): Ok(student);
+            return student == null ? NotFound() : Ok(student);
         }
 
         [Authorize(Roles = "Student")]
@@ -60,30 +67,24 @@ namespace InternHub.Controllers
             return Ok(created);
         }
 
-        [Authorize(Roles = "Student,Employer")]
+        [Authorize(Roles = "Student")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromForm] UpdateStudentDto dto)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var isEmployer = User.IsInRole("Employer");
-            var isStudent = User.IsInRole("Student");
-
-            if (isEmployer && dto.HasNonStatusFields())
-            {
-                return StatusCode(StatusCodes.Status403Forbidden, new { message = "Employer chỉ được phép cập nhật status sinh viên." });
-            }
-
-            if (isStudent && dto.Status != null)
-            {
-                return StatusCode(StatusCodes.Status403Forbidden, new { message = "Bạn không có quyền cập nhật trạng thái sinh viên." });
-            }
-
-            var updated = await _studentService.UpdateAsync(id, dto, _env, isEmployer, userId);
+            
+            var updated = await _studentService.UpdateAsync(id, dto, _env, userId);
             if (updated == null) return NotFound();
             return Ok(updated);
         }
-
-
+        [Authorize(Roles = "Employer")]
+        [HttpPut("{id}/status")]
+        public async Task<IActionResult> UpdateStatus(int id, [FromBody] UpdateStatusDto dto)
+        {
+            var result = await _studentService.UpdateStatusAsync(id, dto.Status);
+            if (!result) return NotFound();
+            return Ok(new { message = "Cập nhật trạng thái thành công." });
+        }
         [Authorize(Roles = "Student")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)

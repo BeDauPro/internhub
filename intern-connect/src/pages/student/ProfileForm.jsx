@@ -2,106 +2,282 @@ import React, { useState, useEffect } from "react";
 import "../../styles/pages/student/profileform.scss";
 import { useNavigate } from "react-router-dom";
 import avatar from "../../images/avatar.jpg";
-import { AiOutlineMail, AiOutlineHome, AiOutlinePhone, AiOutlineGithub, AiOutlineFileText } from "react-icons/ai";
+import { AiOutlineMail, AiOutlineHome, AiOutlinePhone, AiOutlineGithub } from "react-icons/ai";
 import { FaGraduationCap, FaBirthdayCake, FaMale } from "react-icons/fa";
-import Footer from '../../components/Footer'
+import Footer from "../../components/Footer";
+import {
+  createStudent,
+  updateStudent,
+  deleteStudent,
+  getStudentProfile,
+} from "../../services/studentApi";
 
-const ProfileForm = ({ initialData, onSave }) => {
+const ProfileForm = () => {
   const navigate = useNavigate();
+  const [formData, setFormData] = useState({});
+  const [loading, setLoading] = useState(false);
 
-  //formData nhận dữ liệu từ initialData được truyền từ app.js
-  const [formData, setFormData] = useState(initialData);
-  //đảm bảo formData được cập nhật khi initialData thay đổi
   useEffect(() => {
-    setFormData(initialData);
-  }, [initialData]);
+    const fetchProfile = async () => {
+      setLoading(true);
+      try {
+        const data = await getStudentProfile();
+         setFormData(data);
+      } catch (error) {
+        if (error.response?.status === 401) {
+          alert("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
+          navigate("/login");
+        } else {
+          console.error("Lỗi khi tải dữ liệu sinh viên:", error);
+          alert("Không thể tải dữ liệu sinh viên");
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  //xử lý thay đổi input với handleChange
+    fetchProfile();
+  }, []);
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
+  
 
-  //xử lý thay đổi input với handleArrayChange
-  const handleArrayChange = (e, field) => {
-    const value = e.target.value.split(",").map((item) => item.trim());
-    setFormData({ ...formData, [field]: value });
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setFormData({ ...formData, cvFile: file });
   };
 
-  const handleSave = () => {
-    console.log("Updated Data:", formData);
-    onSave(formData);//gọi hàm để cập nhật dữ liệu về app.js
-    navigate("/studentprofile");
+  const handleCreate = async () => {
+    const formDataToSend = new FormData();
+    Object.keys(formData).forEach((key) => {
+      if (key === "cvFile" && formData.cvFile) {
+        formDataToSend.append(key, formData.cvFile);
+      } else if (key === "otherInfo") {
+        // Ensure nested fields like githubProfile are included
+        Object.keys(formData.otherInfo || {}).forEach((nestedKey) => {
+          formDataToSend.append(nestedKey, formData.otherInfo[nestedKey] || "");
+        });
+      } else {
+        formDataToSend.append(key, formData[key] || "");
+      }
+    });
+
+    try {
+      await createStudent(formDataToSend);
+      alert("Tạo sinh viên thành công!");
+      navigate("/studentprofile");
+    } catch (error) {
+      console.error("Lỗi khi tạo sinh viên:", error);
+      alert("Đã xảy ra lỗi khi tạo sinh viên");
+    }
   };
+
+  const handleUpdate = async () => {
+    const formDataToSend = new FormData();
+    Object.keys(formData).forEach((key) => {
+      if (key === "cvFile" && formData.cvFile) {
+        formDataToSend.append(key, formData.cvFile);
+      } else {
+        formDataToSend.append(key, formData[key]);
+      }
+    });
+
+    try {
+      await updateStudent(formData.id, formDataToSend);
+      alert("Cập nhật sinh viên thành công!");
+      navigate("/studentprofile");
+    } catch (error) {
+      console.error("Lỗi khi cập nhật sinh viên:", error);
+      alert("Đã xảy ra lỗi khi cập nhật sinh viên");
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!window.confirm("Bạn có chắc muốn xoá sinh viên này?")) return;
+    try {
+      await deleteStudent(formData.id);
+      alert("Xoá sinh viên thành công!");
+      navigate("/studentprofile");
+    } catch (error) {
+      console.error("Lỗi khi xoá sinh viên:", error);
+      alert("Đã xảy ra lỗi khi xoá sinh viên");
+    }
+  };
+
+  if (loading) return <p>Đang tải dữ liệu...</p>;
 
   return (
     <>
-    <div className="profile-edit-container">
-      <div className="profile-edit-card">
-        <img className="profile-edit-image" src={avatar} alt="Avatar" />
-        <h2>{formData.name}</h2>
-        <p className="student-id">{formData.studentId}</p>
-        <div className="status">
-          <span className="status-label">Trạng thái việc làm</span>
-          <span className="status-badge">{formData.status}</span>
+      <div className="profile-edit-container">
+        <div className="profile-edit-card">
+          <img className="profile-edit-image" src={avatar} alt="Avatar" />
+          <h2>
+            <input
+              type="text"
+              name="fullName"
+              value={formData.fullName || ""}
+              onChange={handleChange}
+              placeholder="Nhập tên của bạn"
+            />
+          </h2>
+          <p className="student-id">{formData.id || "ID chưa được cung cấp"}</p>
+          <section className="contact-section">
+            <h3>Thông tin liên hệ</h3>
+            <p>
+              <AiOutlineMail />{" "}
+              <input
+                type="email"
+                name="schoolEmail"
+                value={formData.schoolEmail || ""}
+                onChange={handleChange}
+                placeholder="Email"
+              />
+            </p>
+            <p>
+              <AiOutlineHome />{" "}
+              <input
+                type="text"
+                name="address"
+                value={formData.address || ""}
+                onChange={handleChange}
+                placeholder="Địa chỉ"
+              />
+            </p>
+            <p>
+              <AiOutlinePhone />{" "}
+              <input
+                type="text"
+                name="phone"
+                value={formData.phone || ""}
+                onChange={handleChange}
+                placeholder="Số điện thoại"
+              />
+            </p>
+            <p>
+              <FaBirthdayCake />{" "}
+              <input
+                type="date"
+                name="dateOfBirth"
+                value={formData.dateOfBirth || ""}
+                onChange={handleChange}
+              />
+            </p>
+            <p>
+              <FaMale />
+              <select
+                name="gender"
+                value={formData.gender || ""}
+                onChange={handleChange}
+              >
+                <option value="">Chọn giới tính</option>
+                <option value="Nam">Nam</option>
+                <option value="Nữ">Nữ</option>
+              </select>
+            </p>
+          </section>
         </div>
-        <section className="contact-section">
-          <h3>Thông tin liên hệ</h3>
-          <p><AiOutlineMail /> <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="Email" /></p>
-          <p><AiOutlineHome /> <input type="text" name="address" value={formData.address} onChange={handleChange} placeholder="Địa chỉ" /></p>
-          <p><AiOutlinePhone /> <input type="text" name="phone" value={formData.phone} onChange={handleChange} placeholder="Số điện thoại" /></p>
-          <p><FaBirthdayCake /> <input type="date" name="birthday" value={formData.birthday} onChange={handleChange} /></p>
-          <p><FaMale />
-            <select name="gender" value={formData.gender} onChange={handleChange} placeholder="Giới tính">
-              <option>Nam</option>
-              <option>Nữ</option>
-            </select>
-          </p>
-        </section>
-      </div>
 
-      <div className="profile-edit-details">
+        <div className="profile-edit-details">
+          <section>
+            <h3>Giới thiệu bản thân</h3>
+            <textarea
+              name="bio"
+              value={formData.bio || ""}
+              onChange={handleChange}
+              placeholder="Nhập giới thiệu bản thân"
+            />
+          </section>
 
+          <section>
+            <h3>Trình độ học vấn</h3>
+            <input
+              type="text"
+              name="education"
+              value={formData.education || ""}
+              onChange={handleChange}
+              placeholder="Nhập trình độ học vấn"
+            />
+          </section>
 
-        <section>
-          <h3>Giới thiệu bản thân</h3>
-          <textarea name="introduction" value={formData.introduction} onChange={handleChange} />
-        </section>
+          <section>
+            <h3>Kỹ năng</h3>
+            <input
+              type="text"
+              name="skills"
+              value={formData.skills || ""}
+              onChange={handleChange}
+              placeholder="Nhập kỹ năng"
+            />
+          </section>
 
-        <section>
-          <h3>Trình độ học vấn</h3>
-          <input
-            type="text"
-            name="education"
-            value={formData.education.map((edu) => edu.institution).join(", ")}
-            onChange={(e) => handleArrayChange(e, "education")}
-            placeholder="Nhập các trường học, cách nhau bằng dấu phẩy"
-          />
-          <input type="text" name="gpa" value={formData.otherInfo.gpa} onChange={handleChange} placeholder="GPA" />
-        </section>
+          <section>
+            <h3>Ngôn ngữ</h3>
+            <input
+              type="text"
+              name="languages"
+              value={formData.languages || ""}
+              onChange={handleChange}
+              placeholder="Nhập các ngôn ngữ (cách nhau bằng dấu phẩy)"
+            />
+          </section>
 
-        <section>
-          <h3>Github</h3>
-          <input type="text" name="github" value={formData.otherInfo.github} onChange={handleChange} />
-        </section>
+          <section>
+            <h3>GPA</h3>
+            <input
+              type="text"
+              name="gpa"
+              value={formData.gpa || ""}
+              onChange={handleChange}
+              placeholder="Nhập GPA"
+            />
+          </section>
 
-        <section>
-          <h3>Kỹ năng</h3>
-          <textarea
-            name="skills"
-            value={formData.skills.join(", ")}
-            onChange={(e) => handleArrayChange(e, "skills")}
-            placeholder="Nhập các kỹ năng, cách nhau bằng dấu phẩy"
-          />
-        </section>
+          <section>
+            <h3>Github</h3>
+            <input
+              type="text"
+              name="githubProfile"
+              value={formData.githubProfile || ""}
+              onChange={handleChange}
+              placeholder="Nhập liên kết Github"
+            />
+          </section>
 
-        <div className="profile-edit-actions">
-          <button onClick={handleSave} className="save-btn">Lưu</button>
-          <button onClick={() => navigate("/studentprofile")} className="cancel-btn">Hủy</button>
+          <section>
+            <h3>CV File</h3>
+            <input
+              type="file"
+              name="cvFile"
+              onChange={handleFileChange}
+              accept=".pdf,.doc,.docx"
+            />
+          </section>
+
+          <div className="profile-edit-actions">
+            {!formData.id ? (
+              <button onClick={handleCreate} className="save-btn">
+                Lưu (Tạo mới)
+              </button>
+            ) : (
+              <>
+                <button onClick={handleUpdate} className="save-btn">
+                  Chỉnh sửa
+                </button>
+                <button onClick={handleDelete} className="delete-btn">
+                  Xoá
+                </button>
+              </>
+            )}
+            <button onClick={() => navigate("/studentprofile")} className="cancel-btn">
+              Hủy
+            </button>
+          </div>
         </div>
       </div>
-    </div>
-    <Footer/>
+      <Footer />
     </>
   );
 };

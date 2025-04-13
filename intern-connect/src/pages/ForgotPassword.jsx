@@ -25,7 +25,10 @@ const ForgotPassword = () => {
                 alert("Gửi token thất bại. Vui lòng thử lại.");
             }
         } catch (error) {
-            if (error.response && error.response.status === 400) {
+            if (error.response && error.response.status === 403) {
+                alert("Bạn không có quyền thực hiện hành động này.");
+                navigate("/unauthorized"); // Redirect to unauthorized page
+            } else if (error.response && error.response.status === 400) {
                 alert("Email không hợp lệ.");
             } else {
                 alert("Đã xảy ra lỗi không xác định.");

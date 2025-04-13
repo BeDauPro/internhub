@@ -1,5 +1,6 @@
 ﻿using InternHub.DTOs.Common;
 using InternHub.DTOs.Student;
+using InternHub.Models.Enums;
 
 namespace InternHub.Services.Interfaces
 {
@@ -19,7 +20,8 @@ namespace InternHub.Services.Interfaces
         Task<StudentDto?> GetByUserIdAsync(string userID);
         Task<StudentDto?> GetByIdAsync(int id);
         Task<StudentDto> CreateAsync(CreateStudentDto dto, string userId, IWebHostEnvironment env);
-        Task<StudentDto> UpdateAsync(int id, UpdateStudentDto dto, IWebHostEnvironment env, bool isEmployer, string userId);
+        Task<StudentDto> UpdateAsync(int id, UpdateStudentDto dto, IWebHostEnvironment env, string userId);
+        Task<bool> UpdateStatusAsync(int studentId, StudentStatus status);
         Task<bool> DeleteAsync(int id,  string userId);
         List<string> GetStatuses();
     }

@@ -33,7 +33,7 @@ namespace InternHub.Models
             modelBuilder.Entity<ApplicationHistory>().ToTable("ApplicationHistories");
             modelBuilder.Entity<StudentReview>().ToTable("StudentReviews");
             modelBuilder.Entity<Notification>().ToTable("Notifications");
-
+            
             modelBuilder.Entity<Event>()
              .HasOne(e => e.Admin)
              .WithMany(a => a.Events)
