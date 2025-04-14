@@ -50,11 +50,18 @@ const ProfileForm = () => {
     setFormData({ ...formData, cvFile: file });
   };
 
+  const handleAvatarChange = (e) => {
+    const file = e.target.files[0];
+    setFormData({ ...formData, profilePicture: file });
+  };
+
   const handleCreate = async () => {
     const formDataToSend = new FormData();
     Object.keys(formData).forEach((key) => {
       if (key === "cvFile" && formData.cvFile) {
         formDataToSend.append(key, formData.cvFile);
+      } else if (key === "profilePicture" && formData.profilePicture) {
+        formDataToSend.append(key, formData.profilePicture);
       } else if (key === "otherInfo") {
         // Ensure nested fields like githubProfile are included
         Object.keys(formData.otherInfo || {}).forEach((nestedKey) => {
@@ -80,6 +87,8 @@ const ProfileForm = () => {
     Object.keys(formData).forEach((key) => {
       if (key === "cvFile" && formData.cvFile) {
         formDataToSend.append(key, formData.cvFile);
+      } else if (key === "profilePicture" && formData.profilePicture) {
+        formDataToSend.append(key, formData.profilePicture);
       } else {
         formDataToSend.append(key, formData[key]);
       }
@@ -113,7 +122,24 @@ const ProfileForm = () => {
     <>
       <div className="profile-edit-container">
         <div className="profile-edit-card">
-          <img className="profile-edit-image" src={avatar} alt="Avatar" />
+          <img
+            className="profile-edit-image"
+            src={
+              formData.profilePicture instanceof File
+                ? URL.createObjectURL(formData.profilePicture)
+                : formData.profilePicture || avatar
+            }
+            alt="Avatar"
+          />
+          <section>
+            <h3>Ảnh đại diện</h3>
+            <input
+              type="file"
+              name="profilePicture"
+              onChange={handleAvatarChange}
+              accept="image/*"
+            />
+          </section>
           <h2>
             <input
               type="text"
