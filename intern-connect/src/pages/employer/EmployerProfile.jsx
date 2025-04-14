@@ -1,56 +1,89 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../styles/pages/employer/employerprofile.scss';
 import logo from '../../images/fpt.jpg';
 import { AiOutlineMail, AiOutlineHome, AiOutlinePhone, AiOutlineGroup, AiOutlineGlobal, AiOutlineFieldTime } from "react-icons/ai";
 import Review from './Review';
 import Footer from '../../components/Footer';
-
-const EmployerProfile = ({ profileData ,EmployerReview}) => {
+import { getEmployerProfile, createEmployer } from '../../services/employerApi';
+const EmployerProfile = () => {
     const navigate = useNavigate();
+    const [employerProfile, setEmployerProfile] = React.useState(null);
+    const [EmployerReview, setEmployerReview] = React.useState(null);
+    const [isCreating, setIsCreating] = React.useState(false);
 
-    if (!profileData) {
+    useEffect(()=>{
+        const fetchData = async () => {
+            try {
+                const data = await getEmployerProfile();
+                if (!data) {
+                    setIsCreating(true); 
+                } else {
+                    setEmployerProfile(data);
+                    setEmployerReview(data.EmployerReview);
+                }
+            } catch (err) {
+                console.error('Error loading profile: ', err);
+                alert('Không thể tải thông tin nhà tuyển dụng. Vui lòng thử lại sau.');
+            }
+        };
+        fetchData();
+    },[]);
+
+    const handleCreate = async (formData) => {
+        try{
+            const newEmployer = await createEmployer(formData);
+            setEmployerProfile(newEmployer);
+            setIsCreating(false);
+        } catch(err){
+            console.error('Error creating profile: ', err);
+            alert('Không thể tạo thông tin nhà tuyển dụng. Vui lòng thử lại sau.');
+        }
+    };
+
+    if (!employerProfile && !isCreating) {
         return (
             <div className="error-container">
+
                 <h2>Thông tin công ty không khả dụng</h2>
-                <button onClick={() => navigate('/')} className="back-btn">Quay lại trang chủ</button>
+                <button
+                    onClick={() => navigate('/editprofile')}
+                    className="create-account-btn">
+                    Tạo tài khoản
+                </button>
             </div>
         );
     }
 
     const handleEdit = () => {
-        navigate('/editprofile', { state: { profileData } });
+        navigate('/editprofile', { state: { employerProfile } });
     };
 
     return (
         <>
             <div className="profile-container">
                 <div className="profile-card">
-                    <img className="profile-image" src={logo} alt="Avatar" />
-                    <h2>{profileData.companyName}</h2>
-                    <p className="company-id">{profileData.companyID}</p>
+                    <img className="profile-image" src={employerProfile.companyLogo || logo} alt="Avatar" />
+                    <h2>{employerProfile.companyName}</h2>
+                    <p className="company-id">ID nhà tuyển dụng: {employerProfile.employerId}</p>
                     <h3>Thông tin liên hệ</h3>
-                    <p><AiOutlineMail /> {profileData.companyEmail}</p>
-                    <p><AiOutlineHome /> {profileData.addresscom}</p>
-                    <p><AiOutlinePhone /> {profileData.phone}</p>
-                    <p><AiOutlineGroup /> {profileData.totalEmployee}</p>
-                    <p><AiOutlineGlobal /> <a href={profileData.website} target="_blank" rel="noopener noreferrer">{profileData.website}</a></p>
-                    <p><AiOutlineFieldTime /> {profileData.since}</p>
+                    <p><AiOutlineMail /> {employerProfile.companyEmail}</p>
+                    <p><AiOutlineHome /> {employerProfile.address}</p>
+                    <p><AiOutlinePhone /> {employerProfile.phone}</p>
+                    <p><AiOutlineGroup /> {employerProfile.employeeSize}</p>
+                    <p><AiOutlineGlobal /> <a href={employerProfile.website} target="_blank" rel="noopener noreferrer">{employerProfile.website}</a></p>
+                    <p><AiOutlineFieldTime /> {employerProfile.foundedYear}</p>
                 </div>
                 <div className='main-profile'>
                     <div className="profile-details">
                         <section className="section">
                             <h3>Giới thiệu công ty</h3>
-                            <p>{profileData.introduction}</p>
+                            <p>{employerProfile.companyDescription}</p>
                         </section>
 
                         <section className="section">
-                            <h3>Dịch vụ cung cấp</h3>
-                            <ul>
-                                {profileData.services?.map((service, index) => (
-                                    <li key={index}>{service}</li>
-                                ))}
-                            </ul>
+                            <h3>Ngành nghề</h3>
+                            <p><AiOutlineGroup /> {employerProfile.industry}</p>
                         </section>
                         <div className='profile-actions'>
                             <button className="edit-btn" onClick={handleEdit}>Chỉnh sửa</button>

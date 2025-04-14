@@ -22,7 +22,7 @@ const ProfileForm = () => {
       setLoading(true);
       try {
         const data = await getStudentProfile();
-         setFormData(data);
+        setFormData(data || {});
       } catch (error) {
         if (error.response?.status === 401) {
           alert("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
@@ -38,21 +38,34 @@ const ProfileForm = () => {
 
     fetchProfile();
   }, []);
-  
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
-  
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     setFormData({ ...formData, cvFile: file });
   };
 
-  const handleAvatarChange = (e) => {
+  const handleAvatarChange = async (e) => {
     const file = e.target.files[0];
-    setFormData({ ...formData, profilePicture: file });
+    if (file) {
+      setFormData({ ...formData, profilePicture: file });
+
+      // Automatically upload the profile picture
+      const formDataToSend = new FormData();
+      formDataToSend.append("profilePicture", file);
+
+      try {
+        await updateStudent(formData.id, formDataToSend); // Assuming `updateStudent` accepts partial updates
+        alert("Ảnh đại diện đã được cập nhật!");
+      } catch (error) {
+        console.error("Lỗi khi cập nhật ảnh đại diện:", error);
+        alert("Không thể cập nhật ảnh đại diện. Vui lòng thử lại.");
+      }
+    }
   };
 
   const handleCreate = async () => {
@@ -62,11 +75,6 @@ const ProfileForm = () => {
         formDataToSend.append(key, formData.cvFile);
       } else if (key === "profilePicture" && formData.profilePicture) {
         formDataToSend.append(key, formData.profilePicture);
-      } else if (key === "otherInfo") {
-        // Ensure nested fields like githubProfile are included
-        Object.keys(formData.otherInfo || {}).forEach((nestedKey) => {
-          formDataToSend.append(nestedKey, formData.otherInfo[nestedKey] || "");
-        });
       } else {
         formDataToSend.append(key, formData[key] || "");
       }
@@ -121,185 +129,187 @@ const ProfileForm = () => {
   return (
     <>
       <div className="profile-edit-container">
-        <div className="profile-edit-card">
-          <img
-            className="profile-edit-image"
-            src={
-              formData.profilePicture instanceof File
-                ? URL.createObjectURL(formData.profilePicture)
-                : formData.profilePicture || avatar
-            }
-            alt="Avatar"
-          />
-          <section>
-            <h3>Ảnh đại diện</h3>
-            <input
-              type="file"
-              name="profilePicture"
-              onChange={handleAvatarChange}
-              accept="image/*"
+        <div className="profile-edit-wrapper">
+          <div className="profile-edit-card">
+            <img
+              className="profile-edit-image"
+              src={
+                formData.profilePicture instanceof File
+                  ? URL.createObjectURL(formData.profilePicture)
+                  : formData.profilePicture || avatar
+              }
+              alt="Avatar"
             />
-          </section>
-          <h2>
-            <input
-              type="text"
-              name="fullName"
-              value={formData.fullName || ""}
-              onChange={handleChange}
-              placeholder="Nhập tên của bạn"
-            />
-          </h2>
-          <p className="student-id">{formData.id || "ID chưa được cung cấp"}</p>
-          <section className="contact-section">
-            <h3>Thông tin liên hệ</h3>
-            <p>
-              <AiOutlineMail />{" "}
+            <section className="logo-upload">
+              <h3>Ảnh đại diện</h3>
               <input
-                type="email"
-                name="schoolEmail"
-                value={formData.schoolEmail || ""}
-                onChange={handleChange}
-                placeholder="Email"
+                type="file"
+                name="profilePicture"
+                onChange={handleAvatarChange}
+                accept="image/*"
               />
-            </p>
-            <p>
-              <AiOutlineHome />{" "}
+            </section>
+            <h2>
               <input
                 type="text"
-                name="address"
-                value={formData.address || ""}
+                name="fullName"
+                value={formData.fullName || ""}
                 onChange={handleChange}
-                placeholder="Địa chỉ"
+                placeholder="Nhập tên của bạn"
               />
-            </p>
-            <p>
-              <AiOutlinePhone />{" "}
+            </h2>
+            <p className="student-id">ID Sinh viên: {formData.id || "Chưa có ID"}</p>
+            <section className="contact-section">
+              <h3>Thông tin liên hệ</h3>
+              <p>
+                <AiOutlineMail />{" "}
+                <input
+                  type="email"
+                  name="schoolEmail"
+                  value={formData.schoolEmail || ""}
+                  onChange={handleChange}
+                  placeholder="Email"
+                />
+              </p>
+              <p>
+                <AiOutlineHome />{" "}
+                <input
+                  type="text"
+                  name="address"
+                  value={formData.address || ""}
+                  onChange={handleChange}
+                  placeholder="Địa chỉ"
+                />
+              </p>
+              <p>
+                <AiOutlinePhone />{" "}
+                <input
+                  type="text"
+                  name="phone"
+                  value={formData.phone || ""}
+                  onChange={handleChange}
+                  placeholder="Số điện thoại"
+                />
+              </p>
+              <p>
+                <FaBirthdayCake />{" "}
+                <input
+                  type="date"
+                  name="dateOfBirth"
+                  value={formData.dateOfBirth || ""}
+                  onChange={handleChange}
+                />
+              </p>
+              <p>
+                <FaMale />
+                <select
+                  name="gender"
+                  value={formData.gender || ""}
+                  onChange={handleChange}
+                >
+                  <option value="">Chọn giới tính</option>
+                  <option value="Nam">Nam</option>
+                  <option value="Nữ">Nữ</option>
+                </select>
+              </p>
+            </section>
+          </div>
+
+          <div className="profile-edit-details">
+            <section>
+              <h3>Giới thiệu bản thân</h3>
+              <textarea
+                name="bio"
+                value={formData.bio || ""}
+                onChange={handleChange}
+                placeholder="Nhập giới thiệu bản thân"
+              />
+            </section>
+
+            <section>
+              <h3>Trình độ học vấn</h3>
               <input
                 type="text"
-                name="phone"
-                value={formData.phone || ""}
+                name="education"
+                value={formData.education || ""}
                 onChange={handleChange}
-                placeholder="Số điện thoại"
+                placeholder="Nhập trình độ học vấn"
               />
-            </p>
-            <p>
-              <FaBirthdayCake />{" "}
+            </section>
+
+            <section>
+              <h3>Kỹ năng</h3>
               <input
-                type="date"
-                name="dateOfBirth"
-                value={formData.dateOfBirth || ""}
+                type="text"
+                name="skills"
+                value={formData.skills || ""}
                 onChange={handleChange}
+                placeholder="Nhập kỹ năng"
               />
-            </p>
-            <p>
-              <FaMale />
-              <select
-                name="gender"
-                value={formData.gender || ""}
+            </section>
+
+            <section>
+              <h3>Ngôn ngữ</h3>
+              <input
+                type="text"
+                name="languages"
+                value={formData.languages || ""}
                 onChange={handleChange}
-              >
-                <option value="">Chọn giới tính</option>
-                <option value="Nam">Nam</option>
-                <option value="Nữ">Nữ</option>
-              </select>
-            </p>
-          </section>
-        </div>
+                placeholder="Nhập các ngôn ngữ (cách nhau bằng dấu phẩy)"
+              />
+            </section>
 
-        <div className="profile-edit-details">
-          <section>
-            <h3>Giới thiệu bản thân</h3>
-            <textarea
-              name="bio"
-              value={formData.bio || ""}
-              onChange={handleChange}
-              placeholder="Nhập giới thiệu bản thân"
-            />
-          </section>
+            <section>
+              <h3>GPA</h3>
+              <input
+                type="text"
+                name="gpa"
+                value={formData.gpa || ""}
+                onChange={handleChange}
+                placeholder="Nhập GPA"
+              />
+            </section>
 
-          <section>
-            <h3>Trình độ học vấn</h3>
-            <input
-              type="text"
-              name="education"
-              value={formData.education || ""}
-              onChange={handleChange}
-              placeholder="Nhập trình độ học vấn"
-            />
-          </section>
+            <section>
+              <h3>Github</h3>
+              <input
+                type="text"
+                name="githubProfile"
+                value={formData.githubProfile || ""}
+                onChange={handleChange}
+                placeholder="Nhập liên kết Github"
+              />
+            </section>
 
-          <section>
-            <h3>Kỹ năng</h3>
-            <input
-              type="text"
-              name="skills"
-              value={formData.skills || ""}
-              onChange={handleChange}
-              placeholder="Nhập kỹ năng"
-            />
-          </section>
+            <section>
+              <h3>CV File</h3>
+              <input
+                type="file"
+                name="cvFile"
+                onChange={handleFileChange}
+                accept=".pdf,.doc,.docx"
+              />
+            </section>
 
-          <section>
-            <h3>Ngôn ngữ</h3>
-            <input
-              type="text"
-              name="languages"
-              value={formData.languages || ""}
-              onChange={handleChange}
-              placeholder="Nhập các ngôn ngữ (cách nhau bằng dấu phẩy)"
-            />
-          </section>
-
-          <section>
-            <h3>GPA</h3>
-            <input
-              type="text"
-              name="gpa"
-              value={formData.gpa || ""}
-              onChange={handleChange}
-              placeholder="Nhập GPA"
-            />
-          </section>
-
-          <section>
-            <h3>Github</h3>
-            <input
-              type="text"
-              name="githubProfile"
-              value={formData.githubProfile || ""}
-              onChange={handleChange}
-              placeholder="Nhập liên kết Github"
-            />
-          </section>
-
-          <section>
-            <h3>CV File</h3>
-            <input
-              type="file"
-              name="cvFile"
-              onChange={handleFileChange}
-              accept=".pdf,.doc,.docx"
-            />
-          </section>
-
-          <div className="profile-edit-actions">
-            {!formData.id ? (
-              <button onClick={handleCreate} className="save-btn">
-                Lưu (Tạo mới)
+            <div className="profile-edit-actions">
+              {!formData.id ? (
+                <button onClick={handleCreate} className="save-btn">
+                  Lưu (Tạo mới)
+                </button>
+              ) : (
+                <>
+                  <button onClick={handleUpdate} className="save-btn">
+                    Cập nhật
+                  </button>
+                  <button onClick={handleDelete} className="delete-btn">
+                    Xoá
+                  </button>
+                </>
+              )}
+              <button onClick={() => navigate("/studentprofile")} className="cancel-btn">
+                Hủy
               </button>
-            ) : (
-              <>
-                <button onClick={handleUpdate} className="save-btn">
-                  Chỉnh sửa
-                </button>
-                <button onClick={handleDelete} className="delete-btn">
-                  Xoá
-                </button>
-              </>
-            )}
-            <button onClick={() => navigate("/studentprofile")} className="cancel-btn">
-              Hủy
-            </button>
+            </div>
           </div>
         </div>
       </div>
