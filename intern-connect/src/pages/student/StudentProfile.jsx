@@ -16,7 +16,7 @@ import {
 import Footer from '../../components/Footer';
 import Evaluate from './Evaluate';
 import { getStudentProfile, createStudent } from '../../services/studentApi';
-import ProfileForm from './ProfileForm';
+
 
 const StudentProfile = () => {
     const [student, setStudent] = useState(null);
@@ -27,7 +27,7 @@ const StudentProfile = () => {
             try {
                 const data = await getStudentProfile();
                 if (!data) {
-                    setIsCreating(true); // Show form if no data exists
+                    setIsCreating(true); 
                 } else {
                     setStudent(data);
                 }
@@ -50,7 +50,7 @@ const StudentProfile = () => {
         }
     };
 
-    if (!student) {
+    if (!student && !isCreating) {
         return (
             <div className="error-container">
                 <h2>Chưa có thông tin tài khoản</h2>
@@ -64,22 +64,13 @@ const StudentProfile = () => {
         );
     }
 
-    // if () {
-    //     return (
-    //         <div className="error-container">
-    //             <h2>Thông tin sinh viên không khả dụng</h2>
-    //             <button onClick={() => window.location.reload()} className="back-btn">Tải lại</button>
-    //         </div>
-    //     );
-    // }
-
     return (
         <>
             <div className="profile-container">
                 <div className="profile-card">
                     <img
                         className="profile-image"
-                        src={student.profilePicture || '/default-avatar.png'}
+                        src={student.profilePicture}
                         alt="Avatar"
                     />
                     <h2>{student.fullName}</h2>
