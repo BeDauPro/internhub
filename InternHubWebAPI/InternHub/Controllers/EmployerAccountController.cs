@@ -109,36 +109,40 @@ namespace InternHub.Controllers
 
         // READ ALL: api/admin/Employer
         [HttpGet]
-        public async Task<IActionResult> GetAllEmployers()
+        public async Task<IActionResult> GetAllEmployers([FromQuery] int? hours = null, [FromQuery] int? count = 50)
         {
             try
             {
-                var employers = await _context.Set<Employer>().ToListAsync();
-                var result = new List<EmployerAccountResponseDto>();
-
-                foreach (var employer in employers)
-                {
-                    var user = await _userManager.FindByIdAsync(employer.UserId);
-                    if (user != null)
+                // Truy vấn chỉ từ bảng AspNetUsers, lọc theo role "Employer"
+                var query = _context.Users
+                    .Where(u => u.UserName != null) // Đảm bảo không null
+                    .OrderByDescending(u => u.CreatedAt)
+                    .Select(u => new EmployerAccountResponseDto
                     {
-                        result.Add(new EmployerAccountResponseDto
-                        {
-                            Id = user.Id,
-                            UserName = user.UserName,
-                            Email = user.Email,
-                            Phone = user.PhoneNumber,
-                            CreatedAt = employer.CreatedAt,
-                            EmployerId = employer.EmployerId,
-                            Role = "Employer"
-                        });
-                    }
+                        Id = u.Id,
+                        UserName = u.UserName,
+                        Email = u.Email,
+                        Phone = u.PhoneNumber,
+                        CreatedAt = u.CreatedAt,
+                        // Không có EmployerId vì chỉ lấy từ AspNetUsers
+                        Role = "Employer"
+                    });
+
+                // Nếu cần lọc theo thời gian tạo gần đây
+                if (hours.HasValue)
+                {
+                    var cutoffTime = DateTime.UtcNow.AddHours(-hours.Value);
+                    query = query.Where(r => r.CreatedAt >= cutoffTime);
                 }
+
+                // Giới hạn số lượng bản ghi
+                var result = await query.Take(count.Value).ToListAsync();
 
                 return Ok(result);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { error = ex.Message });
+                return StatusCode(500, new { error = ex.Message, stackTrace = ex.StackTrace });
             }
         }
 
