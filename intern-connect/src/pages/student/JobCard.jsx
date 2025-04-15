@@ -1,14 +1,50 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import '../../styles/components/jobcard.scss'
 import { useNavigate } from 'react-router-dom'
+import { getAllJobs } from '../../services/JobPostingApi' // Điều chỉnh path import
 
-
-const JobCard = ({ searchResults, jobs }) => {
+const JobCard = ({ searchResults }) => {
+  const [jobs, setJobs] = useState([]);
   const [visibleJobs, setVisibleJobs] = useState(8);
   const [selectedType, setSelectedType] = useState("All");
   const [selectedLocation, setSelectedLocation] = useState("All");
   const [selectedTitle, setSelectedTitle] = useState("All");
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const navigate = useNavigate();
+
+  // Fetch jobs when component mounts
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        setIsLoading(true);
+        const fetchedJobs = await getAllJobs();
+        
+        // Transform jobs to match the original component's structure
+        const transformedJobs = fetchedJobs.map(job => ({
+          id: job.jobPostingId,
+          title: job.jobTitle,
+          type: job.workType,
+          typeClass: job.workType === 'Full-time' ? 'fullTime' : 'partTime',
+          logo: job.companyLogo || '/default-logo.png',
+          company: job.companyName,
+          location: job.location,
+          quantity: job.vacancies,
+          date: new Date(job.postedAt).toLocaleDateString()
+        }));
+
+        setJobs(transformedJobs);
+        setIsLoading(false);
+      } catch (err) {
+        setError("Không thể tải danh sách công việc");
+        setIsLoading(false);
+      }
+    };
+
+    fetchJobs();
+  }, []);
+
   const filteredJobs = jobs.filter((job) =>
     (selectedType === "All" || job.type === selectedType) &&
     (selectedLocation === "All" || job.location === selectedLocation) &&
@@ -21,6 +57,9 @@ const JobCard = ({ searchResults, jobs }) => {
   const handleLoadMore = () => {
     setVisibleJobs(prevVisibleJobs => prevVisibleJobs + 8);
   };
+
+  if (isLoading) return <div>Đang tải...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
     <>
