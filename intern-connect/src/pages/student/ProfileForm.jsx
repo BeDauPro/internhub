@@ -2,7 +2,12 @@ import React, { useState, useEffect } from "react";
 import "../../styles/pages/student/profileform.scss";
 import { useNavigate } from "react-router-dom";
 import avatar from "../../images/avatar.jpg";
-import { AiOutlineMail, AiOutlineHome, AiOutlinePhone, AiOutlineGithub } from "react-icons/ai";
+import {
+  AiOutlineMail,
+  AiOutlineHome,
+  AiOutlinePhone,
+  AiOutlineGithub,
+} from "react-icons/ai";
 import { FaGraduationCap, FaBirthdayCake, FaMale } from "react-icons/fa";
 import Footer from "../../components/Footer";
 import {
@@ -10,7 +15,8 @@ import {
   updateStudent,
   deleteStudent,
   getStudentProfile,
-} from "../../services/studentApi";
+  updateAvatar,
+} from "../../services/studentApi"; 
 
 const ProfileForm = () => {
   const navigate = useNavigate();
@@ -50,21 +56,22 @@ const ProfileForm = () => {
   };
 
   const handleAvatarChange = async (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setFormData({ ...formData, profilePicture: file });
+    console.log("Avatar change event triggered");    const file = e.target.files[0];
+    if (!file) return;
 
-      // Automatically upload the profile picture
-      const formDataToSend = new FormData();
-      formDataToSend.append("profilePicture", file);
+    try {
+      const response = await updateAvatar(formData.id, file);
+      const newImageUrl = response?.profilePicture; 
 
-      try {
-        await updateStudent(formData.id, formDataToSend); // Assuming `updateStudent` accepts partial updates
-        alert("Ảnh đại diện đã được cập nhật!");
-      } catch (error) {
-        console.error("Lỗi khi cập nhật ảnh đại diện:", error);
-        alert("Không thể cập nhật ảnh đại diện. Vui lòng thử lại.");
-      }
+      setFormData((prev) => ({
+        ...prev,
+        profilePicture: newImageUrl,
+      }));
+
+      alert("Ảnh đại diện đã được cập nhật!");
+    } catch (error) {
+      console.error("Lỗi khi cập nhật ảnh đại diện:", error);
+      alert("Không thể cập nhật ảnh đại diện. Vui lòng thử lại.");
     }
   };
 
@@ -73,8 +80,6 @@ const ProfileForm = () => {
     Object.keys(formData).forEach((key) => {
       if (key === "cvFile" && formData.cvFile) {
         formDataToSend.append(key, formData.cvFile);
-      } else if (key === "profilePicture" && formData.profilePicture) {
-        formDataToSend.append(key, formData.profilePicture);
       } else {
         formDataToSend.append(key, formData[key] || "");
       }
@@ -93,12 +98,11 @@ const ProfileForm = () => {
   const handleUpdate = async () => {
     const formDataToSend = new FormData();
     Object.keys(formData).forEach((key) => {
+      console.log("Appending key:", key, "Value:", formData[key]);
       if (key === "cvFile" && formData.cvFile) {
         formDataToSend.append(key, formData.cvFile);
-      } else if (key === "profilePicture" && formData.profilePicture) {
-        formDataToSend.append(key, formData.profilePicture);
       } else {
-        formDataToSend.append(key, formData[key]);
+        formDataToSend.append(key, formData[key] || "");
       }
     });
 
@@ -133,11 +137,7 @@ const ProfileForm = () => {
           <div className="profile-edit-card">
             <img
               className="profile-edit-image"
-              src={
-                formData.profilePicture instanceof File
-                  ? URL.createObjectURL(formData.profilePicture)
-                  : formData.profilePicture || avatar
-              }
+              src={formData.profilePicture || avatar}
               alt="Avatar"
             />
             <section className="logo-upload">
@@ -162,7 +162,7 @@ const ProfileForm = () => {
             <section className="contact-section">
               <h3>Thông tin liên hệ</h3>
               <p>
-                <AiOutlineMail />{" "}
+                <AiOutlineMail />
                 <input
                   type="email"
                   name="schoolEmail"
@@ -172,7 +172,7 @@ const ProfileForm = () => {
                 />
               </p>
               <p>
-                <AiOutlineHome />{" "}
+                <AiOutlineHome />
                 <input
                   type="text"
                   name="address"
@@ -182,7 +182,7 @@ const ProfileForm = () => {
                 />
               </p>
               <p>
-                <AiOutlinePhone />{" "}
+                <AiOutlinePhone />
                 <input
                   type="text"
                   name="phone"
@@ -192,7 +192,7 @@ const ProfileForm = () => {
                 />
               </p>
               <p>
-                <FaBirthdayCake />{" "}
+                <FaBirthdayCake />
                 <input
                   type="date"
                   name="dateOfBirth"

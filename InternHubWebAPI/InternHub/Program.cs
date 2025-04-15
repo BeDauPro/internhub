@@ -41,6 +41,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
 // Configure Identity Options
 builder.Services.Configure<IdentityOptions>(options => {
     // Thiết lập về Password
@@ -165,7 +166,7 @@ builder.Services.AddCors(options =>
                                 .AllowCredentials();
                       });
 });
-
+builder.Services.AddSingleton<AzureBlobService>();
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())

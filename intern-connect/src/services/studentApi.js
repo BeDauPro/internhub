@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://localhost:7286/api/Students';
+const BASE_URL = 'https://localhost:7286/api/students';
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
@@ -53,7 +53,18 @@ export const createStudent = async (formData) => {
 
 // Cập nhật sinh viên
 export const updateStudent = async (id, formData) => {
+  console.log('Updating student with ID:', id);
   const response = await axiosInstance.put(`/${id}`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response.data;
+};
+
+export const updateAvatar = async (id, formData) => {
+  console.log('Updating student with ID:', id);
+  const response = await axiosInstance.put(`/${id}/update-single-file`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -94,5 +105,17 @@ export const getPagedStudents = async ({
   };
 
   const response = await axiosInstance.get('/admin/paged', { params });
+  return response.data;
+};
+
+
+export const uploadProfilePictureToAzure = async (studentId, formData) => {
+  const response = await axiosInstance.put(
+    `/${studentId}/upload`,
+    formData,
+    {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }
+  );
   return response.data;
 };

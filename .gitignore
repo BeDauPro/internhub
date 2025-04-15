@@ -29,3 +29,5 @@ obj/
 *.pdb
 
 .vs/
+
+echo "appsettings.json" >> .gitignore

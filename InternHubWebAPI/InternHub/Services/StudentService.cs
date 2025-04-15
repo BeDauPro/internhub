@@ -15,11 +15,13 @@ namespace InternHub.Services
     {
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
+        private readonly AzureBlobService _blobService;
 
-        public StudentService(AppDbContext context, IMapper mapper)
+        public StudentService(AppDbContext context, IMapper mapper, AzureBlobService blobService)
         {
             _context = context;
             _mapper = mapper;
+            _blobService = blobService;
         }
 
         public async Task<PagedResult<StudentDto>> GetStudentsAsync(
@@ -138,33 +140,31 @@ namespace InternHub.Services
             var student = await _context.Students.FindAsync(id);
             return student == null ? null : _mapper.Map<StudentDto>(student);
         }
+        public async Task<string?> UploadProfilePictureAsync(IFormFile file)
+        {
+            if (file != null && file.ContentType.StartsWith("image"))
+            {
+                return await _blobService.UploadFileAsync(file);
+            }
+            return null;
+        }
+
+        public async Task<string?> UploadCVAsync(IFormFile file)
+        {
+            if (file != null && file.ContentType == "application/pdf")
+            {
+                return await _blobService.UploadFileAsync(file);
+            }
+            return null;
+        }
 
         public async Task<StudentDto> CreateAsync(CreateStudentDto dto, string userId, IWebHostEnvironment env)
         {
             var student = _mapper.Map<Student>(dto);
             student.UserId = userId;
 
-            string webRootPath = env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
-
-            if (dto.ProfilePicture != null && dto.ProfilePicture.ContentType.StartsWith("image"))
-            {
-                string imagePath = Path.Combine("uploads", "images", Guid.NewGuid() + Path.GetExtension(dto.ProfilePicture.FileName));
-                string fullImagePath = Path.Combine(webRootPath, imagePath);
-                Directory.CreateDirectory(Path.GetDirectoryName(fullImagePath)!);
-                using var stream = new FileStream(fullImagePath, FileMode.Create);
-                await dto.ProfilePicture.CopyToAsync(stream);
-                student.ProfilePicture = imagePath;
-            }
-
-            if (dto.CVFile != null && dto.CVFile.ContentType == "application/pdf")
-            {
-                string cvPath = Path.Combine("uploads", "cv", Guid.NewGuid() + Path.GetExtension(dto.CVFile.FileName));
-                string fullCvPath = Path.Combine(webRootPath, cvPath);
-                Directory.CreateDirectory(Path.GetDirectoryName(fullCvPath)!);
-                using var stream = new FileStream(fullCvPath, FileMode.Create);
-                await dto.CVFile.CopyToAsync(stream);
-                student.CVFile = cvPath;
-            }
+            student.ProfilePicture = await UploadProfilePictureAsync(dto.ProfilePicture);
+            student.CVFile = await UploadCVAsync(dto.CVFile);
 
             _context.Students.Add(student);
             await _context.SaveChangesAsync();
@@ -172,52 +172,40 @@ namespace InternHub.Services
             return _mapper.Map<StudentDto>(student);
         }
 
-
         public async Task<StudentDto> UpdateAsync(int id, UpdateStudentDto dto, IWebHostEnvironment env, string userId)
         {
             var student = await _context.Students.FindAsync(id);
-
             if (student == null || student.UserId != userId) return null;
 
-            else
+            if (!string.IsNullOrWhiteSpace(dto.FullName)) student.FullName = dto.FullName;
+            if (!string.IsNullOrWhiteSpace(dto.SchoolEmail)) student.SchoolEmail = dto.SchoolEmail;
+            if (!string.IsNullOrWhiteSpace(dto.Bio)) student.Bio = dto.Bio;
+            if (!string.IsNullOrWhiteSpace(dto.Address)) student.Address = dto.Address;
+            if (!string.IsNullOrWhiteSpace(dto.GithubProfile)) student.GithubProfile = dto.GithubProfile;
+            if (!string.IsNullOrWhiteSpace(dto.Gender)) student.Gender = dto.Gender;
+            if (!string.IsNullOrWhiteSpace(dto.Skills)) student.Skills = dto.Skills;
+            if (!string.IsNullOrWhiteSpace(dto.Languages)) student.Languages = dto.Languages;
+            if (dto.GPA.HasValue) student.GPA = dto.GPA.Value;
+            if (dto.DateOfBirth.HasValue) student.DateOfBirth = dto.DateOfBirth.Value;
+            if (!string.IsNullOrWhiteSpace(dto.Education)) student.Education = dto.Education;
+            if (!string.IsNullOrWhiteSpace(dto.Phone)) student.Phone = dto.Phone;
+
+            // Chỉ upload file mới nếu có, nếu không giữ nguyên
+            if (dto.ProfilePicture != null && dto.ProfilePicture.Length > 0)
             {
-                // Chỉ Student mới vào nhánh này
-                if (!string.IsNullOrWhiteSpace(dto.FullName)) student.FullName = dto.FullName;
-                if (!string.IsNullOrWhiteSpace(dto.SchoolEmail)) student.SchoolEmail = dto.SchoolEmail;
-                if (!string.IsNullOrWhiteSpace(dto.Bio)) student.Bio = dto.Bio;
-                if (!string.IsNullOrWhiteSpace(dto.Address)) student.Address = dto.Address;
-                if (!string.IsNullOrWhiteSpace(dto.GithubProfile)) student.GithubProfile = dto.GithubProfile;
-                if (!string.IsNullOrWhiteSpace(dto.Gender)) student.Gender = dto.Gender;
-                if (!string.IsNullOrWhiteSpace(dto.Skills)) student.Skills = dto.Skills;
-                if (!string.IsNullOrWhiteSpace(dto.Languages)) student.Languages = dto.Languages;
-                if (!string.IsNullOrWhiteSpace(dto.UserId)) student.UserId = dto.UserId;
-                if (dto.GPA.HasValue) student.GPA = dto.GPA.Value;
-                if (dto.DateOfBirth.HasValue) student.DateOfBirth = dto.DateOfBirth.Value;
-                if (!string.IsNullOrWhiteSpace(dto.Education)) student.Education = dto.Education;
-                if (!string.IsNullOrWhiteSpace(dto.Phone)) student.Phone = dto.Phone;
-
-                string webRootPath = env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
-
-                if (dto.ProfilePicture != null)
-                {
-                    string imagePath = Path.Combine("uploads", "images", Guid.NewGuid() + Path.GetExtension(dto.ProfilePicture.FileName));
-                    string fullImagePath = Path.Combine(webRootPath, imagePath);
-                    Directory.CreateDirectory(Path.GetDirectoryName(fullImagePath)!);
-                    using var stream = new FileStream(fullImagePath, FileMode.Create);
-                    await dto.ProfilePicture.CopyToAsync(stream);
-                    student.ProfilePicture = imagePath;
-                }
-
-                if (dto.CVFile != null)
-                {
-                    string cvPath = Path.Combine("uploads", "cv", Guid.NewGuid() + Path.GetExtension(dto.CVFile.FileName));
-                    string fullCvPath = Path.Combine(webRootPath, cvPath);
-                    Directory.CreateDirectory(Path.GetDirectoryName(fullCvPath)!);
-                    using var stream = new FileStream(fullCvPath, FileMode.Create);
-                    await dto.CVFile.CopyToAsync(stream);
-                    student.CVFile = cvPath;
-                }
+                var newProfilePic = await UploadProfilePictureAsync(dto.ProfilePicture);
+                if (!string.IsNullOrEmpty(newProfilePic))
+                    student.ProfilePicture = newProfilePic;
             }
+            // Nếu không gửi file mới thì giữ nguyên ảnh cũ
+
+            if (dto.CVFile != null && dto.CVFile.Length > 0)
+            {
+                var newCV = await UploadCVAsync(dto.CVFile);
+                if (!string.IsNullOrEmpty(newCV))
+                    student.CVFile = newCV;
+            }
+            // Nếu không gửi file mới thì giữ nguyên CV cũ
 
             await _context.SaveChangesAsync();
             return _mapper.Map<StudentDto>(student);
@@ -232,7 +220,6 @@ namespace InternHub.Services
             await _context.SaveChangesAsync();
             return true;
         }
-
 
         public async Task<bool> DeleteAsync(int id, string userId)
         {
