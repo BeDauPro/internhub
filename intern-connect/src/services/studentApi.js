@@ -1,12 +1,9 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://localhost:7286/api/Students';
+const BASE_URL = 'https://localhost:7286/api/students';
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
   withCredentials: true,
 });
 
@@ -37,43 +34,51 @@ export const getStudentProfile = async () => {
     throw error;
   }
 };
-
-// Export getStudentProfile as fetchStudentProfile for compatibility
 export { getStudentProfile as fetchStudentProfile };
-
-// Tạo sinh viên mới
+// Tạo sinh viên mới (FormData gồm ảnh/avatar + dữ liệu)
 export const createStudent = async (formData) => {
-  const response = await axiosInstance.post('/', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
+  const response = await axiosInstance.post('/', formData);
   return response.data;
 };
 
-// Cập nhật sinh viên
+// Cập nhật sinh viên (formData phải là FormData nếu có ảnh/file)
 export const updateStudent = async (id, formData) => {
-  const response = await axiosInstance.put(`/${id}`, formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
+  console.log(formData)
+  const response = await axiosInstance.put(`/${id}`, formData);
   return response.data;
 };
 
-// Xóa sinh viên
+// Cập nhật ảnh đại diện/CV (1 file duy nhất - backend sẽ tự xác định là avatar hay CV)
+export const updateAvatar = async (id, file) => {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const response = await axiosInstance.put(`/${id}/update-single-file`, formData);
+  console.log('Avatar update response:', response.data);
+  sessionStorage.setItem('Profile Update Image', response.data.url) // Log the response for debugging
+  return response.data; // Ensure this returns the updated profilePicture URL
+};
+
+// Tạo ảnh đại diện mới (1 file duy nhất)
+export const createAvatar = async (file) => {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const response = await axiosInstance.post('/create-avatar', formData);
+  console.log('Avatar creation response:', response.data);
+  return response.data; // Ensure this returns the created avatar URL or relevant data
+};
+
 export const deleteStudent = async (id) => {
   const response = await axiosInstance.delete(`/${id}`);
   return response.status === 204;
 };
 
-// Lấy danh sách trạng thái sinh viên (nếu backend là "statuses")
 export const getStudentStatuses = async () => {
   const response = await axiosInstance.get('/statuses');
   return response.data;
 };
 
-// Lấy danh sách sinh viên phân trang, lọc, sắp xếp
 export const getPagedStudents = async ({
   fullName,
   schoolEmail,
@@ -96,3 +101,4 @@ export const getPagedStudents = async ({
   const response = await axiosInstance.get('/admin/paged', { params });
   return response.data;
 };
+

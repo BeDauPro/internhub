@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using InternHub.DTOs.Student;
+using InternHub.Models.ViewModels;
 using InternHub.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -77,6 +78,46 @@ namespace InternHub.Controllers
             if (updated == null) return NotFound();
             return Ok(updated);
         }
+
+        [Authorize(Roles = "Student")]
+        [HttpPut("{id}/update-single-file")]
+        public async Task<IActionResult> UpdateSingleFile(int id)
+        {
+            var form = await HttpContext.Request.ReadFormAsync();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (form.Files.Count == 0)
+            {
+                return BadRequest(new { message = "No file uploaded." });
+            }
+
+            var file = form.Files[0];
+            string? uploadedUrl = null;
+
+            try
+            {
+                if (file.ContentType.StartsWith("image"))
+                {
+                    uploadedUrl = await _studentService.UploadProfilePictureAsync(file);
+                }
+                else if (file.ContentType == "application/pdf")
+                {
+                    uploadedUrl = await _studentService.UploadCVAsync(file);
+                }
+
+                if (string.IsNullOrEmpty(uploadedUrl))
+                {
+                    return BadRequest(new { message = "File upload failed. Please try again." });
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred during file upload.", error = ex.Message });
+            }
+
+            return Ok(new { message = "File uploaded successfully.", url = uploadedUrl });
+        }
+
         [Authorize(Roles = "Employer")]
         [HttpPut("{id}/status")]
         public async Task<IActionResult> UpdateStatus(int id, [FromBody] UpdateStatusDto dto)

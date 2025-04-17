@@ -6,7 +6,6 @@ namespace InternHub.Services.Interfaces
 {
     public interface IStudentService
     {
-        // Cập nhật phương thức trong interface IStudentService
         Task<PagedResult<StudentDto>> GetStudentsAsync(
             string? fullName,
             string? schoolEmail,
@@ -24,5 +23,7 @@ namespace InternHub.Services.Interfaces
         Task<bool> UpdateStatusAsync(int studentId, StudentStatus status);
         Task<bool> DeleteAsync(int id,  string userId);
         List<string> GetStatuses();
+        Task<string?> UploadProfilePictureAsync(IFormFile file);
+        Task<string?> UploadCVAsync(IFormFile file);
     }
 }

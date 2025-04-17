@@ -17,7 +17,7 @@ textarea {
         outline: none;
     }
 }
-.profile-card{
+.profile-card {
     background: white;
     border-radius: 15px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
@@ -85,5 +85,138 @@ button.cancel-btn {
 
     &:hover {
         background-color: #c82333;
+    }
+}
+
+.profile-edit-container {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    background-color: #f9f9f9;
+}
+
+.profile-edit-wrapper {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+    max-width: 1200px;
+}
+
+.profile-edit-card {
+    flex: 0 0 40%; /* Set the card to take 40% of the width */
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.profile-edit-details {
+    flex: 1; /* Set the details section to take the remaining width */
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+.profile-edit-image {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 15px;
+    border: 2px solid #ddd;
+}
+
+.logo-upload {
+    text-align: center;
+    margin-top: 10px;
+
+    input[type="file"] {
+        display: block;
+        margin: 10px auto;
+        max-width: 100%;
+    }
+}
+
+.contact-section {
+    width: 100%;
+    margin-top: 20px;
+
+    h3 {
+        font-size: 18px;
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+    p {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        font-size: 14px;
+        color: #555;
+
+        input {
+            margin-left: 10px;
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+    }
+}
+
+.profile-edit-details {
+    section {
+        margin-bottom: 20px;
+
+        h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        textarea,
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+    }
+}
+
+.profile-edit-actions {
+    display: flex;
+    justify-content: flex-start;
+    margin-top: 20px;
+
+    .save-btn,
+    .delete-btn,
+    .cancel-btn {
+        padding: 10px 20px;
+        font-size: 14px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .save-btn {
+        background-color: #4caf50;
+        color: #fff;
+    }
+
+    .delete-btn {
+        background-color: #f44336;
+        color: #fff;
+    }
+
+    .cancel-btn {
+        background-color: #ccc;
+        color: #333;
     }
 }

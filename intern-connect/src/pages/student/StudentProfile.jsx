@@ -27,7 +27,7 @@ const StudentProfile = () => {
             try {
                 const data = await getStudentProfile();
                 if (!data) {
-                    setIsCreating(true); 
+                    setIsCreating(true);
                 } else {
                     setStudent(data);
                 }
@@ -70,11 +70,12 @@ const StudentProfile = () => {
                 <div className="profile-card">
                     <img
                         className="profile-image"
-                        src={student.profilePicture}
+                        src={student.profilePicture ? `${student.profilePicture}?t=${new Date().getTime()}` : '/default-avatar.png'}
                         alt="Avatar"
                     />
+
                     <h2>{student.fullName}</h2>
-                    <p className="student-id">{student.userId}</p>
+                    <p className="student-id">ID Sinh viên: {student.id}</p>
 
                     <div className="status">
                         <span className="status-label">Trạng thái việc làm</span>
@@ -99,7 +100,7 @@ const StudentProfile = () => {
                         </section>
                         <section className="section">
                             <h3>Trình độ học vấn</h3>
-                            <p>{student.education || 'Không có thông tin học vấn nào được liệt kê'}</p>
+                            <p><FaGraduationCap /> {student.education || 'Không có thông tin học vấn nào được liệt kê'}</p>
                         </section>
                         <section className="section">
                             <h3>Thông tin khác</h3>

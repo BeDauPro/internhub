@@ -149,7 +149,8 @@ $card-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   flex-direction: row-reverse;
 
   .save-btn,
-  .cancel-btn {
+  .cancel-btn,
+  .delete-btn {
     padding: 10px 20px;
     border: none;
     border-radius: 8px;
@@ -166,7 +167,14 @@ $card-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
       background-color: darken($primary-color, 5%);
     }
   }
+  .delete-btn{
+    background-color: $danger-color;
+    color: white;
 
+    &:hover {
+      background-color: darken($danger-color, 5%);
+    }
+  }
   .cancel-btn {
     background-color: $secondary-color;
     color: white;

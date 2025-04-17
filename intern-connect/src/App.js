@@ -123,9 +123,11 @@ const App = () => {
           element={<PrivateRoute isAuthenticated={isAuthenticated} allowedRoles={["Employer"]} role={role} />}
         >
           <Route path="/employerprofile" element={<EmployerProfile profileData={eProfile} EmployerReview={EmployerReview} />} />
+          <Route path="/editprofile" element={<EditProfile profileData={eProfile} onSave={handleSave} />} />
           <Route path="/editjob" element={<EditJob editJob={jobDetails} onSave={handleSave} />} />
           <Route path="/manageposts" element={<ManagePosts jobs={jobs} />} />
           <Route path="/applicationemployer" element={<ApplicationEmployer applicationData={applicationEmployer} />} />
+
         </Route>
 
         <Route

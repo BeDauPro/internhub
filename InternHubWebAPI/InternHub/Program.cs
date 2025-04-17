@@ -25,6 +25,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
+builder.Services.AddScoped<IJobApplicationService, JobApplicationService>();
 
 // Đọc cấu hình email
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
@@ -40,6 +41,7 @@ builder.Services.AddScoped<IEmployerService, EmployerService>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 
 // Configure Identity Options
 builder.Services.Configure<IdentityOptions>(options => {
@@ -165,7 +167,7 @@ builder.Services.AddCors(options =>
                                 .AllowCredentials();
                       });
 });
-
+builder.Services.AddSingleton<AzureBlobService>();
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
