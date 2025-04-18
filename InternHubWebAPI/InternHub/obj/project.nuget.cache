@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "w9Mgleh2IneS552O9ytSzS76pw9HjJ20YRitFtLmyZb9FGUY3I8ntO/80BjBhn7IhMoIdqjDz1A8W5YBc55heA==",
+  "dgSpecHash": "JN1CvOTdojehA+mbOGbYIraa76ncU7Uo+N1k6iaVOCfLHTLztRofT9EX1cDWWtzAKtkBA4xMDNVd25+qfdE1Kg==",
   "success": true,
-  "projectFilePath": "/Users/macbookair2020m1/Projects/InternHub/InternHubWebAPI/InternHub/InternHub.csproj",
+  "projectFilePath": "/Users/macbookair2020m1/Documents/FPT intern/InternHub/InternHubWebAPI/InternHub/InternHub.csproj",
   "expectedPackageFiles": [
     "/Users/macbookair2020m1/.nuget/packages/automapper/8.1.1/automapper.8.1.1.nupkg.sha512",
     "/Users/macbookair2020m1/.nuget/packages/automapper.extensions.microsoft.dependencyinjection/6.1.1/automapper.extensions.microsoft.dependencyinjection.6.1.1.nupkg.sha512",
@@ -79,9 +79,9 @@
     "/Users/macbookair2020m1/.nuget/packages/system.text.json/6.0.10/system.text.json.6.0.10.nupkg.sha512",
     "/Users/macbookair2020m1/.nuget/packages/system.threading.tasks/4.3.0/system.threading.tasks.4.3.0.nupkg.sha512",
     "/Users/macbookair2020m1/.nuget/packages/system.threading.tasks.extensions/4.5.4/system.threading.tasks.extensions.4.5.4.nupkg.sha512",
+    "/Users/macbookair2020m1/.nuget/packages/microsoft.netcore.app.ref/6.0.31/microsoft.netcore.app.ref.6.0.31.nupkg.sha512",
     "/Users/macbookair2020m1/.nuget/packages/microsoft.aspnetcore.app.ref/6.0.31/microsoft.aspnetcore.app.ref.6.0.31.nupkg.sha512",
-    "/Users/macbookair2020m1/.nuget/packages/microsoft.netcore.app.host.osx-arm64/6.0.31/microsoft.netcore.app.host.osx-arm64.6.0.31.nupkg.sha512",
-    "/Users/macbookair2020m1/.nuget/packages/microsoft.netcore.app.ref/6.0.31/microsoft.netcore.app.ref.6.0.31.nupkg.sha512"
+    "/Users/macbookair2020m1/.nuget/packages/microsoft.netcore.app.host.osx-arm64/6.0.31/microsoft.netcore.app.host.osx-arm64.6.0.31.nupkg.sha512"
   ],
   "logs": []
 }

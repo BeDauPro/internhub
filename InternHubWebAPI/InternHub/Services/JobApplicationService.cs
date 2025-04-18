@@ -1,5 +1,6 @@
 ﻿using System;
 using InternHub.Models;
+using InternHub.Models.Enums;
 using InternHub.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using static InternHub.DTOs.JobApplication.JobApplicationDto;
@@ -62,6 +63,78 @@ namespace InternHub.Services
 
             return applications;
         }
+
+        public async Task<List<ApplicationHistoryDto>> GetApplicationHistoryByStudentAsync(string userId)
+        {
+            var student = await _context.Students.FirstOrDefaultAsync(s => s.UserId == userId);
+            if (student == null)
+                throw new Exception("Student not found");
+
+            var applications = await _context.Applications
+                .Where(a => a.StudentId == student.Id)
+                .Include(a => a.JobPosting)
+                    .ThenInclude(j => j.Employer)
+                .OrderByDescending(a => a.ApplicationDate)
+                .ToListAsync();
+
+            return applications.Select(a => new ApplicationHistoryDto
+            {
+                JobPostingId = a.JobPostingId,
+                JobTitle = a.JobPosting.JobTitle,
+                CompanyName = a.JobPosting.Employer.CompanyName,
+                ApplicationDate = a.ApplicationDate,
+                Status = a.Status
+            }).ToList();
+        }
+
+        public async Task<bool> UpdateApplicationStatusAsync(int applicationId, StudentStatus newStatus)
+        {
+            //tìm đơn ứng tuyển theo ID 
+            var application = await _context.Applications
+                .Include(a => a.Student)
+                .FirstOrDefaultAsync(a => a.ApplicationId == applicationId);
+
+            if (application == null)
+                throw new Exception("Application not found");
+            //lấy sinh viên tương ứng với đơn
+            var student = application.Student;
+
+            // Nếu sinh viên đã Internship hoặc Completed thì không thay đổi nữa
+            if (student.Status == StudentStatus.Internship || student.Status == StudentStatus.Completed)
+            {
+                // Chỉ cho phép cập nhật nếu chính application đó đã từng là Internship
+                if (!Enum.TryParse(application.Status, out StudentStatus applicationStatus) || applicationStatus != StudentStatus.Internship)
+                {
+                    throw new Exception("Student has already started or completed an internship. Cannot update status anymore.");
+                }
+                // Cho phép cập nhật nội bộ trong application, không thay đổi status sinh viên
+                application.Status = newStatus.ToString();
+                await _context.SaveChangesAsync();
+                return true;
+            }
+
+            // Cập nhật trạng thái mới cho đơn ứng tuyển
+            application.Status = newStatus.ToString();
+            await _context.SaveChangesAsync();
+
+            // Tìm trạng thái cao nhất từ tất cả đơn ứng tuyển của sinh viên
+            var allStatuses = await _context.Applications
+                .Where(a => a.StudentId == student.Id)
+                .Select(a => a.Status)
+                .ToListAsync();
+
+            var highestEnumStatus = allStatuses
+                .Select(s => Enum.TryParse<StudentStatus>(s, out var parsedStatus) ? parsedStatus : StudentStatus.Pending)
+                .Max();
+
+            // Cập nhật lại trạng thái cho sinh viên nếu chưa từng Internship/Completed
+            student.Status = highestEnumStatus;
+            _context.Students.Update(student);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
     }
 }
 
