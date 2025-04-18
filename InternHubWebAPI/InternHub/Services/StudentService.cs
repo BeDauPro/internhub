@@ -36,24 +36,28 @@ namespace InternHub.Services
            int pageSize)
         {
             var query = _context.Students
-                .Include(s => s.Applications)
+                .Include(s => s.Applications) // Thêm Include nếu cần để lấy thông tin ngày nộp đơn
                 .AsQueryable();
 
+            // Lọc theo tên
             if (!string.IsNullOrEmpty(fullName))
             {
                 query = query.Where(e => e.FullName.Contains(fullName));
             }
 
+            // Lọc theo email
             if (!string.IsNullOrEmpty(schoolEmail))
             {
                 query = query.Where(e => e.SchoolEmail.Contains(schoolEmail));
             }
 
+            // Lọc theo status
             if (!string.IsNullOrEmpty(status) && Enum.TryParse<StudentStatus>(status, out var statusEnum))
             {
                 query = query.Where(e => e.Status == statusEnum);
             }
 
+            // Lọc theo thời gian nộp đơn
             if (!string.IsNullOrEmpty(timeFilter))
             {
                 var today = DateTime.Today;
@@ -75,9 +79,12 @@ namespace InternHub.Services
                         var last30Days = today.AddDays(-30);
                         query = query.Where(s => s.Applications.Any(a => a.ApplicationDate.Date >= last30Days));
                         break;
+
+                        // Bạn có thể thêm các trường hợp khác nếu cần
                 }
             }
 
+            // Sorting
             switch (sortBy?.ToLower())
             {
                 case "fullname":
@@ -90,6 +97,7 @@ namespace InternHub.Services
                     query = sortDirection == "desc" ? query.OrderByDescending(e => e.Status) : query.OrderBy(e => e.Status);
                     break;
                 case "applieddate":
+                    // Sắp xếp theo ngày nộp đơn gần nhất
                     query = sortDirection == "desc"
                         ? query.OrderByDescending(s => s.Applications.Max(a => a.ApplicationDate))
                         : query.OrderBy(s => s.Applications.Min(a => a.ApplicationDate));

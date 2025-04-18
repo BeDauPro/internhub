@@ -6,6 +6,7 @@ namespace InternHub.Services.Interfaces
 {
     public interface IStudentService
     {
+        // Cập nhật phương thức trong interface IStudentService
         Task<PagedResult<StudentDto>> GetStudentsAsync(
             string? fullName,
             string? schoolEmail,

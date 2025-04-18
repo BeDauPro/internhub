@@ -1,22 +1,85 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaMapMarkerAlt, FaUser, FaCalendarAlt, FaAlignLeft } from 'react-icons/fa';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../../styles/pages/student/eventstudent.scss"
 import Footer from '../../components/Footer';
+import { getAllStudentEvents, getStudentEventById } from '../../services/studentApi';
 
-const EventStudent = ({ events }) => {
+const EventStudent = () => {
+    const [events, setEvents] = useState([]);
     const [selectedEvent, setSelectedEvent] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    // Fetch events when component mounts
+    useEffect(() => {
+        const fetchEvents = async () => {
+            try {
+                setIsLoading(true);
+                const fetchedEvents = await getAllStudentEvents();
+                
+                // Transform events to match the component's structure
+                const transformedEvents = fetchedEvents.map(event => ({
+                    id: event.eventId,
+                    title: event.eventTitle,
+                    location: event.eventLocation,
+                    organizer: event.organizer,
+                    date: event.eventDate,
+                    content: event.eventDesc
+                }));
+
+                setEvents(transformedEvents);
+                setError(null);
+            } catch (err) {
+                console.error("Error fetching events:", err);
+                setError("Không thể tải danh sách sự kiện. Vui lòng thử lại sau.");
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchEvents();
+    }, []);
 
     // Function to handle event click
-    const handleEventClick = (event) => {
-        setSelectedEvent(event);
+    const handleEventClick = async (event) => {
+        try {
+            // Fetch detailed event information if needed
+            // const detailedEvent = await getStudentEventById(event.id);
+            // setSelectedEvent({
+            //    id: detailedEvent.eventId,
+            //    title: detailedEvent.eventTitle,
+            //    ...other properties
+            // });
+            
+            // Or just use the event from the list if it already has all needed information
+            setSelectedEvent(event);
+        } catch (err) {
+            console.error("Error fetching event details:", err);
+            setError("Không thể tải chi tiết sự kiện. Vui lòng thử lại sau.");
+        }
     };
 
     // Format date for display
     const formatDate = (dateString) => {
+        if (!dateString) return 'N/A';
+        
         const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
-        return new Date(dateString).toLocaleDateString('vi-VN', options);
+        try {
+            return new Date(dateString).toLocaleDateString('vi-VN', options);
+        } catch (error) {
+            console.error("Date formatting error:", error);
+            return dateString;
+        }
     };
+
+    if (isLoading) {
+        return <div className="loading-container">Đang tải dữ liệu...</div>;
+    }
+
+    if (error) {
+        return <div className="error-container">{error}</div>;
+    }
 
     return (
         <>
@@ -29,21 +92,27 @@ const EventStudent = ({ events }) => {
                             <div className="event-list-header rounded-top">Danh sách sự kiện</div>
 
                             <div className="event-list">
-                                {events.map((event) => (
-                                    <div
-                                        key={event.id}
-                                        className={`event-item ${selectedEvent && selectedEvent.id === event.id ? 'selected' : ''}`}
-                                        onClick={() => handleEventClick(event)}
-                                    >
-                                        <div className="event-item-title">{event.title}</div>
-                                        <div className="event-item-location">
-                                            <span className="location-icon me-1">◎</span> {event.location}
+                                {events.length > 0 ? (
+                                    events.map((event) => (
+                                        <div
+                                            key={event.id}
+                                            className={`event-item ${selectedEvent && selectedEvent.id === event.id ? 'selected' : ''}`}
+                                            onClick={() => handleEventClick(event)}
+                                        >
+                                            <div className="event-item-title">{event.title}</div>
+                                            <div className="event-item-location">
+                                                <span className="location-icon me-1">◎</span> {event.location}
+                                            </div>
+                                            <div className="event-item-date">
+                                                <FaCalendarAlt className="me-1" /> {formatDate(event.date)}
+                                            </div>
                                         </div>
-                                        <div className="event-item-date">
-                                            <FaCalendarAlt className="me-1" /> {formatDate(event.date)}
-                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="no-events-message">
+                                        <p>Không có sự kiện nào được tìm thấy</p>
                                     </div>
-                                ))}
+                                )}
                             </div>
                         </div>
 

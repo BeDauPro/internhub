@@ -37,6 +37,9 @@ builder.Services.AddTransient<IEmailSender, SendMailService>();
 builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<IEmployerService, EmployerService>();
 builder.Services.AddScoped<IStudentReviewService, StudentReviewService>();
+
+builder.Services.AddScoped<IEventService, EventService>();
+
 // Thêm Swagger
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

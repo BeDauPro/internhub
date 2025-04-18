@@ -4,21 +4,64 @@ import '../../styles/pages/employer/manageposts.scss';
 import NavbarEmployer from '../../components/employer/NavbarEmployer';
 import Footer from '../../components/Footer';
 import { useNavigate } from "react-router-dom";
+import { getEmployerJobs, deleteJob } from '../../services/JobPostingApi';
 
-const ManagePosts = ({ jobs }) => {
+const ManagePosts = () => {
+  const [jobs, setJobs] = useState([]);
   const [visibleJobs, setVisibleJobs] = useState(8);
   const [selectedType, setSelectedType] = useState("All");
   const [selectedLocation, setSelectedLocation] = useState("All");
   const [selectedTitle, setSelectedTitle] = useState("All");
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const navigate = useNavigate();
 
+  // Fetch employer jobs when component mounts
+  useEffect(() => {
+    const fetchEmployerJobs = async () => {
+      try {
+        setIsLoading(true);
+        const jobsData = await getEmployerJobs();
+        
+        // Transform jobs to match the component's structure
+        const transformedJobs = jobsData.map(job => ({
+          id: job.jobPostingId || job.id,
+          title: job.jobTitle,
+          type: job.workType,
+          typeClass: job.workType === 'Full-time' ? 'fullTime' : 'partTime',
+          logo: job.companyLogo || '/default-logo.png',
+          company: job.companyName || 'Công ty',
+          location: job.location,
+          quantity: job.vacancies || 1,
+          date: new Date(job.createdAt || job.postedAt || job.applicationDeadline).toLocaleDateString(),
+          status: job.status || 'Pending'
+        }));
+
+        setJobs(transformedJobs);
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching employer jobs:", err);
+        setError("Không thể tải danh sách công việc của bạn");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchEmployerJobs();
+  }, []);
+
+  // Check for updates from history state
   useEffect(() => {
     const updatedJob = window.history.state?.usr?.updatedJob;
     if (updatedJob) {
       const existingIndex = jobs.findIndex((job) => job.id === updatedJob.id);
       if (existingIndex !== -1) {
-        jobs[existingIndex] = updatedJob;
+        setJobs(prevJobs => {
+          const newJobs = [...prevJobs];
+          newJobs[existingIndex] = updatedJob;
+          return newJobs;
+        });
       }
     }
   }, [jobs]);
@@ -36,6 +79,19 @@ const ManagePosts = ({ jobs }) => {
   const handleAddNewPost = () => {
     navigate("/editjob", { state: { clearForm: true } });
   };
+
+  // Cập nhật hàm handleViewDetails để điều hướng đến URL với id
+  const handleViewDetails = (jobId) => {
+    navigate(`/editjob/${jobId}`);
+  };
+
+  if (isLoading) {
+    return <div className="loading-container">Đang tải dữ liệu...</div>;
+  }
+
+  if (error) {
+    return <div className="error-container">{error}</div>;
+  }
 
   return (
     <>
@@ -68,9 +124,10 @@ const ManagePosts = ({ jobs }) => {
             </button>
           </p>
         </div>
-
       </header>
+
       <div className="JobListContainer" style={{ marginTop: '30px' }}>
+        <h2>Danh sách công việc của bạn</h2>
         <div className="filters">
           <select value={selectedType} onChange={(e) => setSelectedType(e.target.value)}>
             <option value="All">Tất cả loại hình</option>
@@ -81,41 +138,64 @@ const ManagePosts = ({ jobs }) => {
 
           <select value={selectedLocation} onChange={(e) => setSelectedLocation(e.target.value)}>
             <option value="All">Tất cả địa điểm</option>
-            {[...new Set(jobs.map(job => job.location))].map((location) => (
+            {[...new Set(jobs.map(job => job.location))].filter(Boolean).map((location) => (
               <option key={location} value={location}>{location}</option>
             ))}
           </select>
 
           <select value={selectedTitle} onChange={(e) => setSelectedTitle(e.target.value)}>
             <option value="All">Tất cả công việc</option>
-            {[...new Set(jobs.map(job => job.title))].map((title) => (
+            {[...new Set(jobs.map(job => job.title))].filter(Boolean).map((title) => (
               <option key={title} value={title}>{title}</option>
             ))}
           </select>
         </div>
-        <div className="jobList">
-          {filteredJobs.slice(0, visibleJobs).map((job) => (
-            <div key={job.id} className="jobCard animate-slide-up">
-              <div className="jobHeader">
-                <span className="jobTitle">{job.title}</span>
-                <span className={`jobType ${job.typeClass}`}>
-                  {job.type}
-                </span>
-              </div>
-              <div className="jobBody">
-                <img src={job.logo} alt={job.company} className="jobLogo" />
-                <div>
-                  <span className="companyName">{job.company}</span>
-                  <div className="jobLocation">📍 {job.location}</div>
+        
+        {filteredJobs.length > 0 ? (
+          <div className="jobList">
+            {filteredJobs.slice(0, visibleJobs).map((job) => (
+              <div key={job.id} className="jobCard animate-slide-up">
+                <div className="jobHeader">
+                  <span className="jobTitle">{job.title}</span>
+                  <span className={`jobType ${job.typeClass}`}>
+                    {job.type}
+                  </span>
+                </div>
+                <div className="jobBody">
+                  <img src={job.logo} alt={job.company} className="jobLogo" />
+                  <div>
+                    <span className="companyName">{job.company}</span>
+                    <div className="jobLocation">📍 {job.location}</div>
+                    <div className="jobStatus">Trạng thái: <span className={`status-${job.status.toLowerCase()}`}>{job.status}</span></div>
+                  </div>
+                </div>
+                <div className="jobFooter">
+                  <span>Số lượng tuyển: {job.quantity}</span>
+                  <button 
+                    className="btn btn-dark" 
+                    onClick={() => handleViewDetails(job.id)} 
+                    style={{ 
+                      backgroundColor: '#333', 
+                      color: 'white', 
+                      border: 'none', 
+                      borderRadius: '4px', 
+                      padding: '5px 10px', 
+                      fontSize: '0.8rem', 
+                      cursor: 'pointer' 
+                    }}
+                  >
+                    Xem chi tiết
+                  </button>
                 </div>
               </div>
-              <div className="jobFooter">
-                <span>Số lượng tuyển: {job.quantity}</span>
-                <button className="viewDetails" onClick={() => navigate("/jobdetail")}>Xem chi tiết</button>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className="no-jobs-message">
+            <p>Bạn chưa có bài đăng tuyển dụng nào</p>
+          </div>
+        )}
+        
         {visibleJobs < filteredJobs.length && (
           <button className="loadMore" onClick={handleLoadMore}>Xem nhiều hơn</button>
         )}

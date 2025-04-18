@@ -102,3 +102,49 @@ export const getPagedStudents = async ({
   return response.data;
 };
 
+
+// Helper function to handle errors consistently
+const handleError = (err) => {
+    if (err.response && err.response.data) {
+        return {
+            status: err.response.status,
+            data: err.response.data,
+        };
+    }
+    return {
+        status: 500,
+        data: { message: 'Unknown error occurred' },
+    };
+};
+
+// ===== EVENT API FOR STUDENTS =====
+
+// Get All Events
+export const getAllStudentEvents = async() => {
+    try {
+        const response = await axiosInstance.get('/events');
+        return response.data;
+    } catch (err) {
+        throw handleError(err);
+    }
+};
+
+// Get Event by ID
+export const getStudentEventById = async(id) => {
+    try {
+        const response = await axiosInstance.get(`/events/${id}`);
+        return response.data;
+    } catch (err) {
+        throw handleError(err);
+    }
+};
+
+// Export event API functions
+export const studentEventAPI = {
+    getAllEvents: getAllStudentEvents,
+    getEventById: getStudentEventById
+};
+
+export default {
+    events: studentEventAPI
+};

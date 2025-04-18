@@ -2,33 +2,33 @@ import lgLogo from '../../src/images/lglogo.png'
 import fptLogo from '../../src/images/fpt.jpg'
 import nvLogo from '../../src/images/nvidialogo.png'
 
-// export const fetchStudentProfile = async () => {
-//   return {
-//     name: "Nguyễn Đức",
-//     studentId: "21T1020310",
-//     status: "Thực tập",
-//     email: "tbnduc2k3@gmail.com",
-//     address: "26 Lê Trung Định, Đà Nẵng",
-//     phone: "0786490209",
-//     birthday: "06/01/2003",
-//     gender: "Nam",
-//     introduction:
-//       "Final-year Software Engineering student at the University of Sciences, Hue University.",
-//     education: [
-//       {
-//         institution: "University of Sciences, Hue University",
-//         details: "Final-year student majoring in Software Engineering.",
-//       },
-//     ],
-//     otherInfo: {
-//       github: "https://github.com/BeDauPro",
-//       gpa: "2.6",
-//       languages: "Tiếng Việt, Tiếng Anh",
-//     },
-//     skills: ["ASP.NET", "ReactJS", "Flutter", "SQL Server", "Figma"],
-//     cvUploaded: false,
-//   };
-// };
+export const fetchStudentProfile = async () => {
+  return {
+    name: "Nguyễn Đức",
+    studentId: "21T1020310",
+    status: "Thực tập",
+    email: "tbnduc2k3@gmail.com",
+    address: "26 Lê Trung Định, Đà Nẵng",
+    phone: "0786490209",
+    birthday: "06/01/2003",
+    gender: "Nam",
+    introduction:
+      "Final-year Software Engineering student at the University of Sciences, Hue University.",
+    education: [
+      {
+        institution: "University of Sciences, Hue University",
+        details: "Final-year student majoring in Software Engineering.",
+      },
+    ],
+    otherInfo: {
+      github: "https://github.com/BeDauPro",
+      gpa: "2.6",
+      languages: "Tiếng Việt, Tiếng Anh",
+    },
+    skills: ["ASP.NET", "ReactJS", "Flutter", "SQL Server", "Figma"],
+    cvUploaded: false,
+  };
+};
 
 export const fetchEmployerProfile = async () => {
   return {
