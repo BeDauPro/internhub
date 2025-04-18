@@ -39,6 +39,7 @@ namespace InternHub.Controllers
         }
 
         [HttpGet("student/{studentId}")]
+        [Authorize(Roles = "Student,Employer,Admin")]
         public async Task<IActionResult> GetReviewsForStudent(int studentId)
         {
             var reviews = await _reviewService.GetReviewsByStudentIdAsync(studentId);
