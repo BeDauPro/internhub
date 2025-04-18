@@ -191,7 +191,7 @@ namespace InternHub.Controllers
         // GET: api/Employer/JobPosting - Lấy tất cả JobPosting của employer hiện tại
         [Route("api/Employer/JobPosting")]
         [HttpGet]
-        [Authorize(Roles = "Employer")]
+        //[Authorize(Roles = "Employer")]
         public async Task<ActionResult> GetEmployerJobPostings()
         {
             try

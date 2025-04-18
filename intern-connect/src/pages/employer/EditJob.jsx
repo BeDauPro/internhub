@@ -7,11 +7,13 @@ import { FaUsers, FaCalendarAlt } from "react-icons/fa";
 import axios from 'axios';
 import '../../styles/pages/employer/editjob.scss';
 import Footer from '../../components/Footer';
+import { getJobById, createJob, updateJob, deleteJob } from '../../services/JobPostingApi';
 
 const EditJob = ({ editJob, onSave }) => {
     const navigate = useNavigate();
     const location = useLocation();
     const { id } = useParams(); // Lấy id từ URL nếu đang edit job
+    const [isLoading, setIsLoading] = useState(false);
     const [formData, setFormData] = useState(editJob || {
         // Các trường mặc định sẽ được tự động import sau này
         companyName: "",
@@ -32,6 +34,9 @@ const EditJob = ({ editJob, onSave }) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState(null);
 
+    // Xác định mode: edit hoặc create
+    const isEditMode = !!id;
+
     useEffect(() => {
         if (editJob) {
             setFormData(editJob);
@@ -41,8 +46,9 @@ const EditJob = ({ editJob, onSave }) => {
     // Fetch job data nếu đang edit và không có dữ liệu
     useEffect(() => {
         const fetchJobData = async () => {
-            if (id && !editJob) {
+            if (id) {
                 try {
+                    setIsLoading(true);
                     const token = localStorage.getItem('token');
                     const response = await axios.get(`https://localhost:7286/api/JobPosting/${id}`, {
                         headers: {
@@ -54,28 +60,30 @@ const EditJob = ({ editJob, onSave }) => {
                     
                     // Chuyển đổi dữ liệu từ API sang form format
                     setFormData({
-                        companyName: jobData.CompanyName,
-                        location: jobData.Location,
-                        field: jobData.JobCategory,
-                        jobTitle: jobData.JobTitle,
-                        jobType: jobData.WorkType,
-                        salary: jobData.Salary,
-                        experience: jobData.ExperienceRequired,
-                        jobDescription: jobData.JobDesc,
-                        jobRequirements: jobData.SkillsRequired,
-                        languages: jobData.LanguagesRequired ? jobData.LanguagesRequired.split(',') : [],
-                        vacancies: jobData.Vacancies,
-                        deadline: new Date(jobData.ApplicationDeadline).toISOString().split('T')[0]
+                        companyName: jobData.companyName,
+                        location: jobData.location,
+                        field: jobData.jobCategory,
+                        jobTitle: jobData.jobTitle,
+                        jobType: jobData.workType,
+                        salary: jobData.salary,
+                        experience: jobData.experienceRequired,
+                        jobDescription: jobData.jobDesc,
+                        jobRequirements: jobData.skillsRequired,
+                        languages: jobData.languagesRequired ? jobData.languagesRequired.split(',') : [],
+                        vacancies: jobData.vacancies,
+                        deadline: new Date(jobData.applicationDeadline).toISOString().split('T')[0]
                     });
                 } catch (err) {
                     console.error("Error fetching job data:", err);
                     setError("Không thể tải thông tin công việc. Vui lòng thử lại sau.");
+                } finally {
+                    setIsLoading(false);
                 }
             }
         };
 
         fetchJobData();
-    }, [id, editJob]);
+    }, [id]);
 
     useEffect(() => {
         if (location.state?.clearForm) {
@@ -240,6 +248,32 @@ const EditJob = ({ editJob, onSave }) => {
         }
     };
 
+    // Thêm hàm xử lý xóa job
+    const handleDelete = async () => {
+        if (window.confirm("Bạn có chắc chắn muốn xóa công việc này?")) {
+            try {
+                setIsSubmitting(true);
+                const token = localStorage.getItem('token');
+                await axios.delete(`https://localhost:7286/api/Employer/JobPosting/${id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                alert("Đã xóa công việc thành công!");
+                navigate("/manageposts");
+            } catch (err) {
+                console.error("Error deleting job:", err);
+                setError("Không thể xóa công việc. Vui lòng thử lại sau.");
+            } finally {
+                setIsSubmitting(false);
+            }
+        }
+    };
+
+    if (isLoading) {
+        return <div className="loading-container">Đang tải dữ liệu...</div>;
+    }
+
     return (
         <>
         <div className="job-detail-container">
@@ -328,8 +362,17 @@ const EditJob = ({ editJob, onSave }) => {
                         className="save-btn"
                         disabled={isSubmitting}
                     >
-                        {isSubmitting ? 'Đang lưu...' : 'Lưu'}
+                        {isSubmitting ? 'Đang lưu...' : (isEditMode ? 'Cập nhật' : 'Tạo mới')}
                     </button>
+                    {id && ( // Chỉ hiển thị nút Xóa khi đang edit job hiện có
+                        <button 
+                            onClick={handleDelete} 
+                            className="delete-btn"
+                            disabled={isSubmitting}
+                        >
+                            Xóa
+                        </button>
+                    )}
                     <button 
                         onClick={() => navigate("/manageposts")} 
                         className="cancel-btn"
@@ -345,4 +388,4 @@ const EditJob = ({ editJob, onSave }) => {
     )
 }
 
-export default EditJob
+export default EditJob;
