@@ -1,67 +1,120 @@
-import { React, useState } from 'react';
+import { React, useState, useEffect } from 'react';
 import { FaPencilAlt, FaMapMarkerAlt, FaUser, FaCalendarAlt, FaAlignLeft } from 'react-icons/fa'; // Import icons
-import "bootstrap/dist/css/bootstrap.min.css"
-import "../../styles/pages/admin/EventManagement.scss"
-import NavbarAdmin from '../../components/admin/NavbarAdmin';
+import "bootstrap/dist/css/bootstrap.min.css";
+import "../../styles/pages/admin/EventManagement.scss";
 import Footer from '../../components/Footer';
+import { getAllEvents, createEvent, updateEvent, deleteEvent } from '../../services/adminApi';
 
-const EventManagement = ({ events: initialEvents }) => {
-    const [events, setEvents] = useState(initialEvents || []);
+const EventManagement = () => {
+    const [events, setEvents] = useState([]);
     const [formData, setFormData] = useState({
-        title: "",
-        location: "",
+        eventTitle: "",
+        eventLocation: "",
         organizer: "",
-        date: "",
-        content: "",
+        eventDate: "",
+        eventDesc: "",
     });
     const [selectedEvent, setSelectedEvent] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    // Fetch events when component mounts
+    useEffect(() => {
+        const fetchEvents = async () => {
+            try {
+                setIsLoading(true);
+                const data = await getAllEvents();
+                setEvents(data);
+                setError(null);
+            } catch (err) {
+                console.error("Error fetching events:", err);
+                setError("Không thể tải dữ liệu sự kiện. Vui lòng thử lại sau.");
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchEvents();
+    }, []);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
 
-    const handleSave = () => {
-        const { title, location, organizer, date, content } = formData;
+    const handleSave = async () => {
+        // Kiểm tra dữ liệu đầu vào
+        const { eventTitle, eventLocation, organizer, eventDate, eventDesc } = formData;
 
-        if (!title || !location || !organizer || !date || !content ) {
+        if (!eventTitle || !eventLocation || !organizer || !eventDate || !eventDesc) {
             alert("Vui lòng điền đầy đủ thông tin sự kiện!");
             return;
         }
-        //nếu selectedEvent khác null thì cập nhật sk, ngược lại thêm sự kiện mới
-        if (selectedEvent) {
-            //duyệt qua các sự kiện
-            const updatedEvents = events.map((event) =>
-                //nếu sự kiện đang được chọn trùng với sự kiện đang được chỉnh sửa thì cập nhât thông tin
-                event.id === selectedEvent.id
-                    ? { ...event, title, location, organizer, date, content }// Cập nhật sự kiện được chọn
-                    : event // Giữ nguyên các sự kiện khác
-            );
-            setEvents(updatedEvents);
-        } else {
-            const newEvent = {
-                id: events.length + 1,
-                title,
-                location,
-                organizer,
-                date,
-                content,
+
+        try {
+            // Chuẩn bị dữ liệu gửi đi
+            const eventData = {
+                eventTitle,
+                eventDesc,
+                eventDate,
+                eventLocation,
+                organizer
             };
-            setEvents([...events, newEvent]); // Add new event to local state
+
+            let response;
+            if (selectedEvent) {
+                // Cập nhật sự kiện
+                response = await updateEvent(selectedEvent.eventId, eventData);
+                
+                // Cập nhật state local
+                setEvents(events.map(event => 
+                    event.eventId === selectedEvent.eventId ? response : event
+                ));
+                
+                alert("Đã cập nhật sự kiện thành công!");
+            } else {
+                // Tạo sự kiện mới
+                response = await createEvent(eventData);
+                
+                // Thêm vào state local
+                setEvents([...events, response]);
+                
+                alert("Đã thêm sự kiện thành công!");
+            }
+            
+            // Reset form và trạng thái
+            clearForm();
+            setSelectedEvent(null);
+            
+        } catch (err) {
+            console.error("Error saving event:", err);
+            alert("Lỗi khi lưu sự kiện: " + (err.data?.error || err.data?.message || "Lỗi không xác định"));
         }
-        clearForm();
     };
 
-    const handleDelete = () => {
-        if (selectedEvent) {
-            const updatedEvents = events.filter((event) => event.id !== selectedEvent.id);
-            setEvents(updatedEvents); // Update local state
-            alert("Đã xoá sự kiện!");
-        } else {
+    const handleDelete = async () => {
+        if (!selectedEvent) {
             alert("Không có sự kiện nào được chọn để xoá!");
+            return;
         }
-        clearForm();
-        setSelectedEvent(null);
+
+        try {
+            const confirmDelete = window.confirm("Bạn có chắc chắn muốn xóa sự kiện này?");
+            
+            if (confirmDelete) {
+                await deleteEvent(selectedEvent.eventId);
+                
+                // Cập nhật state local
+                setEvents(events.filter(event => event.eventId !== selectedEvent.eventId));
+                
+                alert("Đã xoá sự kiện thành công!");
+                clearForm();
+                setSelectedEvent(null);
+            }
+        } catch (err) {
+            console.error("Error deleting event:", err);
+            alert("Lỗi khi xoá sự kiện: " + (err.data?.error || err.data?.message || "Lỗi không xác định"));
+        }
     };
 
     const handleAddEvent = () => {
@@ -71,31 +124,42 @@ const EventManagement = ({ events: initialEvents }) => {
 
     const clearForm = () => {
         setFormData({
-            title: "",
-            location: "",
+            eventTitle: "",
+            eventLocation: "",
             organizer: "",
-            date: "",
-            content: "",
+            eventDate: "",
+            eventDesc: "",
         });
     };
 
     const handleEventClick = (event) => {
         setSelectedEvent(event);
+        
+        // Format date for input type="date" (YYYY-MM-DD)
+        const formattedDate = event.eventDate ? event.eventDate.split('T')[0] : "";
+        
         setFormData({
-            title: event.title,
-            location: event.location,
-            organizer: event.organizer,
-            date: event.date,
-            content: event.content,
+            eventTitle: event.eventTitle || "",
+            eventLocation: event.eventLocation || "",
+            organizer: event.organizer || "",
+            eventDate: formattedDate,
+            eventDesc: event.eventDesc || "",
         });
     };
 
+    if (isLoading) {
+        return <div className="text-center mt-5">Đang tải dữ liệu...</div>;
+    }
+
+    if (error) {
+        return <div className="alert alert-danger m-5">{error}</div>;
+    }
+
     return (
         <>
-        <NavbarAdmin/>
         <div className="container">
             <div className="event-container">
-                <h2 className="text-center mb-4 event-title">Sự kiện</h2>
+                <h2 className="text-center mb-4 event-title">Quản lý sự kiện</h2>
 
                 <div className="row event-content-wrapper">
                     <div className="col-md-4 p-0 event-list-container">
@@ -109,18 +173,22 @@ const EventManagement = ({ events: initialEvents }) => {
                         </button>
 
                         <div className="event-list">
-                            {events.map((event) => (
-                                <div
-                                    key={event.id}
-                                    className="event-item"
-                                    onClick={() => handleEventClick(event)}
-                                >
-                                    <div className="event-item-title">{event.title}</div>
-                                    <div className="event-item-location">
-                                        <span className="location-icon me-1">◎</span> {event.location}
+                            {events.length > 0 ? (
+                                events.map((event) => (
+                                    <div
+                                        key={event.eventId}
+                                        className={`event-item ${selectedEvent && selectedEvent.eventId === event.eventId ? 'selected' : ''}`}
+                                        onClick={() => handleEventClick(event)}
+                                    >
+                                        <div className="event-item-title">{event.eventTitle}</div>
+                                        <div className="event-item-location">
+                                            <span className="location-icon me-1">◎</span> {event.eventLocation}
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))
+                            ) : (
+                                <div className="no-events p-3 text-center">Không có sự kiện nào</div>
+                            )}
                         </div>
                     </div>
 
@@ -132,10 +200,10 @@ const EventManagement = ({ events: initialEvents }) => {
                                 </label>
                                 <input
                                     type="text"
-                                    name="title"
+                                    name="eventTitle"
                                     className="form-control bg-light rounded"
                                     placeholder="Vui lòng viết tiêu đề của sự kiện..."
-                                    value={formData.title}
+                                    value={formData.eventTitle}
                                     onChange={handleInputChange}
                                 />
                             </div>
@@ -146,10 +214,10 @@ const EventManagement = ({ events: initialEvents }) => {
                                 </label>
                                 <input
                                     type="text"
-                                    name="location"
+                                    name="eventLocation"
                                     className="form-control bg-light rounded"
                                     placeholder="Nhập địa điểm tổ chức..."
-                                    value={formData.location}
+                                    value={formData.eventLocation}
                                     onChange={handleInputChange}
                                 />
                             </div>
@@ -174,9 +242,9 @@ const EventManagement = ({ events: initialEvents }) => {
                                 </label>
                                 <input
                                     type="date"
-                                    name="date"
+                                    name="eventDate"
                                     className="form-control bg-light rounded"
-                                    value={formData.date}
+                                    value={formData.eventDate}
                                     onChange={handleInputChange}
                                 />
                             </div>
@@ -186,21 +254,25 @@ const EventManagement = ({ events: initialEvents }) => {
                                     <FaAlignLeft /> Nội dung sự kiện
                                 </label>
                                 <textarea
-                                    name="content"
+                                    name="eventDesc"
                                     className="form-control bg-light rounded content-textarea"
                                     placeholder="Vui lòng viết nội dung của sự kiện..."
-                                    value={formData.content}
+                                    value={formData.eventDesc}
                                     onChange={handleInputChange}
                                     rows="10"
                                 />
                             </div>
 
                             <div className="d-flex justify-content-end">
-                                <button className="btn btn-outline-danger me-2" onClick={handleDelete}>
+                                <button 
+                                    className="btn btn-outline-danger me-2" 
+                                    onClick={handleDelete}
+                                    disabled={!selectedEvent}
+                                >
                                     Xoá
                                 </button>
                                 <button className="btn btn-primary" onClick={handleSave}>
-                                    Lưu
+                                    {selectedEvent ? 'Cập nhật' : 'Thêm mới'}
                                 </button>
                             </div>
                         </div>
@@ -210,7 +282,7 @@ const EventManagement = ({ events: initialEvents }) => {
         </div>
         <Footer/>
         </>
-    )
-}
+    );
+};
 
-export default EventManagement
+export default EventManagement;

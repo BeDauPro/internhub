@@ -5,7 +5,6 @@ import { FaLocationDot, FaMoneyBill1 } from "react-icons/fa6";
 import { MdHomeRepairService } from "react-icons/md";
 import { FaUsers, FaCalendarAlt } from "react-icons/fa";
 import '../../styles/pages/student/jobdetail.scss';
-import Navbar from '../../components/students/Navbar'
 import Footer from '../../components/Footer'
 import { useNavigate } from 'react-router-dom';
 
@@ -23,7 +22,6 @@ const JobDetail = ({ job }) => {
 
     return (
         <>
-        <Navbar/>
         <div className="job-detail-page">
             {showAlert && (
                 <div className="success-alert">

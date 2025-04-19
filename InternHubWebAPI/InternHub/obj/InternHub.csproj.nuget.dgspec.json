@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Users/macbookair2020m1/Projects/InternHub/InternHubWebAPI/InternHub/InternHub.csproj": {}
+    "/Users/macbookair2020m1/Documents/FPT intern/InternHub/InternHubWebAPI/InternHub/InternHub.csproj": {}
   },
   "projects": {
-    "/Users/macbookair2020m1/Projects/InternHub/InternHubWebAPI/InternHub/InternHub.csproj": {
+    "/Users/macbookair2020m1/Documents/FPT intern/InternHub/InternHubWebAPI/InternHub/InternHub.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/macbookair2020m1/Projects/InternHub/InternHubWebAPI/InternHub/InternHub.csproj",
+        "projectUniqueName": "/Users/macbookair2020m1/Documents/FPT intern/InternHub/InternHubWebAPI/InternHub/InternHub.csproj",
         "projectName": "InternHub",
-        "projectPath": "/Users/macbookair2020m1/Projects/InternHub/InternHubWebAPI/InternHub/InternHub.csproj",
+        "projectPath": "/Users/macbookair2020m1/Documents/FPT intern/InternHub/InternHubWebAPI/InternHub/InternHub.csproj",
         "packagesPath": "/Users/macbookair2020m1/.nuget/packages/",
-        "outputPath": "/Users/macbookair2020m1/Projects/InternHub/InternHubWebAPI/InternHub/obj/",
+        "outputPath": "/Users/macbookair2020m1/Documents/FPT intern/InternHub/InternHubWebAPI/InternHub/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/macbookair2020m1/.nuget/NuGet/NuGet.Config"
@@ -42,6 +42,10 @@
             "AutoMapper.Extensions.Microsoft.DependencyInjection": {
               "target": "Package",
               "version": "[6.1.1, )"
+            },
+            "Azure.Storage.Blobs": {
+              "target": "Package",
+              "version": "[12.24.0, )"
             },
             "MailKit": {
               "target": "Package",

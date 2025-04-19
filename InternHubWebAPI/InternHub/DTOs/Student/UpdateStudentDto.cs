@@ -15,10 +15,10 @@ namespace InternHub.DTOs.Student
         public string? UserId { get; set; }
         public decimal? GPA { get; set; }
         public DateTime? DateOfBirth { get; set; }
-        public IFormFile? ProfilePicture { get; set; }
+        public string? ProfilePicture { get; set; }
         public IFormFile? CVFile { get; set; }
-
-        public StudentStatus? Status { get; set; }
+        public string? Education { get; set; }
+        public string? Phone { get; set; }
 
         public bool HasNonStatusFields()
         {
@@ -31,6 +31,8 @@ namespace InternHub.DTOs.Student
                 || !string.IsNullOrWhiteSpace(Skills)
                 || !string.IsNullOrWhiteSpace(Languages)
                 || !string.IsNullOrWhiteSpace(UserId)
+                || !string.IsNullOrWhiteSpace(Education)
+                || !string.IsNullOrWhiteSpace(Phone)
                 || GPA.HasValue
                 || DateOfBirth.HasValue
                 || ProfilePicture != null

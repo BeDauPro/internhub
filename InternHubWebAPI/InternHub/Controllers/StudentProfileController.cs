@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using InternHub.DTOs.Student;
+using InternHub.Models.ViewModels;
 using InternHub.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,20 +19,25 @@ namespace InternHub.Controllers
             _studentService = studentService;
             _env = env;
         }
+
+        //fillter cho quản lí sinh viên
         [HttpGet("admin/paged")]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> GetPagedStudents(
-            [FromQuery] string? fullName,
-            [FromQuery] string? schoolEmail,
-            [FromQuery] string? sortBy = "FullName",
-            [FromQuery] string? sortDirection = "asc",
-            [FromQuery] int pageNumber = 1,
-            [FromQuery] int pageSize = 10)
+        [FromQuery] string? fullName,
+        [FromQuery] string? schoolEmail,
+        [FromQuery] string? status, // Thêm tham số để lọc theo status
+        [FromQuery] string? timeFilter, // Thêm tham số để lọc theo thời gian nộp đơn
+        [FromQuery] string? sortBy = "FullName",
+        [FromQuery] string? sortDirection = "asc",
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10)
         {
-            var result = await _studentService.GetStudentsAsync(fullName, schoolEmail, sortBy, sortDirection, pageNumber, pageSize);
+            var result = await _studentService.GetStudentsAsync(fullName, schoolEmail, status, timeFilter, sortBy, sortDirection, pageNumber, pageSize);
             return Ok(result);
         }
 
-        [Authorize(Roles = "Employer")]
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -40,11 +46,17 @@ namespace InternHub.Controllers
         }
 
         [HttpGet("me")]
-        [Authorize(Roles = "Student")]
-        public async Task<IActionResult> GetMyProfile(){
+        [Authorize(Roles = "Student")] // Ensure the role matches the logged-in user's role
+        public async Task<IActionResult> GetMyProfile()
+        {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+            {
+                return Unauthorized(new { message = "User is not authenticated." });
+            }
+
             var student = await _studentService.GetByUserIdAsync(userId);
-            return student == null ? NotFound(): Ok(student);
+            return student == null ? NotFound() : Ok(student);
         }
 
         [Authorize(Roles = "Student")]
@@ -56,30 +68,64 @@ namespace InternHub.Controllers
             return Ok(created);
         }
 
-        [Authorize(Roles = "Student,Employer")]
+        [Authorize(Roles = "Student")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromForm] UpdateStudentDto dto)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var isEmployer = User.IsInRole("Employer");
-            var isStudent = User.IsInRole("Student");
-
-            if (isEmployer && dto.HasNonStatusFields())
-            {
-                return StatusCode(StatusCodes.Status403Forbidden, new { message = "Employer chỉ được phép cập nhật status sinh viên." });
-            }
-
-            if (isStudent && dto.Status != null)
-            {
-                return StatusCode(StatusCodes.Status403Forbidden, new { message = "Bạn không có quyền cập nhật trạng thái sinh viên." });
-            }
-
-            var updated = await _studentService.UpdateAsync(id, dto, _env, isEmployer, userId);
+            
+            var updated = await _studentService.UpdateAsync(id, dto, _env, userId);
             if (updated == null) return NotFound();
             return Ok(updated);
         }
 
+        [Authorize(Roles = "Student")]
+        [HttpPut("{id}/update-single-file")]
+        public async Task<IActionResult> UpdateSingleFile(int id)
+        {
+            var form = await HttpContext.Request.ReadFormAsync();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
+            if (form.Files.Count == 0)
+            {
+                return BadRequest(new { message = "No file uploaded." });
+            }
+
+            var file = form.Files[0];
+            string? uploadedUrl = null;
+
+            try
+            {
+                if (file.ContentType.StartsWith("image"))
+                {
+                    uploadedUrl = await _studentService.UploadProfilePictureAsync(file);
+                }
+                else if (file.ContentType == "application/pdf")
+                {
+                    uploadedUrl = await _studentService.UploadCVAsync(file);
+                }
+
+                if (string.IsNullOrEmpty(uploadedUrl))
+                {
+                    return BadRequest(new { message = "File upload failed. Please try again." });
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred during file upload.", error = ex.Message });
+            }
+
+            return Ok(new { message = "File uploaded successfully.", url = uploadedUrl });
+        }
+
+        [Authorize(Roles = "Employer")]
+        [HttpPut("{id}/status")]
+        public async Task<IActionResult> UpdateStatus(int id, [FromBody] UpdateStatusDto dto)
+        {
+            var result = await _studentService.UpdateStatusAsync(id, dto.Status);
+            if (!result) return NotFound();
+            return Ok(new { message = "Cập nhật trạng thái thành công." });
+        }
         [Authorize(Roles = "Student")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)

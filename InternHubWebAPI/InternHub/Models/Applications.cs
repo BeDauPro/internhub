@@ -17,7 +17,7 @@ namespace InternHub.Models
         public int JobPostingId { get; set; }
         public virtual JobPosting JobPosting { get; set; }
 
-        public DateTime ApplicationDate { get; set; }
+        public DateTime ApplicationDate { get; set; } = DateTime.UtcNow;
         public string Status { get; set; } = "pending";
 
         public virtual ICollection<ApplicationHistory> ApplicationHistories { get; set; }

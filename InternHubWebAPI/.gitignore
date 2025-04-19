@@ -1,3 +1,20 @@
 .vs/
 */obj/
 *.cache
+# Ignore Visual Studio files
+.vs/
+
+# Ignore build outputs
+*/obj/
+*.cache
+
+# Ignore appsettings.json and related configuration files
+appsettings.json
+appsettings.Development.json
+appsettings.Production.json
+
+# If you use other environments like Staging, you can add them too
+appsettings.Staging.json
+
+echo "appsettings.json" >> .gitignore
+echo "appsettings.Development.json" >> .gitignore

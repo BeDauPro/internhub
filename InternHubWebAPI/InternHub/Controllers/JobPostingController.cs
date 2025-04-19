@@ -191,7 +191,7 @@ namespace InternHub.Controllers
         // GET: api/Employer/JobPosting - Lấy tất cả JobPosting của employer hiện tại
         [Route("api/Employer/JobPosting")]
         [HttpGet]
-        [Authorize(Roles = "Employer")]
+        //[Authorize(Roles = "Employer")]
         public async Task<ActionResult> GetEmployerJobPostings()
         {
             try
@@ -283,6 +283,30 @@ namespace InternHub.Controllers
             }
         }
 
+ 
+        // GET: api/JobPosting/filtered - Lấy danh sách JobPosting có phân trang và lọc theo nhiều tiêu chí
+        [Route("api/JobPosting/filtered")]
+        [HttpGet]
+        public async Task<ActionResult> GetFilteredJobPostings(
+            [FromQuery] string? searchTerm,
+            [FromQuery] string? workType,
+            [FromQuery] string? location,
+            [FromQuery] string? jobCategory,
+            [FromQuery] string? sortDirection = "desc", // Mặc định sắp xếp theo ngày đăng mới nhất
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 8) // Mặc định 8 bài đăng/trang
+        {
+            try
+            {
+                var result = await _jobPostingService.GetFilteredPagedJobPostingsAsync(
+                    searchTerm, workType, location, jobCategory, sortDirection, pageNumber, pageSize);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = ex.Message });
+            }
+        }
         #endregion
     }
 }

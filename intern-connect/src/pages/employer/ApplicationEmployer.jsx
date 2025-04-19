@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { FaFilter, FaFileAlt } from "react-icons/fa";
 import "../../styles/pages/employer/applicationemployer.scss";
 import Footer from '../../components/Footer';
-import NavbarEmployer from '../../components/employer/NavbarEmployer';
 
 const ApplicationEmployer = ({ applicationData }) => {
     const navigate = useNavigate(); 
@@ -146,7 +145,6 @@ const ApplicationEmployer = ({ applicationData }) => {
 
     return (
         <>
-            <NavbarEmployer />
             <div className="application-management-container">
                 <h1 className="page-title">QUẢN LÝ CÁC ỨNG VIÊN</h1>
 

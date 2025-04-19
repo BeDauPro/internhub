@@ -11,7 +11,7 @@ using System.Text.Json.Serialization;
 using AutoMapper;
 using InternHub.Services.Interfaces;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Register services
 builder.Services.AddScoped<AuthService>();
@@ -25,6 +25,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
+builder.Services.AddScoped<IJobApplicationService, JobApplicationService>();
 
 // Đọc cấu hình email
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
@@ -35,6 +36,9 @@ builder.Services.AddTransient<IEmailSender, SendMailService>();
 
 builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<IEmployerService, EmployerService>();
+builder.Services.AddScoped<IStudentReviewService, StudentReviewService>();
+
+builder.Services.AddScoped<IEventService, EventService>();
 
 // Thêm Swagger
 builder.Services.AddControllers();
@@ -154,19 +158,18 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 
-var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
-
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: MyAllowSpecificOrigins,
+    options.AddPolicy(name:  "_myAllowSpecificOrigins",
                       policy =>
                       {
                           policy.WithOrigins("http://localhost:3000") 
                                 .AllowAnyHeader()
-                                .AllowAnyMethod();
+                                .AllowAnyMethod()
+                                .AllowCredentials();
                       });
 });
-
+builder.Services.AddSingleton<AzureBlobService>();
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -192,7 +195,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseCors(MyAllowSpecificOrigins);
+app.UseCors( "_myAllowSpecificOrigins");
 app.UseAuthentication();  
 app.UseAuthorization();
 

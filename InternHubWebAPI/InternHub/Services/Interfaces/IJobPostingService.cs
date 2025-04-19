@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using InternHub.Models.Enums;
 using InternHub.DTOs.JobPosting;
+using InternHub.DTOs.Common;
 
 namespace InternHub.Services.Interfaces
 {
@@ -39,5 +40,14 @@ namespace InternHub.Services.Interfaces
 
         // DELETE - Xóa JobPosting
         Task<bool> DeleteJobPostingAsync(int id, int employerId);
+        //Filter cho jobposting
+        Task<PagedResult<JobPostingListDto>> GetFilteredPagedJobPostingsAsync(
+          string? searchTerm = null,
+          string? workType = null,
+          string? location = null,
+          string? jobCategory = null,
+          string? sortDirection = "desc",
+          int pageNumber = 1,
+          int pageSize = 8);
     }
 }

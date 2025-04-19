@@ -29,7 +29,7 @@ const NavbarEmployer = () => {
                 </button>
                 <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                   <li><a className="dropdown-item" href="" onClick={() => navigate("/employerprofile")}>Hồ sơ doanh nghiệp</a></li>
-                  <li><a className="dropdown-item" href="/loign">Đăng xuất</a></li>
+                  <li><a className="dropdown-item" href="#" onClick={() => navigate("/login")}>Đăng xuất</a></li>
                 </ul>
               </div>
             </div>

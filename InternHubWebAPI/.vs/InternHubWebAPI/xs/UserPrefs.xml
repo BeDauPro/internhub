@@ -7,6 +7,11 @@
       <File FileName="InternHub/Controllers/StudentProfileController.cs" Line="115" Column="1" />
       <File FileName="InternHub/DTOs/Student/StudentDto.cs" Line="5" Column="28" />
       <File FileName="InternHub/Program.cs" Line="69" Column="49" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="InternHub/Services/Interfaces/IJobApplicationService.cs">
+    <Files>
+      <File FileName="InternHub/Services/Interfaces/IJobApplicationService.cs" Line="13" Column="1" />
+      <File FileName="InternHub/Services/JobApplicationService.cs" Line="65" Column="10" />
+      <File FileName="InternHub/Services/JobPostingService.cs" Line="16" Column="38" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -17,6 +22,11 @@
               <Node name="Contacts" expanded="True" />
               <Node name="uploads" expanded="True">
                 <Node name="cv" selected="True" />
+              <Node name="DTOs" expanded="True" />
+              <Node name="Services">
+                <Node name="Interfaces" expanded="True">
+                  <Node name="IJobApplicationService.cs" selected="True" />
+                </Node>
               </Node>
             </Node>
           </Node>

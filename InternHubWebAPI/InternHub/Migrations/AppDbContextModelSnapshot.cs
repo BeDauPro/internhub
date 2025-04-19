@@ -465,6 +465,9 @@ namespace InternHub.Migrations
                     b.Property<DateTime?>("DateOfBirth")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<string>("Education")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("FullName")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -477,11 +480,13 @@ namespace InternHub.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("GithubProfile")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Languages")
                         .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Phone")
                         .HasColumnType("longtext");
 
                     b.Property<string>("ProfilePicture")

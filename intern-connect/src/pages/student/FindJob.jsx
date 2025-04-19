@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Navbar from '../../components/students/Navbar';
 import Footer from '../../components/Footer';
 import JobCard from './JobCard';
 import '../../styles/pages/student/findjob.scss';
@@ -163,7 +162,6 @@ const FindJob = ({ jobs }) => {
 
     return (
         <div className="find-job">
-            <Navbar />
             <HeroSection onSearch={handleSearch} jobs={jobs} />
             <Overview />
             <div ref={jobCardRef}>

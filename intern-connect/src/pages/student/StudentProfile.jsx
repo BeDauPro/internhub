@@ -1,95 +1,148 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
 import '../../styles/pages/student/studentprofile.scss';
-import { AiOutlineMail, AiOutlineHome, AiOutlinePhone, AiOutlineGithub, AiOutlineFileText } from "react-icons/ai";
-import { FaGraduationCap, FaBirthdayCake, FaMale, FaLanguage } from "react-icons/fa";
-import avatar from '../../images/avatar.jpg';
-import Navbar from '../../components/students/Navbar'
-import Footer from '../../components/Footer'
+import {
+    AiOutlineMail,
+    AiOutlineHome,
+    AiOutlinePhone,
+    AiOutlineGithub,
+    AiOutlineFileText,
+} from 'react-icons/ai';
+import {
+    FaGraduationCap,
+    FaBirthdayCake,
+    FaMale,
+    FaLanguage,
+} from 'react-icons/fa';
+import Footer from '../../components/Footer';
 import Evaluate from './Evaluate';
+import { getStudentProfile, createStudent } from '../../services/studentApi';
 
-const StudentProfile = ({ profileData, reviews }) => {
-    const navigate = useNavigate();
-    const handleEdit = () => {
-        navigate('/profileform', { state: { profileData } });
+
+const StudentProfile = () => {
+    const [student, setStudent] = useState(null);
+    const [isCreating, setIsCreating] = useState(false);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const data = await getStudentProfile();
+                if (!data) {
+                    setIsCreating(true);
+                } else {
+                    setStudent(data);
+                }
+            } catch (err) {
+                console.error('Error loading profile: ', err);
+                alert('Không thể tải thông tin sinh viên. Vui lòng thử lại sau.');
+            }
+        };
+        fetchData();
+    }, []);
+
+    const handleCreate = async (formData) => {
+        try {
+            const newStudent = await createStudent(formData);
+            setStudent(newStudent);
+            setIsCreating(false);
+        } catch (err) {
+            console.error('Error creating profile: ', err);
+            alert('Không thể tạo thông tin sinh viên. Vui lòng thử lại sau.');
+        }
     };
 
-    if (!profileData) {
+    if (!student && !isCreating) {
         return (
             <div className="error-container">
-                <h2>Thông tin sinh viên không khả dụng</h2>
-                <button onClick={() => window.location.reload()} className="back-btn">Tải lại</button>
+                <h2>Chưa có thông tin tài khoản</h2>
+                <button
+                    onClick={() => window.location.href = '/profileform'}
+                    className="create-account-btn"
+                >
+                    Tạo mới tài khoản
+                </button>
             </div>
         );
     }
 
     return (
         <>
-            <Navbar />
             <div className="profile-container">
                 <div className="profile-card">
-                    <img className="profile-image" src={avatar} alt="Avatar" />
-                    <h2>{profileData.name}</h2>
-                    <p className="student-id">{profileData.studentId}</p>
+                    <img
+                        className="profile-image"
+                        src={student.profilePicture ? `${student.profilePicture}?t=${new Date().getTime()}` : '/default-avatar.png'}
+                        alt="Avatar"
+                    />
+
+                    <h2>{student.fullName}</h2>
+                    <p className="student-id">ID Sinh viên: {student.id}</p>
+
                     <div className="status">
                         <span className="status-label">Trạng thái việc làm</span>
-                        <span className="status-badge">{profileData.status}</span>
+                        <span className="status-badge">{student.status}</span>
                     </div>
+
                     <section className="contact-section">
                         <h3>Thông tin liên hệ</h3>
-                        <p><AiOutlineMail /> {profileData.email}</p>
-                        <p><AiOutlineHome /> {profileData.address}</p>
-                        <p><AiOutlinePhone /> {profileData.phone}</p>
-                        <p><FaBirthdayCake /> {profileData.birthday}</p>
-                        <p><FaMale /> {profileData.gender}</p>
+                        <p><AiOutlineMail /> {student.schoolEmail}</p>
+                        <p><AiOutlineHome /> {student.address}</p>
+                        <p><AiOutlinePhone /> {student.phone}</p>
+                        <p><FaBirthdayCake /> {student.dateOfBirth}</p>
+                        <p><FaMale /> {student.gender}</p>
                     </section>
                 </div>
+
                 <div className="profile-evaluate-container">
                     <div className="profile-details">
                         <section className="section">
                             <h3>Giới thiệu bản thân</h3>
-                            <p>{profileData.introduction}</p>
+                            <p>{student.bio || 'Chưa có mô tả'}</p>
                         </section>
-
                         <section className="section">
                             <h3>Trình độ học vấn</h3>
-                            {profileData.education.map((edu, index) => (
-                                <div key={index}>
-                                    <p><strong>{edu.institution}</strong></p>
-                                    <p>{edu.details}</p>
-                                </div>
-                            ))}
+                            <p><FaGraduationCap /> {student.education || 'Không có thông tin học vấn nào được liệt kê'}</p>
                         </section>
-
                         <section className="section">
                             <h3>Thông tin khác</h3>
-                            <p><AiOutlineGithub /> <strong>Github link:</strong> <a href={profileData.otherInfo.github} target="_blank" rel="noopener noreferrer">{profileData.otherInfo.github}</a></p>
-                            <p><FaGraduationCap /> <strong>GPA:</strong> {profileData.otherInfo.gpa}</p>
-                            <p><FaLanguage /><strong>Ngôn ngữ sử dụng:</strong> {profileData.otherInfo.languages}</p>
+                            <p>
+                                <AiOutlineGithub /> <strong>Github:</strong>{' '}
+                                {student.githubProfile ? (
+                                    <a href={student.githubProfile} target="_blank" rel="noopener noreferrer">
+                                        {student.githubProfile}
+                                    </a>
+                                ) : (
+                                    'Chưa có'
+                                )}
+                            </p>
+                            <p><FaGraduationCap /> <strong>GPA:</strong> {student.gpa || 'N/A'}</p>
+                            <p><FaLanguage /> <strong>Ngôn ngữ:</strong> {student.languages || 'N/A'}</p>
                         </section>
 
                         <section className="section">
                             <h3>Kỹ năng chuyên môn</h3>
-                            <ul>
-                                {profileData.skills.map((skill, index) => (
-                                    <li key={index}>{skill}</li>
-                                ))}
-                            </ul>
+                            <p>{student.skills || 'Không có kỹ năng nào được liệt kê'}</p>
                         </section>
 
                         <section className="cv-section">
                             <h3>CV cá nhân:</h3>
                             <div className="cv-upload">
                                 <AiOutlineFileText className="cv-icon" />
-                                <span>{profileData.cvUploaded ? "Đã tải lên" : "Chưa tải lên"}</span>
+                                {student.cvFile ? (
+                                    <a href={student.cvFile} target="_blank" rel="noopener noreferrer">Xem CV</a>
+                                ) : (
+                                    <span>Chưa tải lên</span>
+                                )}
                             </div>
                         </section>
-                        <div className="profile-actions">
-                            <button onClick={handleEdit} className="edit-btn">Chỉnh sửa</button>
-                        </div>
 
+                        <div className="profile-actions">
+                            <button onClick={() => window.location.href = '/profileform'} className="edit-btn">
+                                Chỉnh sửa
+                            </button>
+                        </div>
                     </div>
-                    <Evaluate initialReviews={reviews} />
+
+                    <Evaluate initialReviews={student.reviews || []} />
                 </div>
             </div>
             <Footer />
