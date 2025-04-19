@@ -35,6 +35,7 @@
     <None Remove="uploads\cv\" />
     <None Remove="DTOs\Employer\" />
     <None Remove="DTOs\JobApplication\" />
+    <None Remove="DTOs\Review\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\ViewModels\" />
@@ -45,5 +46,6 @@
     <Folder Include="uploads\cv\" />
     <Folder Include="DTOs\Employer\" />
     <Folder Include="DTOs\JobApplication\" />
+    <Folder Include="DTOs\Review\" />
   </ItemGroup>
 </Project>

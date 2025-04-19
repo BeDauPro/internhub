@@ -41,8 +41,9 @@ namespace InternHub.Models
              .OnDelete(DeleteBehavior.Restrict);
             // Cấu hình Unique: Một Student chỉ được review một Employer
             modelBuilder.Entity<StudentReview>()
-                .HasIndex(sr => new { sr.StudentId, sr.EmployerId })
-                .IsUnique();
+            .HasIndex(sr => new { sr.StudentId, sr.EmployerId, sr.ReviewerRole })  
+            .IsUnique();
+
 
             // Cấu hình mối quan hệ giữa ApplicationHistory và Student
             modelBuilder.Entity<ApplicationHistory>()

@@ -1,10 +1,11 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using InternHub.Models.Enums;
 using Microsoft.EntityFrameworkCore;
 
-namespace InternHub.Models
-{
+    namespace InternHub.Models
+    {
     public class StudentReview
     {
         [Key]
@@ -22,13 +23,13 @@ namespace InternHub.Models
         public int EmployerId { get; set; }
         public virtual Employer Employer { get; set; }
 
+        public ReviewerRole ReviewerRole { get; set; }
+
         public static void Configure(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<StudentReview>()
-                .HasIndex(sr => new { sr.StudentId, sr.EmployerId })
+                .HasIndex(sr => new { sr.StudentId, sr.EmployerId, sr.ReviewerRole })
                 .IsUnique();
         }
     }
-
-}
-
+    }
