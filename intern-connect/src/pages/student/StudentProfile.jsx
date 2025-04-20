@@ -1,3 +1,4 @@
+// src/pages/student/StudentProfile.jsx
 import React, { useEffect, useState } from 'react';
 import '../../styles/pages/student/studentprofile.scss';
 import {
@@ -17,19 +18,22 @@ import Footer from '../../components/Footer';
 import Evaluate from './Evaluate';
 import { getStudentProfile, createStudent } from '../../services/studentApi';
 
-
-const StudentProfile = () => {
+const StudentProfile = ({ studentId }) => {
     const [student, setStudent] = useState(null);
     const [isCreating, setIsCreating] = useState(false);
+    const [role, setRole] = useState(null);
 
     useEffect(() => {
+        const userRole = localStorage.getItem('role'); // "Student" hoặc "Employer"
+        setRole(userRole);
+
         const fetchData = async () => {
             try {
-                const data = await getStudentProfile();
+                const data = await getStudentProfile(studentId);
                 if (!data) {
-                    setIsCreating(true);
+                    setIsCreating(true); // Nếu không có thông tin sinh viên, chuyển qua tạo tài khoản mới
                 } else {
-                    setStudent(data);
+                    setStudent(data); // Đã có thông tin sinh viên
                 }
             } catch (err) {
                 console.error('Error loading profile: ', err);
@@ -37,11 +41,11 @@ const StudentProfile = () => {
             }
         };
         fetchData();
-    }, []);
+    }, [studentId]);
 
     const handleCreate = async (formData) => {
         try {
-            const newStudent = await createStudent(formData);
+            const newStudent = await createStudent(formData); // Tạo mới thông tin sinh viên
             setStudent(newStudent);
             setIsCreating(false);
         } catch (err) {
@@ -50,6 +54,7 @@ const StudentProfile = () => {
         }
     };
 
+    // Nếu không có thông tin sinh viên và không đang tạo mới, hiển thị thông báo lỗi
     if (!student && !isCreating) {
         return (
             <div className="error-container">
@@ -62,6 +67,11 @@ const StudentProfile = () => {
                 </button>
             </div>
         );
+    }
+
+    // Nếu thông tin sinh viên chưa được tải về, hiển thị trạng thái tải
+    if (!student) {
+        return <p>Đang tải...</p>;
     }
 
     return (
@@ -135,14 +145,18 @@ const StudentProfile = () => {
                             </div>
                         </section>
 
-                        <div className="profile-actions">
-                            <button onClick={() => window.location.href = '/profileform'} className="edit-btn">
-                                Chỉnh sửa
-                            </button>
-                        </div>
+                        {/* Nút chỉnh sửa chỉ dành cho sinh viên */}
+                        {role === 'Student' && (
+                            <div className="profile-actions">
+                                <button onClick={() => window.location.href = '/profileform'} className="edit-btn">
+                                    Chỉnh sửa
+                                </button>
+                            </div>
+                        )}
                     </div>
 
-                    <Evaluate initialReviews={student.reviews || []} />
+                    {/* Chỉ nhà tuyển dụng mới thấy phần đánh giá */}
+                    {role === 'Employer' && <Evaluate studentId={studentId} />}
                 </div>
             </div>
             <Footer />

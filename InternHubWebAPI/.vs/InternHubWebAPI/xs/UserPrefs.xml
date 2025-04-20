@@ -1,31 +1,32 @@
 ﻿<Properties StartupConfiguration="{041E3534-1384-414A-9671-F6F7C0CDA538}|Default">
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.ItemProperties.InternHub PreferredExecutionTarget="/Applications/Google Chrome.app" />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MultiItemStartupConfigurations />
-  <MonoDevelop.Ide.ItemProperties.InternHub PreferredExecutionTarget="/Applications/Google Chrome.app" />
-  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MonoDevelop.Ide.Workbench ActiveDocument="InternHub/Models/Enums/StudentStatus.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="InternHub/Controllers/EmployerProfileController.cs">
     <Files>
-      <File FileName="InternHub/DTOs/Review/StudentReviewDto.cs" Line="8" Column="45" />
-      <File FileName="InternHub/Controllers/StudentReviewController.cs" Line="30" Column="69" />
-      <File FileName="InternHub/Models/StudentReview.cs" Line="7" Column="31" />
-      <File FileName="InternHub/Models/Enums/ReviewerRoles.cs" Line="1" Column="1" />
-      <File FileName="InternHub/DTOs/Review/StudentReviewCreateDto.cs" Line="13" Column="6" />
-      <File FileName="InternHub/Models/AppDbContext.cs" Line="44" Column="84" />
-      <File FileName="InternHub/Services/StudentReviewService.cs" Line="10" Column="48" />
-      <File FileName="InternHub/Services/Interfaces/IStudentReviewService.cs" Line="4" Column="40" />
-      <File FileName="InternHub/Controllers/StudentEventController.cs" Line="1" Column="1" />
-      <File FileName="InternHub/Controllers/JobApplicationController.cs" Line="92" Column="14" />
-      <File FileName="InternHub/Services/JobApplicationService.cs" Line="94" Column="41" />
-      <File FileName="InternHub/Models/Enums/Worktype.cs" Line="1" Column="1" />
-      <File FileName="InternHub/Models/Enums/StudentStatus.cs" Line="1" Column="1" />
+      <File FileName="InternHub/Controllers/StudentProfileController.cs" Line="69" Column="10" />
+      <File FileName="InternHub/Controllers/EmployerProfileController.cs" Line="50" Column="10" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
-        <State name="__root__" />
+        <State name="__root__">
+          <Node name="InternHubWebAPI">
+            <Node name="InternHub">
+              <Node name="Controllers">
+                <Node name="EmployerProfileController.cs" selected="True" />
+              </Node>
+              <Node name="DTOs" expanded="True">
+                <Node name="Review" expanded="True" />
+              </Node>
+              <Node name="Services" expanded="True" />
+            </Node>
+          </Node>
+        </State>
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
 </Properties>

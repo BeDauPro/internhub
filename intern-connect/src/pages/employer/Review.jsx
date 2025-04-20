@@ -1,132 +1,109 @@
-import React, { useState, useEffect } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import React, { useEffect, useState } from 'react';
+import { createReview, getReviewsForEmployer } from '../../services/reviewApi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar } from '@fortawesome/free-solid-svg-icons';
-import "../../styles/pages/employer/review.scss";
-import avatar from "../../images/avatar.jpg";
+import '../../styles/pages/employer/review.scss';
 
-const Review = ({ EmployerReview }) => {
-  const loggedInUser = {
-    name: "Nguyen Van A",
-    avatar: { avatar },
-  };
-
-  const [formReview, setFormReview] = useState({
-    name: loggedInUser.name,
-    text: "",
-    rating: 0,
-    imgSrc: loggedInUser.avatar,
+const Review = ({ employerId, role }) => {
+  const [reviews, setReviews] = useState([]);
+  const [newReview, setNewReview] = useState({
+    overallRating: 0,
+    comments: '',
   });
 
-  const [reviews, setReviews] = useState(EmployerReview || []);
+  useEffect(() => {
+    if (employerId) {
+      fetchReviews();
+    }
+  }, [employerId]);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormReview({ ...formReview, [name]: value });
+  const fetchReviews = async () => {
+    const data = await getReviewsForEmployer(employerId);
+    setReviews(data);
   };
 
-  const handleRatingChange = (rating) => {
-    setFormReview({ ...formReview, rating });
-  };
-
-  const handleSubmit = () => {
-    const { name, text, rating, imgSrc } = formReview;
-
-    if (!text || rating === 0) {
-      alert("Vui lòng điền đầy đủ thông tin và chọn đánh giá!");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!newReview.comments || newReview.overallRating === 0) {
+      alert("Vui lòng nhập đầy đủ nội dung và đánh giá sao");
       return;
     }
-
-    const newReview = {
-      name,
-      text,
-      rating,
-      imgSrc,
-    };
-
-    setReviews([...reviews, newReview]);
-    alert("Đã gửi đánh giá!");
-    clearForm();
+    try {
+      await createReview({ ...newReview, employerId });
+      setNewReview({ overallRating: 0, comments: '' });
+      fetchReviews();
+    } catch (error) {
+      console.error('Lỗi khi gửi đánh giá:', error);
+      alert('Không thể gửi đánh giá. Vui lòng thử lại sau.');
+    }
   };
-
-  const clearForm = () => {
-    setFormReview({
-      ...formReview,
-      text: "",
-      rating: 0,
-    });
-  };
-
-  const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color') || '#123082';
 
   return (
-    <div>
-      <div className="container-review">
-        <h2 className="mb-4" style={{ color: primaryColor }}>Nhận xét về công ty</h2>
-        <div className="list-group">
-          {reviews.map((review, index) => (
-            <div key={index} className="list-group-item">
-              <div className="d-flex align-items-start">
-                <img
-                  src={review.imgSrc}
-                  alt={`Portrait of ${review.name}`}
-                  className="rounded-circle mr-3"
-                  style={{ width: '110px', height: '110px' }}
-                />
-                <div className="flex-grow-1">
-                  <h5 style={{ color: primaryColor }}>{review.name}</h5>
-                  <div>
-                    {[...Array(5)].map((_, i) => (
-                      <FontAwesomeIcon
-                        key={i}
-                        icon={faStar}
-                        className={i < review.rating ? 'text-warning' : 'text-muted'}
-                      />
-                    ))}
-                  </div>
-                  <p className="text-secondary">{review.text}</p>
-                </div>
+    <div className="container-review">
+      <h2 className="mb-4">Nhận xét về công ty</h2>
+
+      <div className="list-group">
+        {reviews.map((review, index) => (
+          <div key={index} className="list-group-item d-flex align-items-start">
+            <img
+              src={review.studentAvatar}
+              alt={review.studentName}
+              className="rounded-circle mr-3"
+              style={{ width: '80px', height: '80px' }}
+            />
+            <div className="flex-grow-1">
+              <h5>{review.studentName}</h5>
+              <div>
+                {[...Array(5)].map((_, i) => (
+                  <FontAwesomeIcon
+                    key={i}
+                    icon={faStar}
+                    className={i < review.overallRating ? 'text-warning' : 'text-muted'}
+                  />
+                ))}
+              </div>
+              <p>{review.comments}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* ✅ Chỉ hiển thị form nếu là sinh viên */}
+      {role === 'Student' && (
+        <div className="container-comment mt-5">
+          <h2 className="mb-3">Thêm nhận xét</h2>
+          <form onSubmit={handleSubmit}>
+            <div className="mb-3">
+              <label className="form-label">Chọn đánh giá của bạn</label>
+              <div>
+                {[...Array(5)].map((_, i) => (
+                  <FontAwesomeIcon
+                    key={i}
+                    icon={faStar}
+                    className={i < newReview.overallRating ? 'text-warning' : 'text-muted'}
+                    onClick={() => setNewReview({ ...newReview, overallRating: i + 1 })}
+                    style={{ cursor: 'pointer' }}
+                  />
+                ))}
               </div>
             </div>
-          ))}
+            <div className="mb-3">
+              <label htmlFor="comment" className="form-label">Viết nhận xét của bạn</label>
+              <textarea
+                className="form-control"
+                id="comment"
+                placeholder="Viết nhận xét..."
+                rows="4"
+                value={newReview.comments}
+                onChange={(e) => setNewReview({ ...newReview, comments: e.target.value })}
+              ></textarea>
+            </div>
+            <button className="btn btn-primary" type="submit">Gửi</button>
+          </form>
         </div>
-      </div>
-      <div className="container-comment">
-        <h2 className="mb-4" style={{ color: primaryColor }}>Thêm nhận xét</h2>
-        <div className="mb-3">
-          <label className="form-label">Chọn đánh giá của bạn</label>
-          <div>
-            {[...Array(5)].map((_, i) => (
-              <FontAwesomeIcon
-                key={i}
-                icon={faStar}
-                className={i < formReview.rating ? 'text-warning' : 'text-muted'}
-                onClick={() => handleRatingChange(i + 1)}
-                style={{ cursor: 'pointer' }}
-              />
-            ))}
-          </div>
-        </div>
-        <div className="mb-3">
-          <label htmlFor="comment" className="form-label">Viết nhận xét của bạn</label>
-          <textarea
-            className="form-control"
-            id="comment"
-            placeholder="Viết nhận xét..."
-            rows="4"
-            name="text"
-            value={formReview.text}
-            onChange={handleInputChange}
-          ></textarea>
-        </div>
-        <button className="btn btn-primary" onClick={handleSubmit}>Gửi</button>
-      </div>
+      )}
     </div>
   );
 };
 
 export default Review;
-
-
-
-

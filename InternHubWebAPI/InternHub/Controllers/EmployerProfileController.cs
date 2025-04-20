@@ -41,7 +41,13 @@ namespace InternHub.Controllers
             return Ok(employers);
         }
 
-
+        [HttpGet("{id}")]
+        [Authorize(Roles = "Student")]
+        public async Task<IActionResult> GetEmployerProfileById(int id)
+        {
+            var employer = await _employerService.GetByIdAsync(id);
+            return employer == null ? NotFound() : Ok(employer);
+        }
         // GET: Get own employer profile by userId
         [HttpGet("me")]
         [Authorize(Roles = "Employer")]

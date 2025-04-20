@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-
 import StudentProfile from "./pages/student/StudentProfile";
 import ProfileForm from "./pages/student/ProfileForm";
 import "./styles/pages/student/profileform.scss";
 import Login from "./pages/Login";
 import FindJob from "./pages/student/FindJob";
-import Navbar from "./components/students/Navbar";
-import Footer from "./components/Footer";
 import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
 import EmployerProfile from "./pages/employer/EmployerProfile";
@@ -99,18 +96,28 @@ const App = () => {
         setJobDetails(updatedProfile);
     };
 
+    const getDefaultRoute = () => {
+        if (role === "Student") return "/findjob";
+        if (role === "Employer") return "/manageposts";
+        if (role === "Admin") return "/accountmanagement";
+        return "/login"; // fallback nếu không xác định được role
+    };
+
+
     return (
         <Router>
-            {window.location.pathname !== "/login" &&
-            window.location.pathname !== "/register" &&
-            window.location.pathname !== "/forgotpassword" && <NavbarWrapper />}
+            {isAuthenticated &&
+                !["/login", "/register", "/forgotpassword"].includes(window.location.pathname) && (
+                    <NavbarWrapper />
+                )}
 
             <Routes>
-                <Route path="/" element={<Navigate to="/login" />} />
+                <Route path="/" element={<Navigate to={getDefaultRoute()} />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/forgotpassword" element={<ForgotPassword />} />
 
+                {/* Routes dành cho Student */}
                 <Route
                     element={
                         <PrivateRoute
@@ -131,8 +138,14 @@ const App = () => {
                         path="/applicationhistory"
                         element={<ApplicationsHistory applications={applications} />}
                     />
+                    <Route
+                        path="/employerprofile/:employerId"
+                        element={<EmployerProfile />}
+                    />
+                    <Route path="/jobdetail/:id" element={<JobDetail jobDetails={jobDetails} />} />
                 </Route>
 
+                {/* Routes dành cho Employer */}
                 <Route
                     element={
                         <PrivateRoute
@@ -142,22 +155,24 @@ const App = () => {
                         />
                     }
                 >
+                    <Route path="/manageposts" element={<ManagePosts jobs={jobs} />} />
                     <Route
                         path="/employerprofile"
-                        element={<EmployerProfile profileData={eProfile} EmployerReview={EmployerReview} />}
+                        element={<EmployerProfile />}
                     />
                     <Route
                         path="/editjob"
                         element={<EditJob editJob={jobDetails} onSave={handleSave} />}
                     />
                     <Route path="/editjob/:id" element={<EditJob onSave={handleSave} />} />
-                    <Route path="/manageposts" element={<ManagePosts jobs={jobs} />} />
                     <Route
                         path="/applicationemployer"
                         element={<ApplicationEmployer applicationData={applicationEmployer} />}
                     />
+                    <Route path="/editprofile" element={<EditProfile onSave={handleSave} />} />
                 </Route>
 
+                {/* Routes dành cho Admin */}
                 <Route
                     element={
                         <PrivateRoute

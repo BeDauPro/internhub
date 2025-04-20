@@ -4,9 +4,6 @@ const BASE_URL = 'https://localhost:7286/api/EmployerProfile';
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
   withCredentials: true,
 });
 
@@ -63,6 +60,20 @@ export const filterEmployers = async ({
 
   const response = await axiosInstance.get('/filter', { params });
   return response.data;
+};
+
+export const getEmployerProfileById = async (id) => {
+  if (!id) {
+      console.error('Employer ID is missing or invalid.');
+      throw new Error('Employer ID is required.');
+  }
+  try {
+      const response = await axiosInstance.get(`/${id}`);
+      return response.data;
+  } catch (error) {
+      console.error('Error fetching employer profile by ID:', error);
+      throw error;
+  }
 };
 
 // Lấy thông tin employer hiện tại (dành cho employer đã đăng nhập)
