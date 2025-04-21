@@ -2,9 +2,9 @@ namespace InternHub.Models.Enums
 {
     public enum StudentStatus
     {
-        Pending,
-        Reviewed,
-        Internship,
-        Completed
+        Pending = 0,
+        Reviewed = 1,
+        Internship = 2,
+        Completed = 3
     }
 }

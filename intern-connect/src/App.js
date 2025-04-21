@@ -5,8 +5,6 @@ import ProfileForm from "./pages/student/ProfileForm";
 import "./styles/pages/student/profileform.scss";
 import Login from "./pages/Login";
 import FindJob from "./pages/student/FindJob";
-import Navbar from "./components/students/Navbar";
-import Footer from "./components/Footer";
 import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
 import EmployerProfile from "./pages/employer/EmployerProfile";
@@ -23,6 +21,7 @@ import ApplicationsHistory from "./pages/student/ApplicationsHistory";
 import PrivateRoute from "./components/auth/PrivateRoute";
 import useAuth from "./hooks/useAuth";
 import ForgotPassword from "./pages/ForgotPassword";
+import StudentViewEmployerProfile from "./pages/student/StudentViewEmployerProfile";
 import {
     fetchStudentProfile,
     fetchEmployerProfile,
@@ -34,7 +33,6 @@ import {
     fetchEmployerReview,
     fetchApplicationEmployer
 } from "./services/api";
-import JobCard from "./pages/student/JobCard";
 import ApplicationEmployer from "./pages/employer/ApplicationEmployer";
 import StudentManagement from "./pages/admin/StudentManagement";
 import AccountManagement from "./pages/admin/AccountManagement";
@@ -51,7 +49,7 @@ const App = () => {
     const [jobs, setJobs] = useState([]);
     const [events, setEvents] = useState([]);
     const [reviews, setReviews] = useState([]);
-    const [EmployerReview, setEmployerReview] = useState([]);
+    const [employerReview, setEmployerReview] = useState([]);
     const [applicationEmployer, setApplicationEmployer] = useState([]);
     const [managementStudents, setManagementStudents] = useState([]);
     const [accounts, setAccounts] = useState([]);
@@ -73,9 +71,8 @@ const App = () => {
             const jobData = await fetchJobs();
             const eventData = await fetchEvents();
             const reviewData = await fetchReview();
-            const EmployerReviewData = await fetchEmployerReview();
+            const employerReviewData = await fetchEmployerReview();
             const applicationEmployerData = await fetchApplicationEmployer();
-            const studentData = await fetchApplicationEmployer();
 
             setProfile(studentProfile);
             setEProfile(employerProfile);
@@ -84,9 +81,8 @@ const App = () => {
             setJobs(jobData);
             setEvents(eventData);
             setReviews(reviewData);
-            setEmployerReview(EmployerReviewData);
+            setEmployerReview(employerReviewData);
             setApplicationEmployer(applicationEmployerData);
-            setManagementStudents(studentData);
         };
 
         fetchData();
@@ -98,94 +94,54 @@ const App = () => {
         setJobDetails(updatedProfile);
     };
 
+    const defaultRoutes = {
+        Student: "/findjob",
+        Employer: "/manageposts",
+        Admin: "/accountmanagement",
+    };
+
+    const getDefaultRoute = () => defaultRoutes[role] || "/login";
+
+
     return (
         <Router>
-            {window.location.pathname !== "/login" &&
-            window.location.pathname !== "/register" &&
-            window.location.pathname !== "/forgotpassword" && <NavbarWrapper />}
+            {isAuthenticated && !["/login", "/register", "/forgotpassword"].includes(window.location.pathname) && (
+                <NavbarWrapper />
+            )}
 
             <Routes>
-                <Route path="/" element={<Navigate to="/login" />} />
+                <Route path="/" element={<Navigate to={getDefaultRoute()} />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/forgotpassword" element={<ForgotPassword />} />
 
-                <Route
-                    element={
-                        <PrivateRoute
-                            isAuthenticated={isAuthenticated}
-                            allowedRoles={["Student"]}
-                            role={role}
-                        />
-                    }
-                >
-                    <Route
-                        path="/studentprofile"
-                        element={<StudentProfile profileData={profile} reviews={reviews} />}
-                    />
+                <Route element={<PrivateRoute isAuthenticated={isAuthenticated} allowedRoles={["Student"]} role={role} />}>
+                    <Route path="/studentprofile" element={<StudentProfile profileData={profile} reviews={reviews} />} />
+                    <Route path="/profileform" element={<ProfileForm onSave={handleSave} />} />
                     <Route path="/findjob" element={<FindJob jobs={jobs} />} />
                     <Route path="/evaluate" element={<Evaluate initialReviews={reviews} />} />
                     <Route path="/eventstudent" element={<EventStudent events={events} />} />
-                    <Route
-                        path="/applicationhistory"
-                        element={<ApplicationsHistory applications={applications} />}
-                    />
+                    <Route path="/applicationhistory" element={<ApplicationsHistory applications={applications} />} />
+                    <Route path="/viewemployer/:employerId" element={<StudentViewEmployerProfile />} />
+                    <Route path="/jobdetail/:id" element={<JobDetail jobDetails={jobDetails} />} />
+                    <Route path="/review/:employerId" element={<Review role={role} />} />
                 </Route>
 
-                <Route
-                    element={
-                        <PrivateRoute
-                            isAuthenticated={isAuthenticated}
-                            allowedRoles={["Employer"]}
-                            role={role}
-                        />
-                    }
-                >
-                    <Route
-                        path="/employerprofile"
-                        element={<EmployerProfile profileData={eProfile} EmployerReview={EmployerReview} />}
-                    />
-                    <Route
-                        path="/editjob"
-                        element={<EditJob editJob={jobDetails} onSave={handleSave} />}
-                    />
-                    <Route path="/editjob/:id" element={<EditJob onSave={handleSave} />} />
+                <Route element={<PrivateRoute isAuthenticated={isAuthenticated} allowedRoles={["Employer"]} role={role} />}>
                     <Route path="/manageposts" element={<ManagePosts jobs={jobs} />} />
-                    <Route
-                        path="/applicationemployer"
-                        element={<ApplicationEmployer applicationData={applicationEmployer} />}
-                    />
+                    <Route path="/employerprofile" element={<EmployerProfile />} />
+                    <Route path="/editjob" element={<EditJob editJob={jobDetails} onSave={handleSave} />} />
+                    <Route path="/editjob/:id" element={<EditJob onSave={handleSave} />} />
+                    <Route path="/applicationemployer" element={<ApplicationEmployer applicationData={applicationEmployer} />} />
+                    <Route path="/editprofile" element={<EditProfile onSave={handleSave} />} />
                 </Route>
 
-                <Route
-                    element={
-                        <PrivateRoute
-                            isAuthenticated={isAuthenticated}
-                            allowedRoles={["Admin"]}
-                            role={role}
-                        />
-                    }
-                >
+                <Route element={<PrivateRoute isAuthenticated={isAuthenticated} allowedRoles={["Admin"]} role={role} />}>
                     <Route path="/eventmanagement" element={<EventManagement events={events} />} />
-                    <Route
-                        path="/studentmanagement"
-                        element={<StudentManagement studentsData={managementStudents} />}
-                    />
-                    <Route
-                        path="/accountmanagement"
-                        element={<AccountManagement accounts={accounts} />}
-                    />
+                    <Route path="/studentmanagement" element={<StudentManagement studentsData={managementStudents} />} />
+                    <Route path="/accountmanagement" element={<AccountManagement accounts={accounts} />} />
                     <Route path="/confirmjobs" element={<ConfirmJobs jobs={jobs} />} />
-                    <Route
-                        path="/createaccount"
-                        element={
-                            <CreateAccount
-                                onAddAccount={(account) =>
-                                    setAccounts((prev) => [account, ...prev])
-                                }
-                            />
-                        }
-                    />
+                    <Route path="/createaccount" element={<CreateAccount onAddAccount={(account) => setAccounts((prev) => [account, ...prev])} />} />
                 </Route>
 
                 <Route path="*" element={<NotFound />} />

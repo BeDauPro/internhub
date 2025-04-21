@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using InternHub.DTOs.Review;
+﻿using InternHub.DTOs.Review;
 using InternHub.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace InternHub.Controllers
 {
@@ -24,7 +17,7 @@ namespace InternHub.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Employer")]
+        [Authorize(Roles = "Employer,Student")]
         public async Task<IActionResult> CreateReview([FromBody] StudentReviewCreateDto dto)
         {
             try
@@ -34,7 +27,7 @@ namespace InternHub.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new { message = ex.Message });
+                return BadRequest(new { message = ex.ToString() }); 
             }
         }
 
@@ -45,7 +38,13 @@ namespace InternHub.Controllers
             var reviews = await _reviewService.GetReviewsByStudentIdAsync(studentId);
             return Ok(reviews);
         }
+
+        [HttpGet("employer/{employerId}")]
+        [Authorize(Roles = "Student,Employer,Admin")]
+        public async Task<IActionResult> GetReviewsForEmployer(int employerId)
+        {
+            var reviews = await _reviewService.GetReviewsByEmployerIdAsync(employerId);
+            return Ok(reviews);
+        }
     }
-
 }
-

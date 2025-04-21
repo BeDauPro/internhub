@@ -7,6 +7,7 @@ namespace InternHub.Services.Interfaces
 	{
         Task<StudentReviewDto> CreateAsync(StudentReviewCreateDto dto);
         Task<List<StudentReviewDto>> GetReviewsByStudentIdAsync(int studentId);
+        Task<List<StudentReviewDto>> GetReviewsByEmployerIdAsync(int employerId);
     }
 }
 
