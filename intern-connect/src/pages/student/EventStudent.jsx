@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { FaMapMarkerAlt, FaUser, FaCalendarAlt, FaAlignLeft } from 'react-icons/fa';
 import "bootstrap/dist/css/bootstrap.min.css";
-import "../../styles/pages/student/eventstudent.scss"
+import "../../styles/pages/student/eventstudent.scss";
 import Footer from '../../components/Footer';
-import { getAllStudentEvents, getStudentEventById } from '../../services/studentApi';
+import { getAllEvents, getEventById } from '../../services/adminApi';
 
 const EventStudent = () => {
     const [events, setEvents] = useState([]);
@@ -16,7 +16,7 @@ const EventStudent = () => {
         const fetchEvents = async () => {
             try {
                 setIsLoading(true);
-                const fetchedEvents = await getAllStudentEvents();
+                const fetchedEvents = await getAllEvents(); 
                 
                 // Transform events to match the component's structure
                 const transformedEvents = fetchedEvents.map(event => ({
@@ -45,15 +45,15 @@ const EventStudent = () => {
     const handleEventClick = async (event) => {
         try {
             // Fetch detailed event information if needed
-            // const detailedEvent = await getStudentEventById(event.id);
-            // setSelectedEvent({
-            //    id: detailedEvent.eventId,
-            //    title: detailedEvent.eventTitle,
-            //    ...other properties
-            // });
-            
-            // Or just use the event from the list if it already has all needed information
-            setSelectedEvent(event);
+            const detailedEvent = await getEventById(event.id); // Gọi API lấy chi tiết sự kiện
+            setSelectedEvent({
+                id: detailedEvent.eventId,
+                title: detailedEvent.eventTitle,
+                location: detailedEvent.eventLocation,
+                organizer: detailedEvent.organizer,
+                date: detailedEvent.eventDate,
+                content: detailedEvent.eventDesc
+            });
         } catch (err) {
             console.error("Error fetching event details:", err);
             setError("Không thể tải chi tiết sự kiện. Vui lòng thử lại sau.");

@@ -18,24 +18,37 @@ const Review = ({ employerId, role }) => {
   }, [employerId]);
 
   const fetchReviews = async () => {
-    const data = await getReviewsForEmployer(employerId);
-    setReviews(data);
+    try {
+      const data = await getReviewsForEmployer(employerId);
+      setReviews(data);
+    } catch (error) {
+      console.error('Error fetching reviews:', error);
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!newReview.comments || newReview.overallRating === 0) {
       alert("Vui lòng nhập đầy đủ nội dung và đánh giá sao");
       return;
     }
+
     try {
       await createReview({ ...newReview, employerId });
       setNewReview({ overallRating: 0, comments: '' });
       fetchReviews();
     } catch (error) {
-      console.error('Lỗi khi gửi đánh giá:', error);
+      console.error('Error submitting review:', error);
       alert('Không thể gửi đánh giá. Vui lòng thử lại sau.');
     }
+  };
+
+  const handleRatingClick = (rating) => {
+    setNewReview((prev) => ({
+      ...prev,
+      overallRating: rating,
+    }));
   };
 
   return (
@@ -43,29 +56,33 @@ const Review = ({ employerId, role }) => {
       <h2 className="mb-4">Nhận xét về công ty</h2>
 
       <div className="list-group">
-        {reviews.map((review, index) => (
-          <div key={index} className="list-group-item d-flex align-items-start">
-            <img
-              src={review.studentAvatar}
-              alt={review.studentName}
-              className="rounded-circle mr-3"
-              style={{ width: '80px', height: '80px' }}
-            />
-            <div className="flex-grow-1">
-              <h5>{review.studentName}</h5>
-              <div>
-                {[...Array(5)].map((_, i) => (
-                  <FontAwesomeIcon
-                    key={i}
-                    icon={faStar}
-                    className={i < review.overallRating ? 'text-warning' : 'text-muted'}
-                  />
-                ))}
+        {reviews.length > 0 ? (
+          reviews.map((review, index) => (
+            <div key={index} className="list-group-item d-flex align-items-start">
+              <img
+                src={review.studentAvatar}
+                alt={review.studentName}
+                className="rounded-circle mr-3"
+                style={{ width: '80px', height: '80px' }}
+              />
+              <div className="flex-grow-1">
+                <h5>{review.studentName}</h5>
+                <div>
+                  {[...Array(5)].map((_, i) => (
+                    <FontAwesomeIcon
+                      key={i}
+                      icon={faStar}
+                      className={i < review.overallRating ? 'text-warning' : 'text-muted'}
+                    />
+                  ))}
+                </div>
+                <p>{review.comments}</p>
               </div>
-              <p>{review.comments}</p>
             </div>
-          </div>
-        ))}
+          ))
+        ) : (
+          <p>Chưa có đánh giá nào cho công ty này.</p>
+        )}
       </div>
 
       {/* ✅ Chỉ hiển thị form nếu là sinh viên */}
@@ -81,7 +98,7 @@ const Review = ({ employerId, role }) => {
                     key={i}
                     icon={faStar}
                     className={i < newReview.overallRating ? 'text-warning' : 'text-muted'}
-                    onClick={() => setNewReview({ ...newReview, overallRating: i + 1 })}
+                    onClick={() => handleRatingClick(i + 1)}
                     style={{ cursor: 'pointer' }}
                   />
                 ))}

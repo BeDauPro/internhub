@@ -59,7 +59,7 @@ const JobDetail = () => {
                                 src={job.companyLogo} 
                                 alt="Company Logo"
                             />
-                            <div className="company-details" onClick={() => navigate(`/employerprofile/${job.employerId}`)} style={{ cursor: "pointer" }} >
+                            <div className="company-details" onClick={() => navigate(`/viewemployer/${job.employerId}`)}  style={{ cursor: "pointer" }} >
                                 <h2>{job.companyName}</h2>
                                 <p><FaLocationDot /> {job.location}</p>
                                 <p className="job-field"><MdHomeRepairService /> Lĩnh vực: {job.industry}</p>
