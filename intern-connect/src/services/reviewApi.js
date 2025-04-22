@@ -13,7 +13,7 @@ axiosInstance.interceptors.request.use((config) => {
   if (token) {
     config.headers['Authorization'] = `Bearer ${token}`;
   } else {
-    console.warn('⚠️ Authentication token is missing.');
+    console.warn('Authentication token is missing.');
   }
   return config;
 });

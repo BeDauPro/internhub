@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
 import '../../styles/pages/employer/employerprofile.scss';
 import defaultLogo from '../../images/fpt.jpg';
 import {
@@ -9,20 +8,23 @@ import {
 import Review from '../employer/Review'; 
 import Footer from '../../components/Footer';
 import { getEmployerProfileById } from '../../services/employerApi';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const StudentViewEmployerProfile = () => {
-  const { employerId } = useParams();
+  const { employerId } = useParams(); // Lấy employerId từ URL
+  const navigate = useNavigate();
   const [employerProfile, setEmployerProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  console.log('Employer ID:', employerId);
   useEffect(() => {
     const fetchEmployerProfile = async () => {
       try {
         if (!employerId) {
           throw new Error('No employer ID provided');
         }
-        
+
         setLoading(true);
         const data = await getEmployerProfileById(employerId);
         setEmployerProfile(data);
@@ -36,6 +38,15 @@ const StudentViewEmployerProfile = () => {
 
     fetchEmployerProfile();
   }, [employerId]);
+
+  if (!employerId) {
+    console.error('No employer ID provided in URL');
+    return (
+      <div className="error-message">
+        Không tìm thấy ID nhà tuyển dụng. <button onClick={() => navigate(-1)}>Quay lại</button>
+      </div>
+    );
+  }
 
   if (loading) return <div className="loading">Đang tải...</div>;
   if (error) return <div className="error-message">{error}</div>;

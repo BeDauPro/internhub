@@ -57,6 +57,7 @@ const ProfileForm = () => {
   };
 
   const handleAvatarChange = async (e) => {
+    
     const file = e.target.files[0];
   
     if (!file) return;
@@ -65,6 +66,7 @@ const ProfileForm = () => {
       //gọi hàm từ Api để cập nhật ảnh đại diện theo id và file
       const response = await createAvatar(file);
       if (response?.url) {
+        localStorage.setItem("ProfileUpdateImage", response.url);
         console.log("New image URL:", response.url);
         // cập nhật lại formData với ảnh đại diện mới
         setFormData((prev) => ({  
@@ -82,6 +84,7 @@ const ProfileForm = () => {
   };
 
   const handleCreate = async () => {
+    const profilePicture = localStorage.getItem("ProfileUpdateImage");
     const formDataToSend = new FormData();
     Object.keys(formData).forEach((key) => {
       if (key === "cvFile" && formData.cvFile) {
@@ -90,7 +93,7 @@ const ProfileForm = () => {
         formDataToSend.append(key, formData[key] || "");
       }
     });
-
+    profilePicture ? formDataToSend.append("ProfilePicture2", profilePicture) : console.log("No new profile picture");
     try {
       await createStudent(formDataToSend);
       alert("Tạo sinh viên thành công!");
@@ -103,6 +106,7 @@ const ProfileForm = () => {
 
   const handleUpdate = async () => {
     const formDataToSend = new FormData();
+    const profilePicture = localStorage.getItem("ProfileUpdateImage");
     Object.keys(formData).forEach((key) => {
       console.log("Appending key:", key, "Value:", formData[key]);
       if (key === "cvFile" && formData.cvFile) {
@@ -112,6 +116,8 @@ const ProfileForm = () => {
       }
       
     });
+
+    profilePicture ? formDataToSend.append("ProfilePicture2", profilePicture) : console.log("No new profile picture");
     
     try {
       await updateStudent(formData.id, formDataToSend);
@@ -142,15 +148,12 @@ const ProfileForm = () => {
       <div className="profile-edit-container">
         <div className="profile-edit-wrapper">
           <div className="profile-edit-card">
-              <img className="profile-edit-image" src={formData.ProfilePicture} alt="Preview" />
-
-
+              <img className="profile-edit-image"  src={formData.ProfilePicture} alt="Preview" />
             <section className="logo-upload">
               <h3>Ảnh đại diện</h3>
               <input
                 type="file"
                 accept="image/*"
-                disabled={formData.id}
                 onChange={handleAvatarChange}
               />
 

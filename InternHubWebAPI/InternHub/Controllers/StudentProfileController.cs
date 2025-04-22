@@ -73,18 +73,17 @@ namespace InternHub.Controllers
         public async Task<IActionResult> Update(int id, [FromForm] UpdateStudentDto dto)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            
+            Console.WriteLine("Controller", dto);
             var updated = await _studentService.UpdateAsync(id, dto, _env, userId);
             if (updated == null) return NotFound();
             return Ok(updated);
         }
 
         [Authorize(Roles = "Student")]
-        [HttpPut("{id}/update-single-file")]
-        public async Task<IActionResult> UpdateSingleFile(int id)
+        [HttpPost("create-single-file")]
+        public async Task<IActionResult> CreateSingleFile()
         {
             var form = await HttpContext.Request.ReadFormAsync();
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             if (form.Files.Count == 0)
             {
@@ -102,7 +101,7 @@ namespace InternHub.Controllers
                 }
                 else if (file.ContentType == "application/pdf")
                 {
-                    uploadedUrl = await _studentService.UploadCVAsync(file);
+                    //uploadedUrl = await _studentService.UploadCVAsync(file);
                 }
 
                 if (string.IsNullOrEmpty(uploadedUrl))

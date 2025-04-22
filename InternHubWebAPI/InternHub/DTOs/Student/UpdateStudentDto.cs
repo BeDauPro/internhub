@@ -16,6 +16,7 @@ namespace InternHub.DTOs.Student
         public decimal? GPA { get; set; }
         public DateTime? DateOfBirth { get; set; }
         public string? ProfilePicture { get; set; }
+        public string? ProfilePicture2 { get; set; }
         public IFormFile? CVFile { get; set; }
         public string? Education { get; set; }
         public string? Phone { get; set; }

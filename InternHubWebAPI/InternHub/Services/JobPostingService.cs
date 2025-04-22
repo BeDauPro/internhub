@@ -318,6 +318,7 @@ namespace InternHub.Services
                 Vacancies = jobPosting.Vacancies,
                 ApplicationDeadline = jobPosting.ApplicationDeadline,
                 PostedAt = jobPosting.PostedAt,
+                EmployerId = (int)(employer?.EmployerId),
                 CompanyName = employer?.CompanyName,
                 CompanyLogo = employer?.CompanyLogo,
                 Address = employer?.Address,

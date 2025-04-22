@@ -43,7 +43,6 @@ export const createStudent = async (formData) => {
 
 // Cập nhật sinh viên (formData phải là FormData nếu có ảnh/file)
 export const updateStudent = async (id, formData) => {
-  console.log(formData)
   const response = await axiosInstance.put(`/${id}`, formData);
   return response.data;
 };
@@ -64,7 +63,7 @@ export const createAvatar = async (file) => {
   const formData = new FormData();
   formData.append('file', file);
 
-  const response = await axiosInstance.post('/create-avatar', formData);
+  const response = await axiosInstance.post('/create-single-file', formData);
   console.log('Avatar creation response:', response.data);
   return response.data; // Ensure this returns the created avatar URL or relevant data
 };

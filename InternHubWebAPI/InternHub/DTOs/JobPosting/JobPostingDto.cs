@@ -90,6 +90,7 @@ namespace InternHub.DTOs.JobPosting
         public DateTime PostedAt { get; set; }
 
         // Thông tin từ bảng Employer
+        public int EmployerId { get; set; }
         public string CompanyName { get; set; }
         public string CompanyLogo { get; set; }
         public string Address { get; set; }

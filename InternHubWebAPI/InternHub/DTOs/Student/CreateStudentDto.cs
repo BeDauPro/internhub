@@ -4,7 +4,8 @@ namespace InternHub.DTOs.Student
     {
         public string? FullName { get; set; }
         public string? SchoolEmail { get; set; }
-        public IFormFile? ProfilePicture { get; set; }
+        public string? ProfilePicture { get; set; }
+        public string? ProfilePicture2 { get; set; }
         public IFormFile? CVFile { get; set; }
         public string? Address { get; set; }
         public string? Bio { get; set; }

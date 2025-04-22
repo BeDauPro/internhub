@@ -176,11 +176,9 @@ namespace InternHub.Services
         {
             var student = _mapper.Map<Student>(dto);
             student.UserId = userId;
-
-            student.ProfilePicture = await UploadProfilePictureAsync(dto.ProfilePicture);
             student.CVFile = await UploadCVAsync(dto.CVFile);
-
-            _context.Students.Add(student);
+            student.ProfilePicture = dto.ProfilePicture;
+                _context.Students.Add(student);
             await _context.SaveChangesAsync();
 
             return _mapper.Map<StudentDto>(student);
@@ -203,7 +201,7 @@ namespace InternHub.Services
             if (dto.DateOfBirth.HasValue) student.DateOfBirth = dto.DateOfBirth.Value;
             if (!string.IsNullOrWhiteSpace(dto.Education)) student.Education = dto.Education;
             if (!string.IsNullOrWhiteSpace(dto.Phone)) student.Phone = dto.Phone;
-            if (!string.IsNullOrWhiteSpace(dto.ProfilePicture)) student.ProfilePicture = dto.ProfilePicture;
+            if (!string.IsNullOrWhiteSpace(dto.ProfilePicture2)) student.ProfilePicture = dto.ProfilePicture2;
             
 
             if (dto.CVFile != null && dto.CVFile.Length > 0)
@@ -216,7 +214,7 @@ namespace InternHub.Services
                 if (!string.IsNullOrEmpty(newCV))
                     student.CVFile = newCV;
             }
-
+            Console.WriteLine("In service", dto.ProfilePicture);
             await _context.SaveChangesAsync();
             return _mapper.Map<StudentDto>(student);
         }

@@ -8,8 +8,9 @@ import '../../styles/pages/student/jobdetail.scss';
 import Footer from '../../components/Footer';
 import { getJobById } from '../../services/JobPostingApi';
 
+
 const JobDetail = () => {
-    const { id } = useParams(); 
+    const { id } = useParams();
     const [job, setJob] = useState(null);
     const [showAlert, setShowAlert] = useState(false);
     const [loading, setLoading] = useState(true);
@@ -19,7 +20,7 @@ const JobDetail = () => {
         const fetchJobDetails = async () => {
             try {
                 const data = await getJobById(id);
-                console.log(data); 
+                console.log(data);
                 setJob(data);
             } catch (error) {
                 console.error("Failed to fetch job details:", error);
@@ -56,10 +57,14 @@ const JobDetail = () => {
                         <div className="company-info">
                             <img
                                 className="company-logo"
-                                src={job.companyLogo} 
+                                src={job.companyLogo}
                                 alt="Company Logo"
                             />
-                            <div className="company-details" onClick={() => navigate(`/viewemployer/${job.employerId}`)}  style={{ cursor: "pointer" }} >
+                            <div
+                                className="company-details"
+                                onClick={() => navigate(`/viewemployer/${job.employerId}`)}
+                                style={{ cursor: "pointer" }}
+                            >
                                 <h2>{job.companyName}</h2>
                                 <p><FaLocationDot /> {job.location}</p>
                                 <p className="job-field"><MdHomeRepairService /> Lĩnh vực: {job.industry}</p>

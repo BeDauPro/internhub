@@ -124,7 +124,7 @@ const App = () => {
                     <Route path="/applicationhistory" element={<ApplicationsHistory applications={applications} />} />
                     <Route path="/viewemployer/:employerId" element={<StudentViewEmployerProfile />} />
                     <Route path="/jobdetail/:id" element={<JobDetail jobDetails={jobDetails} />} />
-                    <Route path="/review/:employerId" element={<Review role={role} />} />
+                    <Route path="/viewemployer/:employerId" element={<StudentViewEmployerProfile />} />
                 </Route>
 
                 <Route element={<PrivateRoute isAuthenticated={isAuthenticated} allowedRoles={["Employer"]} role={role} />}>

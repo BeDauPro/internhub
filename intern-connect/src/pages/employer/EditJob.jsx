@@ -11,14 +11,14 @@ import { getJobById, createJob, updateJob, deleteJob } from '../../services/JobP
 
 const EditJob = ({ editJob, onSave }) => {
     const navigate = useNavigate();
-    const location = useLocation();
+    const address = useLocation();
     const { id } = useParams(); // Lấy id từ URL nếu đang edit job
     const [isLoading, setIsLoading] = useState(false);
     const [formData, setFormData] = useState(editJob || {
         // Các trường mặc định sẽ được tự động import sau này
         companyName: "",
-        location: "",
-        field: "", 
+        address: "",
+        industry: "", 
         
         // Các trường người dùng cần nhập
         jobTitle: "",
@@ -61,8 +61,8 @@ const EditJob = ({ editJob, onSave }) => {
                     // Chuyển đổi dữ liệu từ API sang form format
                     setFormData({
                         companyName: jobData.companyName,
-                        location: jobData.location,
-                        field: jobData.jobCategory,
+                        address: jobData.address,
+                        industry: jobData.jobCategory,
                         jobTitle: jobData.jobTitle,
                         jobType: jobData.workType,
                         salary: jobData.salary,
@@ -86,11 +86,11 @@ const EditJob = ({ editJob, onSave }) => {
     }, [id]);
 
     useEffect(() => {
-        if (location.state?.clearForm) {
+        if (address.state?.clearForm) {
             setFormData({
                 companyName: "",
-                location: "",
-                field: "",
+                address: "",
+                industry: "",
                 jobTitle: "",
                 jobType: "Full-time",
                 salary: "",
@@ -102,16 +102,16 @@ const EditJob = ({ editJob, onSave }) => {
                 deadline: ""
             });
         }
-    }, [location.state]);
+    }, [address.state]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
 
-    const handleArrayChange = (e, field) => {
+    const handleArrayChange = (e, industry) => {
         const value = e.target.value.split(',').map(item => item.trim());
-        setFormData({ ...formData, [field]: value });
+        setFormData({ ...formData, [industry]: value });
     };
 
     const validateForm = () => {
@@ -169,8 +169,8 @@ const EditJob = ({ editJob, onSave }) => {
             if (formData.jobRequirements) formDataToSend.append('SkillsRequired', formData.jobRequirements);
             if (formData.salary) formDataToSend.append('Salary', formData.salary);
             if (formData.experience) formDataToSend.append('ExperienceRequired', formData.experience);
-            if (formData.field) formDataToSend.append('JobCategory', formData.field);
-            if (formData.location) formDataToSend.append('Location', formData.location);
+            if (formData.industry) formDataToSend.append('JobCategory', formData.industry);
+            if (formData.address) formDataToSend.append('address', formData.address);
             if (formData.vacancies) formDataToSend.append('Vacancies', formData.vacancies);
             
             // Xử lý languages - chuyển array thành string
@@ -220,7 +220,7 @@ const EditJob = ({ editJob, onSave }) => {
                         type: result.WorkType || formData.jobType,
                         typeClass: (result.WorkType || formData.jobType).toLowerCase().replace(" ", "-"),
                         company: result.CompanyName || formData.companyName,
-                        location: result.Location || formData.location,
+                        address: result.address || formData.address,
                         quantity: result.Vacancies || formData.vacancies
                     } 
                 } 
@@ -288,8 +288,8 @@ const EditJob = ({ editJob, onSave }) => {
                 <div className="company-info">
                     <div className="company-details">
                         <p>Tên công ty: <span>{formData.companyName}</span></p>
-                        <p>Địa chỉ: <span>{formData.location}</span></p>
-                        <p className="job-field">Lĩnh vực: <span>{formData.field}</span></p>
+                        <p>Địa chỉ: <span>{formData.address}</span></p>
+                        <p className="job-industry">Lĩnh vực: <span>{formData.industry}</span></p>
                     </div>
                 </div>
                 <div className="job-summary">

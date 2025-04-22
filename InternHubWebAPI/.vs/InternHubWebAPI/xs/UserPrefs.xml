@@ -1,25 +1,22 @@
 ﻿<Properties StartupConfiguration="{041E3534-1384-414A-9671-F6F7C0CDA538}|Default">
-  <MonoDevelop.Ide.ItemProperties.InternHub PreferredExecutionTarget="/Applications/Google Chrome.app" />
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
-  </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.Workbench ActiveDocument="InternHub/Controllers/EmployerProfileController.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="InternHub/Controllers/JobApplicationController.cs">
     <Files>
-      <File FileName="InternHub/Controllers/StudentProfileController.cs" Line="69" Column="10" />
-      <File FileName="InternHub/Controllers/EmployerProfileController.cs" Line="50" Column="10" />
+      <File FileName="InternHub/Services/JobApplicationService.cs" Line="112" Column="18" />
+      <File FileName="InternHub/Controllers/JobApplicationController.cs" Line="20" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="InternHubWebAPI">
             <Node name="InternHub">
-              <Node name="Controllers">
-                <Node name="EmployerProfileController.cs" selected="True" />
+              <Node name="Controllers" expanded="True">
+                <Node name="JobApplicationController.cs" selected="True" />
               </Node>
               <Node name="DTOs" expanded="True">
-                <Node name="Review" expanded="True" />
+                <Node name="Student" expanded="True" />
               </Node>
+              <Node name="Models" expanded="True" />
               <Node name="Services" expanded="True" />
             </Node>
           </Node>
@@ -27,6 +24,10 @@
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.ItemProperties.InternHub PreferredExecutionTarget="/Applications/Google Chrome.app" />
   <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
 </Properties>
