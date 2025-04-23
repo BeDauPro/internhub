@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using InternHub.DTOs.JobApplication;
 using InternHub.Models.Enums;
+using InternHub.Services;
 using InternHub.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -103,12 +104,13 @@ namespace InternHub.Controllers
         // New API for admins to view all applications
         [HttpGet("admin/all")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetAllApplicationsForAdmin()
+        public async Task<IActionResult> GetAllStudentsForAdmin()
         {
             try
             {
-                var applications = await _jobApplicationService.GetAllApplicationsForAdminAsync();
-                return Ok(applications);
+                // Đổi tên service hoặc thêm phương thức mới trong service
+                var students = await _jobApplicationService.GetAllStudentsForAdminAsync();
+                return Ok(students);
             }
             catch (Exception ex)
             {

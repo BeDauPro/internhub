@@ -1,4 +1,5 @@
 ﻿using System;
+using InternHub.DTOs.Review;
 using InternHub.Models;
 using InternHub.Models.Enums;
 using InternHub.Services.Interfaces;
@@ -106,7 +107,7 @@ namespace InternHub.Services
             var jobPosting = application.JobPosting;
 
             // Parse status hiện tại của application
-            var isParsed = Enum.TryParse(application.Status, out StudentStatus currentAppStatus);
+            var isParsed = Enum.TryParse(application.Status, ignoreCase: true, out StudentStatus currentAppStatus);
             if (!isParsed)
                 throw new Exception("Invalid current application status");
 
@@ -165,28 +166,23 @@ namespace InternHub.Services
             student.Status = highestEnumStatus;
             _context.Students.Update(student);
             await _context.SaveChangesAsync();
-
             return true;
         }
 
-        // New method for admin to view all applications
-        public async Task<IEnumerable<AdminApplicationViewDto>> GetAllApplicationsForAdminAsync()
+        public async Task<IEnumerable<StudentViewDto>> GetAllStudentsForAdminAsync()
         {
-            var applications = await _context.Applications
-                .Include(a => a.Student)
-                .Include(a => a.JobPosting)
-                .OrderByDescending(a => a.ApplicationDate)
-                .Select(a => new AdminApplicationViewDto
+            var students = await _context.Students
+                .OrderByDescending(s => s.CreatedAt)
+                .Select(s => new StudentViewDto
                 {
-                    StudentId = a.StudentId,
-                    JobTitle = a.JobPosting.JobTitle,
-                    StudentName = a.Student.FullName,
-                    Status = a.Status,
-                    CVFile = a.Student.CVFile
+                    StudentId = s.Id,
+                    GPA = s.GPA.HasValue ? (decimal)s.GPA : 0,
+                    StudentName = s.FullName,
+                    Status = s.Status.ToString(),
+                    CVFile = s.CVFile
                 })
                 .ToListAsync();
-
-            return applications;
+            return students;
         }
 
         // New method for employers to view candidates for their job postings
@@ -217,6 +213,11 @@ namespace InternHub.Services
                 .ToListAsync();
 
             return candidates;
+        }
+
+        public Task<IEnumerable<StudentViewDto>> GetAllApplicationsForAdminAsync()
+        {
+            throw new NotImplementedException();
         }
     }
 }

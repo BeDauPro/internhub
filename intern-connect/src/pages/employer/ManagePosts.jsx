@@ -23,7 +23,7 @@ const ManagePosts = () => {
       try {
         setIsLoading(true);
         const jobsData = await getEmployerJobs();
-        
+
         // Transform jobs to match the component's structure
         const transformedJobs = jobsData.map(job => ({
           id: job.jobPostingId || job.id,
@@ -97,27 +97,27 @@ const ManagePosts = () => {
     <>
       <header className="manageposts-header w3-display-container w3-grayscale-min" style={{ height: '100vh', position: 'relative' }}>
         <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'black', opacity: 0.5, zIndex: 1 }}></div>
-        <div className="w3-display-left w3-text-white" style={{ padding: '48px', fontFamily: 'Georgia, serif', fontSize: '1.2em', position: 'relative', zIndex: 2,margin: '100px'}}>
-          <span className="w3-jumbo w3-hide-small" style={{ fontSize: '2em', fontWeight: 'bold'}}>Quản lý bài đăng của bạn</span><br />
+        <div className="w3-display-left w3-text-white" style={{ padding: '48px', fontFamily: 'Georgia, serif', fontSize: '1.2em', position: 'relative', zIndex: 2, margin: '100px' }}>
+          <span className="w3-jumbo w3-hide-small" style={{ fontSize: '2em', fontWeight: 'bold' }}>Quản lý bài đăng của bạn</span><br />
           <span className="w3-xxlarge w3-hide-large w3-hide-medium" style={{ fontSize: '3em', fontWeight: 'bold' }}>Sẵn sàng tìm kiếm nguồn nhân lực mới</span><br />
           <span className="w3-large" style={{ fontSize: '1.5em' }}>Tạo, chỉnh sửa và quản lý các bài đăng tuyển dụng của bạn một cách dễ dàng.</span>
           <p>
-            <button 
-              className="w3-button w3-white w3-padding-large w3-large w3-margin-top" 
-              style={{ 
+            <button
+              className="w3-button w3-white w3-padding-large w3-large w3-margin-top"
+              style={{
                 backgroundColor: '#007BFF',
-                color: 'white', 
-                fontWeight: 'bold', 
-                padding: '10px', 
-                borderRadius: '15px', 
+                color: 'white',
+                fontWeight: 'bold',
+                padding: '10px',
+                borderRadius: '15px',
                 boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.2), inset 0px -2px 4px rgba(255, 255, 255, 0.2)',
                 border: 'none',
                 cursor: 'pointer',
                 transition: 'transform 0.2s ease',
                 marginTop: '10px'
-              }} 
+              }}
               onClick={handleAddNewPost}
-              onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'} 
+              onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
               onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
             >
               Thêm bài đăng mới
@@ -150,13 +150,15 @@ const ManagePosts = () => {
             ))}
           </select>
         </div>
-        
+
         {filteredJobs.length > 0 ? (
           <div className="jobList">
             {filteredJobs.slice(0, visibleJobs).map((job) => (
               <div key={job.id} className="jobCard animate-slide-up">
                 <div className="jobHeader">
-                  <span className="jobTitle">{job.title}</span>
+                  <span className="jobTitle">
+                    {job.title.length > 20 ? `${job.title.substring(0, 17)}...` : job.title}
+                  </span>
                   <span className={`jobType ${job.typeClass}`}>
                     {job.type}
                   </span>
@@ -166,22 +168,22 @@ const ManagePosts = () => {
                   <div>
                     <span className="companyName">{job.company}</span>
                     <div className="jobLocation">📍 {job.location}</div>
-                    <div className="jobStatus">Trạng thái: <span className={`status-${job.status.toLowerCase()}`}>{job.status}</span></div>
+
                   </div>
                 </div>
                 <div className="jobFooter">
                   <span>Số lượng tuyển: {job.quantity}</span>
-                  <button 
-                    className="btn btn-dark" 
-                    onClick={() => handleViewDetails(job.id)} 
-                    style={{ 
-                      backgroundColor: '#333', 
-                      color: 'white', 
-                      border: 'none', 
-                      borderRadius: '4px', 
-                      padding: '5px 10px', 
-                      fontSize: '0.8rem', 
-                      cursor: 'pointer' 
+                  <button
+                    className="btn btn-dark"
+                    onClick={() => handleViewDetails(job.id)}
+                    style={{
+                      backgroundColor: '#333',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '4px',
+                      padding: '5px 10px',
+                      fontSize: '0.8rem',
+                      cursor: 'pointer'
                     }}
                   >
                     Xem chi tiết
@@ -195,7 +197,7 @@ const ManagePosts = () => {
             <p>Bạn chưa có bài đăng tuyển dụng nào</p>
           </div>
         )}
-        
+
         {visibleJobs < filteredJobs.length && (
           <button className="loadMore" onClick={handleLoadMore}>Xem nhiều hơn</button>
         )}

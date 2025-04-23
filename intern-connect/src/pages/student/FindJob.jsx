@@ -6,6 +6,7 @@ import '../../styles/pages/student/overview.scss';
 import FptIntern from '../../images/fptintern.jpg';
 import Intern from '../../images/intern.jpg';
 import imgLogin from '../../images/login.jpg';
+import { getAllJobs } from '../../services/JobPostingApi';
 
 const HeroSection = ({ onSearch, jobs }) => {
     const [searchInput, setSearchInput] = useState('');
@@ -21,12 +22,12 @@ const HeroSection = ({ onSearch, jobs }) => {
             const searchBar = document.querySelector('.search-bar');
             const img4 = document.querySelector('.img4');
 
-            if (window.scrollY >= img4.offsetTop) {
+            if (bgText && searchBar && img4 && window.scrollY >= img4.offsetTop) {
                 bgText.style.position = 'absolute';
                 bgText.style.top = `${img4.offsetTop}px`;
                 searchBar.style.position = 'absolute';
                 searchBar.style.top = `${img4.offsetTop + bgText.offsetHeight}px`;
-            } else {
+            } else if (bgText && searchBar) {
                 bgText.style.position = 'fixed';
                 bgText.style.top = '50%';
                 searchBar.style.position = 'fixed';
@@ -38,7 +39,7 @@ const HeroSection = ({ onSearch, jobs }) => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    const uniqueLocations = [...new Set(jobs.map(job => job.location))];
+    const uniqueLocations = jobs && jobs.length > 0 ? [...new Set(jobs.map(job => job.location))] : [];
 
     return (
         <section className="hero-section" style={{ marginBottom: '10vh' }}>
@@ -85,7 +86,10 @@ const HeroSection = ({ onSearch, jobs }) => {
                                 <a
                                     className="dropdown-item"
                                     href="#"
-                                    onClick={() => setSelectedLocation(location)}
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        setSelectedLocation(location);
+                                    }}
                                 >
                                     {location}
                                 </a>
@@ -148,9 +152,39 @@ const Overview = () => {
     );
 };
 
-const FindJob = ({ jobs }) => {
+const FindJob = () => {
     const [searchResults, setSearchResults] = useState(null);
+    const [jobs, setJobs] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
     const jobCardRef = React.useRef(null);
+
+    useEffect(() => {
+        const fetchJobs = async () => {
+            try {
+                setIsLoading(true);
+
+                // Gọi API với các tham số rỗng
+                const jobsData = await getAllJobs('', '', '');
+
+                if (Array.isArray(jobsData)) {
+                    setJobs(jobsData);
+                    setError(null);
+                } else {
+                    setError("Không thể tải danh sách công việc");
+                    setJobs([]);
+                }
+            } catch (err) {
+                console.error("Error fetching jobs:", err);
+                setError("Không thể tải danh sách công việc");
+                setJobs([]);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchJobs();
+    }, []);
 
     const handleSearch = (searchInput, selectedLocation) => {
         const result = searchInput ? { searchInput } : { selectedLocation };
@@ -160,10 +194,30 @@ const FindJob = ({ jobs }) => {
         }
     };
 
+    if (isLoading) {
+        return (
+            <div className="find-job">
+                <HeroSection onSearch={handleSearch} jobs={[]} />
+                <Overview />
+                <div style={{ textAlign: 'center', padding: '20px' }}>
+                    <div className="spinner-border text-primary" role="status">
+                        <span className="visually-hidden">Đang tải...</span>
+                    </div>
+                </div>
+                <Footer />
+            </div>
+        );
+    }
+
     return (
         <div className="find-job">
             <HeroSection onSearch={handleSearch} jobs={jobs} />
             <Overview />
+            {error && (
+                <div style={{ color: 'red', textAlign: 'center', margin: '20px' }}>
+                    {error}
+                </div>
+            )}
             <div ref={jobCardRef}>
                 <JobCard searchResults={searchResults} jobs={jobs} />
             </div>
@@ -173,4 +227,3 @@ const FindJob = ({ jobs }) => {
 };
 
 export default FindJob;
-

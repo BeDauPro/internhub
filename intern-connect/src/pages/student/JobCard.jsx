@@ -8,6 +8,7 @@ const JobCard = ({ searchResults }) => {
   const [visibleJobs, setVisibleJobs] = useState(8);
   const [selectedType, setSelectedType] = useState("All");
   const [selectedLocation, setSelectedLocation] = useState("All");
+  const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedTitle, setSelectedTitle] = useState("All");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -22,15 +23,19 @@ const JobCard = ({ searchResults }) => {
 
         if (searchResults && (searchResults.searchInput || searchResults.selectedLocation)) {
           jobsData = await getFilteredJobs(
-            searchResults.searchInput || '', 
+            searchResults.searchInput || '',
             selectedType !== 'All' ? selectedType : '',
             searchResults.selectedLocation || '',
-            ''
+            selectedCategory !== 'All' ? selectedCategory : '',
+            'desc',
+            1,
+            50
           );
           if (jobsData.items) jobsData = jobsData.items;
         } else {
+          // Gọi API với tham số mặc định để tránh lỗi 400
           jobsData = await getAllJobs(
-            '',
+            selectedCategory !== 'All' ? selectedCategory : '',
             selectedLocation !== 'All' ? selectedLocation : '',
             selectedType !== 'All' ? selectedType : ''
           );
@@ -52,19 +57,35 @@ const JobCard = ({ searchResults }) => {
         setError(null);
       } catch (err) {
         console.error("Error fetching jobs:", err);
-        setError("Không thể tải danh sách công việc");
+        setError("Không thể tải danh sách công việc. Vui lòng thử lại sau.");
+        // Nếu lỗi, có thể sử dụng mock data để hiển thị giao diện
+        setJobs([]);
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchJobs();
-  }, [selectedType, selectedLocation, searchResults]);
+  }, [selectedType, selectedLocation, selectedCategory, searchResults]);
+
+  // Hàm hỗ trợ để format location
+  const formatLocation = (location) => {
+    if (!location) return 'Không xác định';
+    const parts = location.split(',');
+    return parts[0].trim();
+  };
+
+  // Hàm lấy tên công ty từ category
+  const getCompanyFromCategory = (category) => {
+    if (!category) return 'Công ty';
+    // Bạn có thể thêm logic để map category sang company name ở đây
+    return category;
+  };
 
   const filteredJobs = jobs.filter(job =>
     (selectedType === "All" || job.type === selectedType) &&
     (selectedLocation === "All" || job.location === selectedLocation) &&
-    (selectedTitle === "All" || job.title === selectedTitle)
+    (selectedCategory === "All" || job.category === selectedCategory)
   );
 
   const handleLoadMore = () => {
