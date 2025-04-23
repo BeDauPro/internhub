@@ -27,13 +27,14 @@
         }
 
         // New DTO for admin view of applications
-        public class AdminApplicationViewDto
+        public class StudentViewDto
         {
             public int StudentId { get; set; }
-            public string JobTitle { get; set; }
+            public decimal GPA { get; set; }
             public string StudentName { get; set; }
             public string Status { get; set; }
             public string CVFile { get; set; }
+            // Thêm các trường khác bạn muốn hiển thị
         }
 
         // New DTO for employer view of candidates

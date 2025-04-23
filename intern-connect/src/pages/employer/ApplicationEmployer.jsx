@@ -3,12 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import { FaFilter, FaFileAlt } from "react-icons/fa";
 import "../../styles/pages/employer/applicationemployer.scss";
 import Footer from '../../components/Footer';
+import { updateApplicationStatus, getCandidatesForEmployer } from '../../services/ApplicationApi';
 
-const ApplicationEmployer = ({ applicationData }) => {
-    const navigate = useNavigate(); 
-    const [currentPage, setCurrentPage] = useState(1); // Current page state
-    const applicationsPerPage = 10; // Maximum applications per page
+const ApplicationEmployer = () => {
+    const navigate = useNavigate();
+    const [currentPage, setCurrentPage] = useState(1);
+    const applicationsPerPage = 10;
     const [applications, setApplications] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const [filters, setFilters] = useState({
         dateRange: '',
         startDate: '',
@@ -19,6 +22,72 @@ const ApplicationEmployer = ({ applicationData }) => {
     // Define statusRefs and openStatusId
     const statusRefs = useRef({});
     const [openStatusId, setOpenStatusId] = useState(null);
+
+    // Fetch data from API when component mounts
+    useEffect(() => {
+        fetchCandidates();
+    }, []);
+
+    const fetchCandidates = async () => {
+        try {
+            setLoading(true);
+            const response = await getCandidatesForEmployer();
+
+            // Transform API data to match our application structure
+            const formattedApplications = response.map(candidate => ({
+                id: candidate.applicationId,
+                position: candidate.jobTitle,
+                student: candidate.studentName,
+                date: formatDate(candidate.applicationDate),
+                status: mapStatusFromApi(candidate.status),
+                cvFile: candidate.cvFile
+            }));
+
+            setApplications(formattedApplications);
+            setError(null);
+        } catch (err) {
+            console.error("Error fetching candidates:", err);
+            setError("Không thể tải dữ liệu. Vui lòng thử lại sau.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Helper function to format date from API to DD/MM/YYYY
+    const formatDate = (dateString) => {
+        if (!dateString) return '';
+
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) {
+            return dateString;
+        }
+
+        return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
+    };
+
+    // Map API status values to display values based on your enum
+    const mapStatusFromApi = (apiStatus) => {
+        const statusMap = {
+            'pending': 'Chờ phản hồi',
+            'interview': 'Phỏng vấn',
+            'internship': 'Thực tập',
+            'completed': 'Hoàn thành'
+        };
+
+        return statusMap[apiStatus?.toLowerCase()] || 'Chờ phản hồi';
+    };
+
+    // Map display status values back to API values (enum format for backend)
+    const mapStatusToApi = (displayStatus) => {
+        const reverseStatusMap = {
+            'Chờ phản hồi': 0, // Pending
+            'Phỏng vấn': 1,    // Interview
+            'Thực tập': 2,     // Internship
+            'Hoàn thành': 3    // Completed
+        };
+
+        return reverseStatusMap[displayStatus];
+    };
 
     // Function to toggle the status dropdown
     const toggleStatusDropdown = (id, event) => {
@@ -43,22 +112,6 @@ const ApplicationEmployer = ({ applicationData }) => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, [openStatusId]);
-
-    useEffect(() => {
-        if (applicationData) {
-            setApplications(applicationData);
-        }
-    }, [applicationData]);
-
-    // Early return after hooks
-    if (!applicationData || applicationData.length === 0) {
-        return (
-            <div className="error-container">
-                <h2>Thông tin sinh viên không khả dụng</h2>
-                <button onClick={() => navigate('/')} className="back-btn">Quay lại trang chủ</button>
-            </div>
-        );
-    }
 
     // Status style mapping
     const getStatusStyle = (status) => {
@@ -124,12 +177,26 @@ const ApplicationEmployer = ({ applicationData }) => {
         setShowFilterDropdown(!showFilterDropdown);
     };
 
-    const handleStatusChange = (id, newStatus, event) => {
+    const handleStatusChange = async (id, newStatus, event) => {
         event.stopPropagation(); // Prevent event bubbling
-        setApplications(applications.map(app =>
-            app.id === id ? { ...app, status: newStatus } : app
-        ));
-        setOpenStatusId(null); // Close the dropdown after status change
+
+        try {
+            // Convert display status to API status enum value
+            const apiStatus = mapStatusToApi(newStatus);
+
+            // Call API to update status
+            await updateApplicationStatus(id, apiStatus);
+
+            // Update local state if API call succeeds
+            setApplications(applications.map(app =>
+                app.id === id ? { ...app, status: newStatus } : app
+            ));
+
+            setOpenStatusId(null); // Close the dropdown after status change
+        } catch (err) {
+            console.error("Error updating application status:", err);
+            alert("Không thể cập nhật trạng thái. Vui lòng thử lại sau.");
+        }
     };
 
     // Pagination logic
@@ -142,6 +209,30 @@ const ApplicationEmployer = ({ applicationData }) => {
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
     };
+
+    const handleViewProfile = (app) => {
+        // Navigate to student profile with student ID or other identifier
+        // You may need to adjust this based on your routing setup
+        navigate(`/studentprofile/${app.student}`, {
+            state: {
+                cvFile: app.cvFile
+            }
+        });
+    };
+
+    // Render loading or error states
+    if (loading) {
+        return <div className="loading-container">Đang tải dữ liệu...</div>;
+    }
+
+    if (error) {
+        return (
+            <div className="error-container">
+                <h2>{error}</h2>
+                <button onClick={fetchCandidates} className="retry-btn">Thử lại</button>
+            </div>
+        );
+    }
 
     return (
         <>
@@ -156,9 +247,9 @@ const ApplicationEmployer = ({ applicationData }) => {
                         <div className="filter-dropdown">
                             <div className="filter-group">
                                 <label>Thời gian:</label>
-                                <select 
-                                    name="dateRange" 
-                                    value={filters.dateRange} 
+                                <select
+                                    name="dateRange"
+                                    value={filters.dateRange}
                                     onChange={handleFilterChange}
                                 >
                                     <option value="all">Tất cả</option>
@@ -173,19 +264,19 @@ const ApplicationEmployer = ({ applicationData }) => {
                                 <>
                                     <div className="filter-group">
                                         <label>Từ ngày:</label>
-                                        <input 
-                                            type="date" 
-                                            name="startDate" 
-                                            value={filters.startDate} 
+                                        <input
+                                            type="date"
+                                            name="startDate"
+                                            value={filters.startDate}
                                             onChange={handleFilterChange}
                                         />
                                     </div>
                                     <div className="filter-group">
                                         <label>Đến ngày:</label>
-                                        <input 
-                                            type="date" 
-                                            name="endDate" 
-                                            value={filters.endDate} 
+                                        <input
+                                            type="date"
+                                            name="endDate"
+                                            value={filters.endDate}
                                             onChange={handleFilterChange}
                                         />
                                     </div>
@@ -213,50 +304,50 @@ const ApplicationEmployer = ({ applicationData }) => {
                                 <div className="cell student-cell">{app.student}</div>
                                 <div className="cell date-cell">{app.date}</div>
                                 <div className="cell file-cell">
-                                    <button 
-                                        className="file-button" 
-                                        onClick={() => navigate("/studentprofile")}
+                                    <button
+                                        className="file-button"
+                                        onClick={() => handleViewProfile(app)}
                                         title="Xem hồ sơ"
                                     >
                                         <FaFileAlt />
                                     </button>
                                 </div>
                                 <div className="cell status-cell">
-                                    <div 
+                                    <div
                                         className="status-dropdown"
                                         ref={el => statusRefs.current[app.id] = el}
                                     >
-                                        <div 
+                                        <div
                                             className={`status-badge ${getStatusStyle(app.status)}`}
                                             onClick={(e) => toggleStatusDropdown(app.id, e)}
                                         >
                                             {app.status} <span className="dropdown-arrow">▼</span>
                                         </div>
-                                        
+
                                         {openStatusId === app.id && (
                                             <div className="status-dropdown-menu">
-                                                <div 
+                                                <div
                                                     className="status-option waiting"
                                                     onClick={(e) => handleStatusChange(app.id, 'Chờ phản hồi', e)}
                                                 >
                                                     <span className="status-dot waiting-dot"></span>
                                                     Chờ phản hồi
                                                 </div>
-                                                <div 
+                                                <div
                                                     className="status-option interview"
                                                     onClick={(e) => handleStatusChange(app.id, 'Phỏng vấn', e)}
                                                 >
                                                     <span className="status-dot interview-dot"></span>
                                                     Phỏng vấn
                                                 </div>
-                                                <div 
+                                                <div
                                                     className="status-option internship"
                                                     onClick={(e) => handleStatusChange(app.id, 'Thực tập', e)}
                                                 >
                                                     <span className="status-dot internship-dot"></span>
                                                     Thực tập
                                                 </div>
-                                                <div 
+                                                <div
                                                     className="status-option completed"
                                                     onClick={(e) => handleStatusChange(app.id, 'Hoàn thành', e)}
                                                 >
@@ -277,17 +368,19 @@ const ApplicationEmployer = ({ applicationData }) => {
                 </div>
 
                 {/* Pagination controls */}
-                <div className="pagination">
-                    {Array.from({ length: totalPages }, (_, index) => (
-                        <button
-                            key={index}
-                            className={`pagination-button ${currentPage === index + 1 ? 'active' : ''}`}
-                            onClick={() => handlePageChange(index + 1)}
-                        >
-                            {index + 1}
-                        </button>
-                    ))}
-                </div>
+                {totalPages > 1 && (
+                    <div className="pagination">
+                        {Array.from({ length: totalPages }, (_, index) => (
+                            <button
+                                key={index}
+                                className={`pagination-button ${currentPage === index + 1 ? 'active' : ''}`}
+                                onClick={() => handlePageChange(index + 1)}
+                            >
+                                {index + 1}
+                            </button>
+                        ))}
+                    </div>
+                )}
             </div>
             <Footer />
         </>

@@ -11,7 +11,7 @@ namespace InternHub.Services.Interfaces
         Task<bool> UpdateApplicationStatusAsync(int applicationId, StudentStatus newStatus);
 
         // New methods for admin and employer views
-        Task<IEnumerable<AdminApplicationViewDto>> GetAllApplicationsForAdminAsync();
+        Task<IEnumerable<StudentViewDto>> GetAllStudentsForAdminAsync();
         Task<IEnumerable<EmployerCandidateViewDto>> GetCandidatesForEmployerAsync(string userId);
     }
 }

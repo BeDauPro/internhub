@@ -189,34 +189,6 @@ export const deleteJob = async(id) => {
     }
 };
 
-// API endpoints cho Admin (cần đăng nhập với role Admin)
-export const getPendingJobs = async() => {
-    try {
-        const response = await axiosInstance.get('/Admin/JobPosting/Pending');
-        return response.data;
-    } catch (err) {
-        throw handleError(err);
-    }
-};
-
-export const approveJob = async(id) => {
-    try {
-        const response = await axiosInstance.patch(`/Admin/JobPosting/${id}/Approve`);
-        return response.data;
-    } catch (err) {
-        throw handleError(err);
-    }
-};
-
-export const rejectJob = async(id) => {
-    try {
-        const response = await axiosInstance.patch(`/Admin/JobPosting/${id}/Reject`);
-        return response.data;
-    } catch (err) {
-        throw handleError(err);
-    }
-};
-
 // Hàm xử lý lỗi để tái sử dụng
 const handleError = (err) => {
     if (err.response && err.response.data) {
