@@ -1,4 +1,4 @@
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using InternHub.DTOs.JobApplication;
 using InternHub.Models.Enums;
 using InternHub.Services.Interfaces;
@@ -87,6 +87,44 @@ namespace InternHub.Controllers
                     return Ok(new { message = "Application status updated successfully." });
                 }
                 return BadRequest(new { message = "Failed to update application status." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        // New API for admins to view all applications
+        [HttpGet("admin/all")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetAllApplicationsForAdmin()
+        {
+            try
+            {
+                var applications = await _jobApplicationService.GetAllApplicationsForAdminAsync();
+                return Ok(applications);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        // New API for employers to view candidates for their job postings
+        [HttpGet("employer/candidates")]
+        [Authorize(Roles = "Employer")]
+        public async Task<IActionResult> GetCandidatesForEmployer()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+            {
+                return Unauthorized(new { message = "User is not authenticated." });
+            }
+
+            try
+            {
+                var candidates = await _jobApplicationService.GetCandidatesForEmployerAsync(userId);
+                return Ok(candidates);
             }
             catch (Exception ex)
             {

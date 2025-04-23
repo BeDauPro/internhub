@@ -1,7 +1,6 @@
 ﻿using System;
 using InternHub.Models.Enums;
 using static InternHub.DTOs.JobApplication.JobApplicationDto;
-
 namespace InternHub.Services.Interfaces
 {
     public interface IJobApplicationService
@@ -10,6 +9,9 @@ namespace InternHub.Services.Interfaces
         Task<IEnumerable<ApplicationViewDto>> GetApplicationsByJobPostingAsync(int jobPostingId);
         Task<List<ApplicationHistoryDto>> GetApplicationHistoryByStudentAsync(string userId);
         Task<bool> UpdateApplicationStatusAsync(int applicationId, StudentStatus newStatus);
+
+        // New methods for admin and employer views
+        Task<IEnumerable<AdminApplicationViewDto>> GetAllApplicationsForAdminAsync();
+        Task<IEnumerable<EmployerCandidateViewDto>> GetCandidatesForEmployerAsync(string userId);
     }
 }
-
