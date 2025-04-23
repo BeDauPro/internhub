@@ -11,7 +11,7 @@ using System.Text.Json.Serialization;
 using AutoMapper;
 using InternHub.Services.Interfaces;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Register services
 builder.Services.AddScoped<AuthService>();
@@ -44,7 +44,6 @@ builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
 
 // Configure Identity Options
 builder.Services.Configure<IdentityOptions>(options => {

@@ -25,6 +25,26 @@
             public DateTime ApplicationDate { get; set; }
             public string Status { get; set; }
         }
+
+        // New DTO for admin view of applications
+        public class AdminApplicationViewDto
+        {
+            public int StudentId { get; set; }
+            public string JobTitle { get; set; }
+            public string StudentName { get; set; }
+            public string Status { get; set; }
+            public string CVFile { get; set; }
+        }
+
+        // New DTO for employer view of candidates
+        public class EmployerCandidateViewDto
+        {
+            public int ApplicationId { get; set; }
+            public string JobTitle { get; set; }
+            public string StudentName { get; set; }
+            public string CVFile { get; set; }
+            public DateTime ApplicationDate { get; set; }
+            public string Status { get; set; }
+        }
     }
 }
-

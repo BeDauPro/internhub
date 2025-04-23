@@ -26,10 +26,11 @@ namespace InternHub.Controllers
         // GET: api/JobPosting - Lấy tất cả JobPostings có status Accept
         [Route("api/JobPosting")]
         [HttpGet]
+        [AllowAnonymous] // Thêm để cho phép truy cập không cần xác thực
         public async Task<ActionResult> GetAllAcceptedJobPostings(
-            [FromQuery] string category = null,
-            [FromQuery] string location = null,
-            [FromQuery] string workType = null)
+            [FromQuery] string category = "",  // Đổi null thành chuỗi rỗng
+            [FromQuery] string location = "",  // Đổi null thành chuỗi rỗng
+            [FromQuery] string workType = "")  // Đổi null thành chuỗi rỗng
         {
             try
             {
@@ -53,6 +54,7 @@ namespace InternHub.Controllers
         // GET: api/JobPosting/{id} - Lấy chi tiết một bài đăng
         [Route("api/JobPosting/{id}")]
         [HttpGet]
+        [AllowAnonymous] // Thêm để cho phép truy cập không cần xác thực
         public async Task<ActionResult<JobPostingDetailDto>> GetJobPostingById(int id)
         {
             try
@@ -191,7 +193,7 @@ namespace InternHub.Controllers
         // GET: api/Employer/JobPosting - Lấy tất cả JobPosting của employer hiện tại
         [Route("api/Employer/JobPosting")]
         [HttpGet]
-        //[Authorize(Roles = "Employer")]
+        [Authorize(Roles = "Employer")]
         public async Task<ActionResult> GetEmployerJobPostings()
         {
             try
@@ -283,18 +285,19 @@ namespace InternHub.Controllers
             }
         }
 
- 
+
         // GET: api/JobPosting/filtered - Lấy danh sách JobPosting có phân trang và lọc theo nhiều tiêu chí
         [Route("api/JobPosting/filtered")]
         [HttpGet]
+        [AllowAnonymous] // Thêm để cho phép truy cập không cần xác thực
         public async Task<ActionResult> GetFilteredJobPostings(
-            [FromQuery] string? searchTerm,
-            [FromQuery] string? workType,
-            [FromQuery] string? location,
-            [FromQuery] string? jobCategory,
-            [FromQuery] string? sortDirection = "desc", // Mặc định sắp xếp theo ngày đăng mới nhất
+            [FromQuery] string? searchTerm = "", // Đổi null thành chuỗi rỗng
+            [FromQuery] string? workType = "",   // Đổi null thành chuỗi rỗng
+            [FromQuery] string? location = "",   // Đổi null thành chuỗi rỗng
+            [FromQuery] string? jobCategory = "", // Đổi null thành chuỗi rỗng
+            [FromQuery] string? sortDirection = "desc",
             [FromQuery] int pageNumber = 1,
-            [FromQuery] int pageSize = 8) // Mặc định 8 bài đăng/trang
+            [FromQuery] int pageSize = 8)
         {
             try
             {

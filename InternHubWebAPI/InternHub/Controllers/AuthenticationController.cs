@@ -178,7 +178,6 @@ namespace InternHub.Controllers
             {
                 return BadRequest(new { error = "Password reset failed.", details = resetResult.Errors });
             }
-
             // Xóa token sau khi đặt lại mật khẩu thành công
             user.PasswordResetToken = null;
             user.ResetTokenExpires = null;

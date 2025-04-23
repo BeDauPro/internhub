@@ -108,7 +108,7 @@ namespace InternHub.Services
             return MapToResponseDto(jobPosting, jobPosting.Employer);
         }
 
-        // READ - Lấy tất cả JobPosting theo vai trò
+        // READ - Lấy tất cả JobPosting theo vai trò (Đã sửa để không bắt buộc userRole)
         public async Task<IEnumerable<JobPostingListDto>> GetAllJobPostingsAsync(string userRole = null)
         {
             // Trước tiên, xóa các bài đăng đã hết hạn
@@ -124,18 +124,17 @@ namespace InternHub.Services
                 // Admin xem những bài đăng Pending
                 query = query.Where(j => j.Status == JobpostingStatus.Pending);
             }
-            else if (userRole == "Student" || userRole == null)
+            else
             {
-                // Student và người không đăng nhập chỉ xem các bài đăng đã được chấp nhận
+                // Mặc định (Student, null hoặc không xác định): chỉ xem các bài đăng đã được chấp nhận
                 query = query.Where(j => j.Status == JobpostingStatus.Accept);
             }
-            // Employer đã được xử lý trong phương thức GetEmployerJobPostingsAsync
 
             var jobPostings = await query.ToListAsync();
             return jobPostings.Select(j => MapToListDto(j, j.Employer));
         }
 
-        // READ - Lấy JobPosting theo filter
+        // READ - Lấy JobPosting theo filter (Đã sửa để xử lý tham số rỗng)
         public async Task<IEnumerable<JobPostingListDto>> GetFilteredJobPostingsAsync(string category, string location, string workType)
         {
             // Trước tiên, xóa các bài đăng đã hết hạn
@@ -146,6 +145,7 @@ namespace InternHub.Services
                 .Where(j => j.Status == JobpostingStatus.Accept) // Chỉ lấy những bài đăng đã được chấp nhận
                 .AsQueryable();
 
+            // Áp dụng filter chỉ khi tham số không rỗng
             if (!string.IsNullOrEmpty(category))
             {
                 query = query.Where(j => j.JobCategory.Contains(category));
@@ -325,7 +325,8 @@ namespace InternHub.Services
                 Industry = employer?.Industry
             };
         }
-        //Filter cho jobposting
+
+        //Filter cho jobposting (Đã sửa để xử lý tham số null)
         public async Task<PagedResult<JobPostingListDto>> GetFilteredPagedJobPostingsAsync(
             string? searchTerm = null,
             string? workType = null,
@@ -369,7 +370,7 @@ namespace InternHub.Services
             }
 
             // Sắp xếp theo ngày đăng
-            query = sortDirection.ToLower() == "asc"
+            query = (sortDirection?.ToLower() ?? "desc") == "asc"
                 ? query.OrderBy(j => j.PostedAt)     // Cũ nhất -> Mới nhất
                 : query.OrderByDescending(j => j.PostedAt);  // Mới nhất -> Cũ nhất
 
@@ -392,6 +393,7 @@ namespace InternHub.Services
                 PageSize = pageSize
             };
         }
+
         public async Task<IEnumerable<JobPostingListDto>> GetEmployerJobPostingsListAsync(int employerId)
         {
             // Trước tiên, xóa các bài đăng đã hết hạn

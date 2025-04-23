@@ -1,13 +1,32 @@
 ﻿<Properties StartupConfiguration="{041E3534-1384-414A-9671-F6F7C0CDA538}|Default">
+<<<<<<< HEAD
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.Workbench ActiveDocument="InternHub/Services/JobApplicationService.cs">
     <Files>
       <File FileName="InternHub/Services/JobApplicationService.cs" Line="115" Column="58" />
       <File FileName="InternHub/Controllers/JobApplicationController.cs" />
+=======
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.ItemProperties.InternHub PreferredExecutionTarget="/Applications/Google Chrome.app" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="InternHub/DTOs/Student/UpdateStudentDto.cs">
+    <Files>
+      <File FileName="InternHub/Services/BlobService.cs" Line="25" Column="1" />
+      <File FileName="InternHub/appsettings.json" Line="26" Column="1" />
+      <File FileName="InternHub/Controllers/StudentProfileController.cs" Line="17" Column="1" />
+      <File FileName="InternHub/Services/StudentReviewService.cs" Line="1" Column="1" />
+      <File FileName="InternHub/Services/StudentService.cs" Line="31" Column="27" />
+      <File FileName="InternHub/DTOs/Review/StudentReviewCreateDto.cs" Line="1" Column="1" />
+      <File FileName="InternHub/DTOs/Student/CreateStudentDto.cs" Line="1" Column="1" />
+      <File FileName="InternHub/DTOs/Student/UpdateStatusDto.cs" Line="1" Column="1" />
+      <File FileName="InternHub/DTOs/Student/UpdateStudentDto.cs" Line="43" Column="1" />
+>>>>>>> origin/HuyBranch
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
+<<<<<<< HEAD
           <Node name="InternHubWebAPI">
             <Node name="InternHub" expanded="True">
               <Node name="DTOs" expanded="True">
@@ -17,16 +36,26 @@
               <Node name="Services" expanded="True">
                 <Node name="JobApplicationService.cs" selected="True" />
               </Node>
+=======
+          <Node name="InternHubWebAPI" expanded="True">
+            <Node name="InternHub" expanded="True">
+              <Node name="Services" expanded="True" />
+>>>>>>> origin/HuyBranch
             </Node>
           </Node>
         </State>
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
+<<<<<<< HEAD
   <MonoDevelop.Ide.ItemProperties.InternHub PreferredExecutionTarget="/Applications/Google Chrome.app" />
   <MultiItemStartupConfigurations />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
+=======
+>>>>>>> origin/HuyBranch
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MultiItemStartupConfigurations />
 </Properties>

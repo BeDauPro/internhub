@@ -22,6 +22,10 @@ namespace InternHub.Services
             if (student == null)
                 throw new Exception("Không tìm thấy sinh viên.");
 
+            // Kiểm tra trạng thái của sinh viên
+            if (student.Status == StudentStatus.Internship || student.Status == StudentStatus.Completed)
+                throw new Exception("Bạn không thể ứng tuyển vì đã có trạng thái Internship hoặc Completed.");
+
             var job = await _context.JobPostings.FindAsync(dto.JobPostingId);
             if (job == null)
                 throw new Exception("Tin tuyển dụng không tồn tại.");
@@ -165,6 +169,54 @@ namespace InternHub.Services
             return true;
         }
 
+        // New method for admin to view all applications
+        public async Task<IEnumerable<AdminApplicationViewDto>> GetAllApplicationsForAdminAsync()
+        {
+            var applications = await _context.Applications
+                .Include(a => a.Student)
+                .Include(a => a.JobPosting)
+                .OrderByDescending(a => a.ApplicationDate)
+                .Select(a => new AdminApplicationViewDto
+                {
+                    StudentId = a.StudentId,
+                    JobTitle = a.JobPosting.JobTitle,
+                    StudentName = a.Student.FullName,
+                    Status = a.Status,
+                    CVFile = a.Student.CVFile
+                })
+                .ToListAsync();
+
+            return applications;
+        }
+
+        // New method for employers to view candidates for their job postings
+        public async Task<IEnumerable<EmployerCandidateViewDto>> GetCandidatesForEmployerAsync(string userId)
+        {
+            // First, find the employer ID from the user ID
+            var employer = await _context.Employers
+                .FirstOrDefaultAsync(e => e.UserId == userId);
+
+            if (employer == null)
+                throw new Exception("Không tìm thấy thông tin nhà tuyển dụng.");
+
+            // Get all applications for this employer's job postings
+            var candidates = await _context.Applications
+                .Include(a => a.Student)
+                .Include(a => a.JobPosting)
+                .Where(a => a.JobPosting.EmployerId == employer.EmployerId)
+                .OrderByDescending(a => a.ApplicationDate)
+                .Select(a => new EmployerCandidateViewDto
+                {
+                    ApplicationId = a.ApplicationId,
+                    JobTitle = a.JobPosting.JobTitle,
+                    StudentName = a.Student.FullName,
+                    CVFile = a.Student.CVFile,
+                    ApplicationDate = a.ApplicationDate,
+                    Status = a.Status
+                })
+                .ToListAsync();
+
+            return candidates;
+        }
     }
 }
-
