@@ -8,10 +8,12 @@ import axios from 'axios';
 import '../../styles/pages/employer/editjob.scss';
 import Footer from '../../components/Footer';
 import { getJobById, createJob, updateJob, deleteJob } from '../../services/JobPostingApi';
+import { getEmployerProfile } from '../../services/employerApi';
 
 const EditJob = ({ editJob, onSave }) => {
     const navigate = useNavigate();
     const address = useLocation();
+    const [employerProfile, setEmployerProfile] = useState(null);
     const { id } = useParams(); // Lấy id từ URL nếu đang edit job
     const [isLoading, setIsLoading] = useState(false);
     const [formData, setFormData] = useState(editJob || {
@@ -29,7 +31,8 @@ const EditJob = ({ editJob, onSave }) => {
         jobRequirements: "",
         languages: [],
         vacancies: 1,
-        deadline: ""
+        deadline: "",
+        location: ""
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState(null);
@@ -79,9 +82,30 @@ const EditJob = ({ editJob, onSave }) => {
                 } finally {
                     setIsLoading(false);
                 }
+            } else {
+                const fetchData = async () => {
+                    try {
+                        const data = await getEmployerProfile();
+                        console.log("Employer Profile Data: ", data);
+                        setEmployerProfile(data);
+                
+                        // Use `data` directly to set form data
+                        setFormData((prevFormData) => ({
+                            ...prevFormData,
+                            companyName: data.companyName,
+                            address: data.address,
+                            industry: data.industry,
+                            location: data.address,
+                        }));
+                    } catch (err) {
+                        console.error('Error loading profile: ', err);
+                    }
+                };
+                await fetchData();
             }
-        };
+            
 
+            }
         fetchJobData();
     }, [id]);
 
@@ -172,7 +196,7 @@ const EditJob = ({ editJob, onSave }) => {
             if (formData.industry) formDataToSend.append('JobCategory', formData.industry);
             if (formData.address) formDataToSend.append('address', formData.address);
             if (formData.vacancies) formDataToSend.append('Vacancies', formData.vacancies);
-            
+            if (formData.location) formDataToSend.append('Location', formData.location);
             // Xử lý languages - chuyển array thành string
             if (formData.languages && Array.isArray(formData.languages) && formData.languages.length > 0) {
                 formDataToSend.append('LanguagesRequired', formData.languages.join(','));
