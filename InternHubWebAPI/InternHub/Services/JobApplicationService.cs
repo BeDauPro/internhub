@@ -87,42 +87,62 @@ namespace InternHub.Services
             }).ToList();
         }
 
-        public async Task<bool> UpdateApplicationStatusAsync(int applicationId, StudentStatus newStatus)
+        public async Task<bool> UpdateApplicationStatusAsync(int applicationId, StudentStatus newStatus, string employerId)
         {
             // Tìm đơn ứng tuyển theo ID 
             var application = await _context.Applications
                 .Include(a => a.Student)
+                .Include(a => a.JobPosting)
                 .FirstOrDefaultAsync(a => a.ApplicationId == applicationId);
 
             if (application == null)
                 throw new Exception("Application not found");
 
             var student = application.Student;
+            var jobPosting = application.JobPosting;
 
             // Parse status hiện tại của application
             var isParsed = Enum.TryParse(application.Status, out StudentStatus currentAppStatus);
+            if (!isParsed)
+                throw new Exception("Invalid current application status");
 
-            // Nếu sinh viên đã Internship hoặc Completed
-            if (student.Status == StudentStatus.Internship || student.Status == StudentStatus.Completed)
+            // Kiểm tra không cho phép cập nhật xuống trạng thái thấp hơn
+            if (newStatus < currentAppStatus)
             {
-                // Chỉ cho phép cập nhật nếu:
-                // - Chính application đó đã từng là Internship
-                // - Và trạng thái mới là Completed
-                if (!isParsed || currentAppStatus != StudentStatus.Internship || newStatus != StudentStatus.Completed)
-                {
-                    throw new Exception("Student has already started or completed an internship. Cannot update status anymore.");
-                }
-
-                // ✅ Cho phép cập nhật nội bộ application (từ Internship → Completed)
-                application.Status = newStatus.ToString();
-                student.Status = newStatus; // Update luôn student nếu completed thành công
-                _context.Applications.Update(application);
-                _context.Students.Update(student);
-                await _context.SaveChangesAsync();
-                return true;
+                throw new Exception($"Không thể cập nhật xuống trạng thái thấp hơn. Trạng thái hiện tại: {currentAppStatus}");
             }
 
-            // Trường hợp sinh viên chưa Internship → cập nhật bình thường
+            // Nếu sinh viên đang ở trạng thái Internship
+            if (student.Status == StudentStatus.Internship)
+            {
+                // Kiểm tra xem employer có quyền thay đổi status không
+                if (!int.TryParse(employerId, out int parsedEmployerId) || jobPosting.EmployerId != parsedEmployerId)
+                {
+                    throw new Exception("Only the employer who provided the internship can update the student's status.");
+                }
+            }
+
+            // Nếu application đang ở trạng thái Internship
+            if (currentAppStatus == StudentStatus.Internship)
+            {
+                // Chỉ cho phép cập nhật lên Completed
+                if (newStatus != StudentStatus.Completed)
+                {
+                    throw new Exception("Can only update from Internship to Completed status.");
+                }
+            }
+
+            // Nếu đang cập nhật lên Internship
+            if (newStatus == StudentStatus.Internship)
+            {
+                // Kiểm tra xem employer có quyền thay đổi status không
+                if (!int.TryParse(employerId, out int parsedEmployerId) || jobPosting.EmployerId != parsedEmployerId)
+                {
+                    throw new Exception("Only the employer who provided the job posting can update the status to Internship.");
+                }
+            }
+
+            // Cập nhật status của application
             application.Status = newStatus.ToString();
             _context.Applications.Update(application);
             await _context.SaveChangesAsync();
@@ -137,6 +157,7 @@ namespace InternHub.Services
                 .Select(s => Enum.TryParse<StudentStatus>(s, out var parsedStatus) ? parsedStatus : StudentStatus.Pending)
                 .Max();
 
+            // Cập nhật student status
             student.Status = highestEnumStatus;
             _context.Students.Update(student);
             await _context.SaveChangesAsync();

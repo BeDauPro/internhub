@@ -75,18 +75,24 @@ namespace InternHub.Controllers
             }
         }
 
-        [HttpPut("application/{applicationId}/status")]
+        [HttpPut("{applicationId}/status")]
         [Authorize(Roles = "Employer")]
         public async Task<IActionResult> UpdateApplicationStatus(int applicationId, [FromBody] StudentStatus newStatus)
         {
             try
             {
-                var result = await _jobApplicationService.UpdateApplicationStatusAsync(applicationId, newStatus);
+                var employerId = User.FindFirst("EmployerId")?.Value;
+                if (string.IsNullOrEmpty(employerId))
+                {
+                    return Unauthorized();
+                }
+
+                var result = await _jobApplicationService.UpdateApplicationStatusAsync(applicationId, newStatus, employerId);
                 if (result)
                 {
-                    return Ok(new { message = "Application status updated successfully." });
+                    return Ok(new { message = $"Đã cập nhật trạng thái thành công lên {newStatus}" });
                 }
-                return BadRequest(new { message = "Failed to update application status." });
+                return BadRequest(new { message = "Không thể cập nhật trạng thái" });
             }
             catch (Exception ex)
             {
