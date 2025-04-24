@@ -16,39 +16,51 @@ namespace InternHub.Services
         {
             _context = context;
         }
-
-        public async Task<string> ApplyAsync(string userId, ApplicationCreateDto dto)
+        public class ResultDto
         {
-            var student = await _context.Students.FirstOrDefaultAsync(s => s.UserId == userId);
-            if (student == null)
-                throw new Exception("Không tìm thấy sinh viên.");
-
-            // Kiểm tra trạng thái của sinh viên
-            if (student.Status == StudentStatus.Internship || student.Status == StudentStatus.Completed)
-                throw new Exception("Bạn không thể ứng tuyển vì đã có trạng thái Internship hoặc Completed.");
-
-            var job = await _context.JobPostings.FindAsync(dto.JobPostingId);
-            if (job == null)
-                throw new Exception("Tin tuyển dụng không tồn tại.");
-
-            bool alreadyApplied = await _context.Applications
-                .AnyAsync(a => a.StudentId == student.Id && a.JobPostingId == dto.JobPostingId);
-            if (alreadyApplied)
-                throw new Exception("Bạn đã ứng tuyển công việc này.");
-
-            var application = new Application
-            {
-                StudentId = student.Id,
-                JobPostingId = dto.JobPostingId,
-                Status = "pending",
-                ApplicationDate = DateTime.UtcNow,
-            };
-
-            _context.Applications.Add(application);
-            await _context.SaveChangesAsync();
-
-            return "Ứng tuyển thành công.";
+            public string Status { get; set; } // "success" hoặc "fail"
+            public string Message { get; set; }
         }
+
+        public async Task<ResultDto> ApplyAsync(string userId, ApplicationCreateDto dto)
+        {
+            try
+            {
+                var student = await _context.Students.FirstOrDefaultAsync(s => s.UserId == userId);
+                if (student == null)
+                    return new ResultDto { Status = "fail", Message = "Không tìm thấy sinh viên." };
+
+                if (student.Status == StudentStatus.Internship || student.Status == StudentStatus.Completed)
+                    return new ResultDto { Status = "fail", Message = "Bạn không thể ứng tuyển vì đã có trạng thái Internship hoặc Completed." };
+
+                var job = await _context.JobPostings.FindAsync(dto.JobPostingId);
+                if (job == null)
+                    return new ResultDto { Status = "fail", Message = "Tin tuyển dụng không tồn tại." };
+
+                bool alreadyApplied = await _context.Applications
+                    .AnyAsync(a => a.StudentId == student.Id && a.JobPostingId == dto.JobPostingId);
+                if (alreadyApplied)
+                    return new ResultDto { Status = "fail", Message = "Bạn đã ứng tuyển công việc này ." };
+
+                var application = new Application
+                {
+                    StudentId = student.Id,
+                    JobPostingId = dto.JobPostingId,
+                    Status = "pending",
+                    ApplicationDate = DateTime.UtcNow,
+                };
+
+                _context.Applications.Add(application);
+                await _context.SaveChangesAsync();
+
+                return new ResultDto { Status = "success", Message = "Ứng tuyển thành công." };
+            }
+            catch (Exception ex)
+            {
+                return new ResultDto { Status = "fail", Message = "Ứng tuyển thất bại: " + ex.Message };
+            }
+        }
+
 
         public async Task<IEnumerable<ApplicationViewDto>> GetApplicationsByJobPostingAsync(int jobPostingId)
         {

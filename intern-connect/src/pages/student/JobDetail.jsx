@@ -7,12 +7,14 @@ import { FaUsers, FaCalendarAlt } from "react-icons/fa";
 import '../../styles/pages/student/jobdetail.scss';
 import Footer from '../../components/Footer';
 import { getJobById } from '../../services/JobPostingApi';
-
+import {applyForJob} from '../../services/ApplicationApi';
 
 const JobDetail = () => {
     const { id } = useParams();
     const [job, setJob] = useState(null);
     const [showAlert, setShowAlert] = useState(false);
+    
+    const [response, setResponse] = useState(null);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
@@ -31,9 +33,35 @@ const JobDetail = () => {
         fetchJobDetails();
     }, [id]);
 
-    const handleApply = () => {
-        setShowAlert(true);
-        setTimeout(() => setShowAlert(false), 3500);
+    const handleApply = async () => {
+        const studentId = localStorage.getItem('token');
+        if (!studentId) {
+            alert("Không tìm thấy thông tin sinh viên. Vui lòng đăng nhập lại.");
+            return;
+        }
+    
+        const applicationData = {
+            jobPostingId: id, // ID của công việc
+            // studentId: studentId, // ID của sinh viên
+            // applicationDate: new Date().toISOString(), // Ngày nộp hồ sơ
+        };
+    
+        console.log("Application Data:", applicationData); // Log dữ liệu để kiểm tra
+    
+        try {
+            const response = await applyForJob(applicationData);
+            console.log("Response:", response); // Log phản hồi từ API
+            if (response.status === "success") {
+                setShowAlert(true);
+                setTimeout(() => setShowAlert(false), 3500);
+            } else {
+                setResponse(response);
+                alert(response.message);
+            }
+        } catch (error) {
+            console.error("Error applying for job:", error);
+            alert(error.data?.message || "Đã xảy ra lỗi khi nộp hồ sơ. Vui lòng thử lại sau.");
+        }
     };
 
     if (loading) {

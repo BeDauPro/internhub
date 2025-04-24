@@ -5,6 +5,5 @@
         fulltime,
         parttime,
         remote,
-
     }
 }
