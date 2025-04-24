@@ -13,6 +13,7 @@ const StudentManagement = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const studentsPerPage = 10;
     const [studentIdFilter, setStudentIdFilter] = useState("");
+    const [statusFilter, setStatusFilter] = useState(""); // New status filter state
     const [sortOrder, setSortOrder] = useState("");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -55,14 +56,57 @@ const StudentManagement = () => {
         setStudentIdFilter(e.target.value);
     };
 
+    const handleStatusFilterChange = (e) => {
+        setStatusFilter(e.target.value);
+    };
+
     const handleSortOrderChange = (e) => {
         setSortOrder(e.target.value);
     };
 
+    // Status priority order based on StudentStatus enum
+    const statusPriority = {
+        'Completed': 1,    // Hoàn thành - Ưu tiên cao nhất
+        'Internship': 2,   // Đang thực tập
+        'Reviewed': 3,     // Đã xem xét
+        'Pending': 4       // Đang chờ xử lý - Ưu tiên thấp nhất
+    };
+
+    // Get status name from numeric value
+    const getStatusName = (statusValue) => {
+        switch (statusValue) {
+            case 0: return 'Pending';
+            case 1: return 'Reviewed';
+            case 2: return 'Internship';
+            case 3: return 'Completed';
+            default: return 'Unknown';
+        }
+    };
+
+    // Get status name in Vietnamese
+    const getStatusNameVietnamese = (statusName) => {
+        switch (statusName) {
+            case 'Pending': return 'Đang chờ xử lý';
+            case 'Reviewed': return 'Đã xem xét';
+            case 'Internship': return 'Đang thực tập';
+            case 'Completed': return 'Hoàn thành';
+            default: return 'Không xác định';
+        }
+    };
+
     // Filter and sort students
     const filteredAndSortedStudents = managementStudent
-        .filter(student => studentIdFilter === "" || student.studentId.toString().includes(studentIdFilter))
+        .filter(student => {
+            const idMatch = studentIdFilter === "" || student.studentId.toString().includes(studentIdFilter);
+            const statusMatch = statusFilter === "" ||
+                (statusFilter === "priority" ? true : getStatusName(student.status) === statusFilter);
+            return idMatch && statusMatch;
+        })
         .sort((a, b) => {
+            if (statusFilter === "priority") {
+                return statusPriority[getStatusName(a.status)] - statusPriority[getStatusName(b.status)];
+            }
+
             if (sortOrder === "asc") {
                 return a.studentId.toString().localeCompare(b.studentId.toString());
             } else if (sortOrder === "desc") {
@@ -86,6 +130,23 @@ const StudentManagement = () => {
         navigate(`/studentprofile/${studentId}`);
     };
 
+    // Function to determine status style classes
+    const getStatusStyle = (statusValue) => {
+        const statusName = getStatusName(statusValue);
+        switch (statusName) {
+            case 'Pending':
+                return 'pending';
+            case 'Reviewed':
+                return 'reviewed';
+            case 'Internship':
+                return 'internship';
+            case 'Completed':
+                return 'completed';
+            default:
+                return '';
+        }
+    };
+
     return (
         <>
             <div className="student-management-container">
@@ -105,6 +166,20 @@ const StudentManagement = () => {
                                     value={studentIdFilter}
                                     onChange={handleStudentIdFilterChange}
                                 />
+                            </div>
+                            <div className="filter-group">
+                                <label>Trạng thái:</label>
+                                <select
+                                    value={statusFilter}
+                                    onChange={handleStatusFilterChange}
+                                >
+                                    <option value="">Tất cả</option>
+                                    <option value="priority">Ưu tiên (Hoàn thành → Đang chờ)</option>
+                                    <option value="Completed">Hoàn thành</option>
+                                    <option value="Internship">Đang thực tập</option>
+                                    <option value="Reviewed">Đã xem xét</option>
+                                    <option value="Pending">Đang chờ xử lý</option>
+                                </select>
                             </div>
                             <div className="filter-group">
                                 <label>Sắp xếp theo ID:</label>
@@ -133,7 +208,11 @@ const StudentManagement = () => {
                                 <div className="cell id-cell">{student.studentId}</div>
                                 <div className="cell company-cell">{student.studentName}</div>
                                 <div className="cell position-cell">{student.gpa}</div>
-                                <div className="cell student-cell">{student.status}</div>
+                                <div className="cell student-cell">
+                                    <span className={`status-badge ${getStatusStyle(student.status)}`}>
+                                        {getStatusNameVietnamese(getStatusName(student.status))}
+                                    </span>
+                                </div>
                                 <div className="cell file-cell">
                                     <button
                                         className="file-button"

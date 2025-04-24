@@ -1,18 +1,68 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaFilter } from "react-icons/fa";
 import "../../styles/pages/student/applicationhistory.scss";
 import Footer from '../../components/Footer';
 import { useNavigate } from "react-router-dom";
+import { getStudentApplicationHistory } from '../../services/ApplicationApi';
 
-const ApplicationsHistory = ({ applications }) => { 
+const ApplicationsHistory = () => {
     const navigate = useNavigate();
+    const [applications, setApplications] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const [filters, setFilters] = useState({
         status: '',
         timeSort: ''
     });
     const [showFilterDropdown, setShowFilterDropdown] = useState(false);
-    const [currentPage, setCurrentPage] = useState(1); // Current page state
-    const applicationsPerPage = 10; // Maximum applications per page
+    const [currentPage, setCurrentPage] = useState(1);
+    const applicationsPerPage = 10;
+
+    // Fetch application history on component mount
+    useEffect(() => {
+        const fetchApplicationHistory = async () => {
+            try {
+                setLoading(true);
+                const historyData = await getStudentApplicationHistory();
+
+                // Transform API data to match the component's expected format
+                const formattedData = historyData.map((app, index) => ({
+                    id: app.jobPostingId,
+                    position: app.jobTitle,
+                    company: app.companyName,
+                    dateRange: formatDate(app.applicationDate),
+                    status: mapStatusToVietnamese(app.status)
+                }));
+
+                setApplications(formattedData);
+                setError(null);
+            } catch (err) {
+                setError(err.data?.message || 'Failed to fetch application history');
+                console.error('Error fetching application history:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchApplicationHistory();
+    }, []);
+
+    // Helper function to format date
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('vi-VN');  // Format as DD/MM/YYYY
+    };
+
+    // Helper function to map API status values to Vietnamese display values
+    const mapStatusToVietnamese = (status) => {
+        const statusMap = {
+            'pending': 'Chờ phản hồi',
+            'interview': 'Phỏng vấn',
+            'internship': 'Thực tập',
+            'completed': 'Hoàn thành'
+        };
+        return statusMap[status.toLowerCase()] || status;
+    };
 
     // Status priority order
     const statusPriority = {
@@ -121,47 +171,61 @@ const ApplicationsHistory = ({ applications }) => {
                         </div>
                     )}
                 </div>
-                <div className="applications-table">
-                    <div className="table-header">
-                        <div className="header-cell id-cell">ID</div>
-                        <div className="header-cell position-cell">Việc làm</div>
-                        <div className="header-cell company-cell">Công ty</div>
-                        <div className="header-cell date-cell">Thời gian</div>
-                        <div className="header-cell status-cell">Trạng thái</div>
-                    </div>
-                    {currentApplications.length > 0 ? (
-                        currentApplications.map((app, index) => (
-                            <div className="table-row" key={index}>
-                                <div className="cell id-cell">{app.id}</div>
-                                <div className="cell position-cell" onClick={() => navigate("/jobdetail")}>{app.position}</div>
-                                <div className="cell company-cell">{app.company}</div>
-                                <div className="cell date-cell">{app.dateRange}</div>
-                                <div className="cell status-cell">
-                                    <span className={`status-badge ${getStatusStyle(app.status)}`}>
-                                        {app.status}
-                                    </span>
-                                </div>
-                            </div>
-                        ))
-                    ) : (
-                        <div className="no-results">
-                            <p>Không tìm thấy kết quả phù hợp.</p>
-                        </div>
-                    )}
-                </div>
 
-                {/* Pagination controls */}
-                <div className="pagination">
-                    {Array.from({ length: totalPages }, (_, index) => (
-                        <button
-                            key={index}
-                            className={`pagination-button ${currentPage === index + 1 ? 'active' : ''}`}
-                            onClick={() => handlePageChange(index + 1)}
-                        >
-                            {index + 1}
-                        </button>
-                    ))}
-                </div>
+                {loading ? (
+                    <div className="loading">Đang tải dữ liệu...</div>
+                ) : error ? (
+                    <div className="error-message">{error}</div>
+                ) : (
+                    <>
+                        <div className="applications-table">
+                            <div className="table-header">
+                                <div className="header-cell id-cell">ID</div>
+                                <div className="header-cell position-cell">Việc làm</div>
+                                <div className="header-cell company-cell">Công ty</div>
+                                <div className="header-cell date-cell">Thời gian</div>
+                                <div className="header-cell status-cell">Trạng thái</div>
+                            </div>
+                            {currentApplications.length > 0 ? (
+                                currentApplications.map((app, index) => (
+                                    <div className="table-row" key={index}>
+                                        <div className="cell id-cell">{app.id}</div>
+                                        <div className="cell position-cell"
+                                            onClick={() => navigate(`/jobdetail/${app.id}`)}>
+                                            {app.position}
+                                        </div>
+                                        <div className="cell company-cell">{app.company}</div>
+                                        <div className="cell date-cell">{app.dateRange}</div>
+                                        <div className="cell status-cell">
+                                            <span className={`status-badge ${getStatusStyle(app.status)}`}>
+                                                {app.status}
+                                            </span>
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="no-results">
+                                    <p>Không tìm thấy kết quả phù hợp.</p>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Pagination controls */}
+                        {totalPages > 1 && (
+                            <div className="pagination">
+                                {Array.from({ length: totalPages }, (_, index) => (
+                                    <button
+                                        key={index}
+                                        className={`pagination-button ${currentPage === index + 1 ? 'active' : ''}`}
+                                        onClick={() => handlePageChange(index + 1)}
+                                    >
+                                        {index + 1}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </>
+                )}
             </div>
             <Footer />
         </>

@@ -1,26 +1,32 @@
 {
   "format": 1,
   "restore": {
-    "/Users/macbookair2020m1/Documents/FPT intern/InternHub/InternHubWebAPI/InternHub/InternHub.csproj": {}
+    "D:\\FPTacademy\\internproject\\internhub\\InternHubWebAPI\\InternHub\\InternHub.csproj": {}
   },
   "projects": {
-    "/Users/macbookair2020m1/Documents/FPT intern/InternHub/InternHubWebAPI/InternHub/InternHub.csproj": {
+    "D:\\FPTacademy\\internproject\\internhub\\InternHubWebAPI\\InternHub\\InternHub.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/macbookair2020m1/Documents/FPT intern/InternHub/InternHubWebAPI/InternHub/InternHub.csproj",
+        "projectUniqueName": "D:\\FPTacademy\\internproject\\internhub\\InternHubWebAPI\\InternHub\\InternHub.csproj",
         "projectName": "InternHub",
-        "projectPath": "/Users/macbookair2020m1/Documents/FPT intern/InternHub/InternHubWebAPI/InternHub/InternHub.csproj",
-        "packagesPath": "/Users/macbookair2020m1/.nuget/packages/",
-        "outputPath": "/Users/macbookair2020m1/Documents/FPT intern/InternHub/InternHubWebAPI/InternHub/obj/",
+        "projectPath": "D:\\FPTacademy\\internproject\\internhub\\InternHubWebAPI\\InternHub\\InternHub.csproj",
+        "packagesPath": "C:\\Users\\PC\\.nuget\\packages\\",
+        "outputPath": "D:\\FPTacademy\\internproject\\internhub\\InternHubWebAPI\\InternHub\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "/Users/macbookair2020m1/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\PC\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net6.0"
         ],
         "sources": {
-          "/usr/local/share/dotnet/sdk/7.0.317/Sdks/Microsoft.NET.Sdk.Web/library-packs": {},
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -33,7 +39,13 @@
           "warnAsError": [
             "NU1605"
           ]
-        }
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.200"
       },
       "frameworks": {
         "net6.0": {
@@ -101,20 +113,6 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "downloadDependencies": [
-            {
-              "name": "Microsoft.AspNetCore.App.Ref",
-              "version": "[6.0.31, 6.0.31]"
-            },
-            {
-              "name": "Microsoft.NETCore.App.Host.osx-arm64",
-              "version": "[6.0.31, 6.0.31]"
-            },
-            {
-              "name": "Microsoft.NETCore.App.Ref",
-              "version": "[6.0.31, 6.0.31]"
-            }
-          ],
           "frameworkReferences": {
             "Microsoft.AspNetCore.App": {
               "privateAssets": "none"
@@ -123,7 +121,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.317/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.203\\RuntimeIdentifierGraph.json"
         }
       }
     }
