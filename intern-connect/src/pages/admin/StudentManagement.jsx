@@ -13,6 +13,7 @@ const StudentManagement = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const studentsPerPage = 10;
     const [studentIdFilter, setStudentIdFilter] = useState("");
+    const [statusFilter, setStatusFilter] = useState(""); // New status filter state
     const [sortOrder, setSortOrder] = useState("");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -55,14 +56,35 @@ const StudentManagement = () => {
         setStudentIdFilter(e.target.value);
     };
 
+    const handleStatusFilterChange = (e) => {
+        setStatusFilter(e.target.value);
+    };
+
     const handleSortOrderChange = (e) => {
         setSortOrder(e.target.value);
     };
 
+    // Status priority order (similar to ApplicationHistory)
+    const statusPriority = {
+        'Hoàn thành': 1,
+        'Thực tập': 2,
+        'Phỏng vấn': 3,
+        'Chờ phản hồi': 4
+    };
+
     // Filter and sort students
     const filteredAndSortedStudents = managementStudent
-        .filter(student => studentIdFilter === "" || student.studentId.toString().includes(studentIdFilter))
+        .filter(student => {
+            const idMatch = studentIdFilter === "" || student.studentId.toString().includes(studentIdFilter);
+            const statusMatch = statusFilter === "" ||
+                (statusFilter === "priority" ? true : student.status === statusFilter);
+            return idMatch && statusMatch;
+        })
         .sort((a, b) => {
+            if (statusFilter === "priority") {
+                return statusPriority[a.status] - statusPriority[b.status];
+            }
+
             if (sortOrder === "asc") {
                 return a.studentId.toString().localeCompare(b.studentId.toString());
             } else if (sortOrder === "desc") {
@@ -82,8 +104,26 @@ const StudentManagement = () => {
         setCurrentPage(pageNumber);
     };
 
+    // Updated function to navigate to the student profile page
     const viewStudentProfile = (studentId) => {
-        navigate(`/studentprofile/${studentId}`);
+        // Navigate to the admin view of student profile
+        navigate(`/admin/studentprofile/${studentId}`);
+    };
+
+    // Function to determine status style classes (similar to ApplicationHistory)
+    const getStatusStyle = (status) => {
+        switch (status) {
+            case 'Chờ phản hồi':
+                return 'waiting';
+            case 'Phỏng vấn':
+                return 'interview';
+            case 'Thực tập':
+                return 'internship';
+            case 'Hoàn thành':
+                return 'completed';
+            default:
+                return '';
+        }
     };
 
     return (
@@ -105,6 +145,20 @@ const StudentManagement = () => {
                                     value={studentIdFilter}
                                     onChange={handleStudentIdFilterChange}
                                 />
+                            </div>
+                            <div className="filter-group">
+                                <label>Trạng thái:</label>
+                                <select
+                                    value={statusFilter}
+                                    onChange={handleStatusFilterChange}
+                                >
+                                    <option value="">Tất cả</option>
+                                    <option value="priority">Ưu tiên (Hoàn thành → Chờ phản hồi)</option>
+                                    <option value="Hoàn thành">Hoàn thành</option>
+                                    <option value="Thực tập">Thực tập</option>
+                                    <option value="Phỏng vấn">Phỏng vấn</option>
+                                    <option value="Chờ phản hồi">Chờ phản hồi</option>
+                                </select>
                             </div>
                             <div className="filter-group">
                                 <label>Sắp xếp theo ID:</label>
@@ -133,7 +187,11 @@ const StudentManagement = () => {
                                 <div className="cell id-cell">{student.studentId}</div>
                                 <div className="cell company-cell">{student.studentName}</div>
                                 <div className="cell position-cell">{student.gpa}</div>
-                                <div className="cell student-cell">{student.status}</div>
+                                <div className="cell student-cell">
+                                    <span className={`status-badge ${getStatusStyle(student.status)}`}>
+                                        {student.status}
+                                    </span>
+                                </div>
                                 <div className="cell file-cell">
                                     <button
                                         className="file-button"

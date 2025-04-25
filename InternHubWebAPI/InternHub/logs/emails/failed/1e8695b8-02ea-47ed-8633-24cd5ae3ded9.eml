@@ -1,0 +1,10 @@
+From: InternHub <21t1020310@husc.edu.vn>
+Date: Fri, 25 Apr 2025 14:21:07 +0700
+Subject: Email Verification
+Message-Id: <KB7561LTZPU4.K2KIO3WGH60R@desktop-9897340>
+Sender: InternHub <21t1020310@husc.edu.vn>
+To: 36t1234567@husc.edu.vn
+MIME-Version: 1.0
+Content-Type: text/html; charset=utf-8
+
+Please verify your email by clicking the link: http://localhost:4200/verify-email?token=34b01a35-bd92-4db9-9454-88c74aa8e435

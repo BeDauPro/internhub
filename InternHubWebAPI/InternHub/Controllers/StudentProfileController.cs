@@ -141,5 +141,17 @@ namespace InternHub.Controllers
             var statuses = _studentService.GetStatuses();
             return Ok(statuses);
         }
+
+        [HttpGet("{id}")]
+        //[Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var student = await _studentService.GetByIdAsync(id);
+            if (student == null)
+            {
+                return NotFound(new { message = "Không tìm thấy sinh viên với ID này." });
+            }
+            return Ok(student);
+        }
     }
 }
