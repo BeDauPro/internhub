@@ -32,17 +32,21 @@ const ApplicationEmployer = () => {
         try {
             setLoading(true);
             const response = await getCandidatesForEmployer();
-
-            // Transform API data to match our application structure
-            const formattedApplications = response.map(candidate => ({
-                id: candidate.applicationId,
-                position: candidate.jobTitle,
-                student: candidate.studentName,
-                date: formatDate(candidate.applicationDate),
-                status: mapStatusFromApi(candidate.status),
-                cvFile: candidate.cvFile
-            }));
-
+            
+            console.log("API Response:", response);
+            
+            const formattedApplications = response.map(candidate => {
+                console.log("Mapping candidate:", candidate.applicationId, "Status:", candidate.status);
+                return {
+                    id: candidate.applicationId,
+                    position: candidate.jobTitle,
+                    student: candidate.studentName,
+                    date: formatDate(candidate.applicationDate),
+                    status: mapStatusFromApi(candidate.status),
+                    cvFile: candidate.cvFile
+                };
+            });
+    
             setApplications(formattedApplications);
             setError(null);
         } catch (err) {
@@ -78,16 +82,27 @@ const ApplicationEmployer = () => {
     };
 
     // Map display status values back to API values (enum format for backend)
-    const mapStatusToApi = (displayStatus) => {
-        const reverseStatusMap = {
-            'Chờ phản hồi': 0, // Pending
-            'Phỏng vấn': 1,    // Interview
-            'Thực tập': 2,     // Internship
-            'Hoàn thành': 3    // Completed
-        };
+    // const mapStatusToApi = (displayStatus) => {
+    //     const reverseStatusMap = {
+    //         'Chờ phản hồi': 0, // Pending
+    //         'Phỏng vấn': 1,    // Interview
+    //         'Thực tập': 2,     // Internship
+    //         'Hoàn thành': 3    // Completed
+    //     };
 
-        return reverseStatusMap[displayStatus];
+    //     return reverseStatusMap[displayStatus];
+    // };
+
+    const mapStatusToApi = (statusText) => {
+        const statusMap = {
+            'Chờ phản hồi': 0,
+            'Phỏng vấn': 1,
+            'Thực tập': 2,
+            'Hoàn thành': 3
+        };
+        return statusMap[statusText] ?? 0;
     };
+    
 
     // Function to toggle the status dropdown
     const toggleStatusDropdown = (id, event) => {
@@ -177,28 +192,33 @@ const ApplicationEmployer = () => {
         setShowFilterDropdown(!showFilterDropdown);
     };
 
+
+    // In your frontend component, modify handleStatusChange:
     const handleStatusChange = async (id, newStatus, event) => {
-        event.stopPropagation(); // Prevent event bubbling
-
+        event.stopPropagation();
+    
         try {
-            // Convert display status to API status enum value
             const apiStatus = mapStatusToApi(newStatus);
-
-            // Call API to update status
+            console.log(`Updating application ${id} status to:`, apiStatus);
+            
             await updateApplicationStatus(id, apiStatus);
-
-            // Update local state if API call succeeds
-            setApplications(applications.map(app =>
-                app.id === id ? { ...app, status: newStatus } : app
-            ));
-
-            setOpenStatusId(null); // Close the dropdown after status change
+    
+            // Cập nhật trạng thái cục bộ
+            setApplications(prevApplications =>
+                prevApplications.map(app =>
+                    app.id === id ? { ...app, status: newStatus } : app
+                )
+            );
+    
+            // Gọi lại API để đảm bảo dữ liệu đồng bộ
+            await fetchCandidates();
+            
+            setOpenStatusId(null);
         } catch (err) {
             console.error("Error updating application status:", err);
             alert("Không thể cập nhật trạng thái. Vui lòng thử lại sau.");
         }
     };
-
     // Pagination logic
     const indexOfLastApplication = currentPage * applicationsPerPage;
     const indexOfFirstApplication = indexOfLastApplication - applicationsPerPage;
@@ -213,7 +233,7 @@ const ApplicationEmployer = () => {
     const handleViewProfile = (app) => {
         // Navigate to student profile with student ID or other identifier
         // You may need to adjust this based on your routing setup
-        navigate(`/studentprofile/${app.student}`, {
+        navigate(`/studentprofile/${app.studentId}`, {
             state: {
                 cvFile: app.cvFile
             }

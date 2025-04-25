@@ -64,14 +64,27 @@ export const getStudentApplicationHistory = async() => {
 };
 
 // Update application status (for employers)
-export const updateApplicationStatus = async(applicationId, newStatus) => {
+// export const updateApplicationStatus = async(applicationId, newStatus) => {
+//     try {
+//         const response = await axiosInstance.put(`/applications/application/${applicationId}/status`, newStatus);
+//         return response.data;
+//     } catch (err) {
+//         throw handleError(err);
+//     }
+// };
+
+export const updateApplicationStatus = async (applicationId, status) => {
     try {
-        const response = await axiosInstance.put(`/applications/application/${applicationId}/status`, newStatus);
-        return response.data;
+      const response = await axiosInstance.put(
+        `/applications/${applicationId}/status`,
+        status  // Send just the status value, not wrapped in object
+      );
+      return response.data;
     } catch (err) {
-        throw handleError(err);
+      throw handleError(err);
     }
-};
+  };
+
 
 // Get all students (for admin)
 export const getAllStudentsForAdmin = async() => {

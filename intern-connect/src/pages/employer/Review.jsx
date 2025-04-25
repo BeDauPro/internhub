@@ -3,13 +3,15 @@ import { createReview, getReviewsForEmployer } from '../../services/reviewApi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar } from '@fortawesome/free-solid-svg-icons';
 import '../../styles/pages/employer/review.scss';
-
+import { getStudentProfile } from '../../services/studentApi';
+import { getRoleFromStorage } from '../../services/studentApi';
 const Review = ({ employerId, role }) => {
   const [reviews, setReviews] = useState([]);
   const [newReview, setNewReview] = useState({
     overallRating: 0,
     comments: '',
   });
+
 
   useEffect(() => {
     if (employerId) {
@@ -20,11 +22,16 @@ const Review = ({ employerId, role }) => {
   const fetchReviews = async () => {
     try {
       const data = await getReviewsForEmployer(employerId);
+      const studentData = await getStudentProfile();
+      const role = getRoleFromStorage();
       setReviews(data);
+      setNewReview({...newReview, studentId: studentData.id, reviewerRole: role});
     } catch (error) {
       console.error('Error fetching reviews:', error);
     }
   };
+
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,7 +42,7 @@ const Review = ({ employerId, role }) => {
     }
 
     try {
-      await createReview({ ...newReview, employerId });
+      await createReview({ ...newReview, employerId: parseInt(employerId) });
       setNewReview({ overallRating: 0, comments: '' });
       fetchReviews();
     } catch (error) {

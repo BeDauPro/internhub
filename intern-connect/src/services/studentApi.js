@@ -78,6 +78,17 @@ export const getStudentStatuses = async () => {
   return response.data;
 };
 
+export const getRoleFromStorage = () => {
+  try {
+    const role = localStorage.getItem('role'); 
+    return role || null; 
+  } catch (error) {
+    console.error('Error retrieving role from storage:', error);
+    return null;
+  }
+};
+
+
 export const getPagedStudents = async ({
   fullName,
   schoolEmail,
@@ -147,3 +158,4 @@ export const studentEventAPI = {
 export default {
     events: studentEventAPI
 };
+

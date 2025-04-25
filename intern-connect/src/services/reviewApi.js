@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://localhost:7286/api'; // KHÔNG để `/students` ở đây vì bạn dùng cho nhiều endpoint khác nhau như StudentReview
+const BASE_URL = 'https://localhost:7286/api'; 
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,

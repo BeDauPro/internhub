@@ -16,7 +16,7 @@ import {
 } from 'react-icons/fa';
 import Footer from '../../components/Footer';
 import Evaluate from './Evaluate';
-import { getStudentProfile, createStudent } from '../../services/studentApi';
+import { getStudentProfile} from '../../services/studentApi';
 
 const StudentProfile = ({ studentId }) => {
     const [student, setStudent] = useState(null);
@@ -42,17 +42,6 @@ const StudentProfile = ({ studentId }) => {
         };
         fetchData();
     }, [studentId]);
-
-    const handleCreate = async (formData) => {
-        try {
-            const newStudent = await createStudent(formData); // Tạo mới thông tin sinh viên
-            setStudent(newStudent);
-            setIsCreating(false);
-        } catch (err) {
-            console.error('Error creating profile: ', err);
-            alert('Không thể tạo thông tin sinh viên. Vui lòng thử lại sau.');
-        }
-    };
 
     // Nếu không có thông tin sinh viên và không đang tạo mới, hiển thị thông báo lỗi
     if (!student && !isCreating) {
