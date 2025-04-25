@@ -106,7 +106,7 @@ namespace InternHub.Controllers
         // CREATE: api/Employer/JobPosting
         [Route("api/Employer/JobPosting")]
         [HttpPost]
-        [Authorize(Roles = "Employer")]
+        //[Authorize(Roles = "Employer")]
         public async Task<ActionResult<JobPostingResponseDto>> CreateJobPosting([FromForm] CreateJobPostingDto createDto)
         {
             if (!ModelState.IsValid)

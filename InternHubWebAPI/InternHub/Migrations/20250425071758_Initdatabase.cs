@@ -327,6 +327,10 @@ namespace InternHub.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     CVFile = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
+                    Education = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Phone = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     Status = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
@@ -493,6 +497,7 @@ namespace InternHub.Migrations
                     ReviewedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     StudentId = table.Column<int>(type: "int", nullable: false),
                     EmployerId = table.Column<int>(type: "int", nullable: false),
+                    ReviewerRole = table.Column<int>(type: "int", nullable: false),
                     JobPostingId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -684,9 +689,9 @@ namespace InternHub.Migrations
                 column: "JobPostingId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_StudentReviews_StudentId_EmployerId",
+                name: "IX_StudentReviews_StudentId_EmployerId_ReviewerRole",
                 table: "StudentReviews",
-                columns: new[] { "StudentId", "EmployerId" },
+                columns: new[] { "StudentId", "EmployerId", "ReviewerRole" },
                 unique: true);
 
             migrationBuilder.CreateIndex(

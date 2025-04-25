@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InternHub.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250413152939_MakeGithubProfileNullable")]
-    partial class MakeGithubProfileNullable
+    [Migration("20250425071758_Initdatabase")]
+    partial class Initdatabase
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -482,6 +482,7 @@ namespace InternHub.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("GithubProfile")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Languages")
@@ -541,6 +542,9 @@ namespace InternHub.Migrations
                     b.Property<DateTime>("ReviewedAt")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<int>("ReviewerRole")
+                        .HasColumnType("int");
+
                     b.Property<int>("StudentId")
                         .HasColumnType("int");
 
@@ -550,7 +554,7 @@ namespace InternHub.Migrations
 
                     b.HasIndex("JobPostingId");
 
-                    b.HasIndex("StudentId", "EmployerId")
+                    b.HasIndex("StudentId", "EmployerId", "ReviewerRole")
                         .IsUnique();
 
                     b.ToTable("StudentReviews", (string)null);

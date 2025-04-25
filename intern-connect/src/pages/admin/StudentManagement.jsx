@@ -64,34 +64,12 @@ const StudentManagement = () => {
         setSortOrder(e.target.value);
     };
 
-    // Status priority order based on StudentStatus enum
+    // Status priority order (similar to ApplicationHistory)
     const statusPriority = {
-        'Completed': 1,    // Hoàn thành - Ưu tiên cao nhất
-        'Internship': 2,   // Đang thực tập
-        'Reviewed': 3,     // Đã xem xét
-        'Pending': 4       // Đang chờ xử lý - Ưu tiên thấp nhất
-    };
-
-    // Get status name from numeric value
-    const getStatusName = (statusValue) => {
-        switch (statusValue) {
-            case 0: return 'Pending';
-            case 1: return 'Reviewed';
-            case 2: return 'Internship';
-            case 3: return 'Completed';
-            default: return 'Unknown';
-        }
-    };
-
-    // Get status name in Vietnamese
-    const getStatusNameVietnamese = (statusName) => {
-        switch (statusName) {
-            case 'Pending': return 'Đang chờ xử lý';
-            case 'Reviewed': return 'Đã xem xét';
-            case 'Internship': return 'Đang thực tập';
-            case 'Completed': return 'Hoàn thành';
-            default: return 'Không xác định';
-        }
+        'Hoàn thành': 1,
+        'Thực tập': 2,
+        'Phỏng vấn': 3,
+        'Chờ phản hồi': 4
     };
 
     // Filter and sort students
@@ -99,12 +77,12 @@ const StudentManagement = () => {
         .filter(student => {
             const idMatch = studentIdFilter === "" || student.studentId.toString().includes(studentIdFilter);
             const statusMatch = statusFilter === "" ||
-                (statusFilter === "priority" ? true : getStatusName(student.status) === statusFilter);
+                (statusFilter === "priority" ? true : student.status === statusFilter);
             return idMatch && statusMatch;
         })
         .sort((a, b) => {
             if (statusFilter === "priority") {
-                return statusPriority[getStatusName(a.status)] - statusPriority[getStatusName(b.status)];
+                return statusPriority[a.status] - statusPriority[b.status];
             }
 
             if (sortOrder === "asc") {
@@ -126,21 +104,22 @@ const StudentManagement = () => {
         setCurrentPage(pageNumber);
     };
 
+    // Updated function to navigate to the student profile page
     const viewStudentProfile = (studentId) => {
-        navigate(`/studentprofile/${studentId}`);
+        // Navigate to the admin view of student profile
+        navigate(`/admin/studentprofile/${studentId}`);
     };
 
-    // Function to determine status style classes
-    const getStatusStyle = (statusValue) => {
-        const statusName = getStatusName(statusValue);
-        switch (statusName) {
-            case 'Pending':
-                return 'pending';
-            case 'Reviewed':
-                return 'reviewed';
-            case 'Internship':
+    // Function to determine status style classes (similar to ApplicationHistory)
+    const getStatusStyle = (status) => {
+        switch (status) {
+            case 'Chờ phản hồi':
+                return 'waiting';
+            case 'Phỏng vấn':
+                return 'interview';
+            case 'Thực tập':
                 return 'internship';
-            case 'Completed':
+            case 'Hoàn thành':
                 return 'completed';
             default:
                 return '';
@@ -174,11 +153,11 @@ const StudentManagement = () => {
                                     onChange={handleStatusFilterChange}
                                 >
                                     <option value="">Tất cả</option>
-                                    <option value="priority">Ưu tiên (Hoàn thành → Đang chờ)</option>
-                                    <option value="Completed">Hoàn thành</option>
-                                    <option value="Internship">Đang thực tập</option>
-                                    <option value="Reviewed">Đã xem xét</option>
-                                    <option value="Pending">Đang chờ xử lý</option>
+                                    <option value="priority">Ưu tiên (Hoàn thành → Chờ phản hồi)</option>
+                                    <option value="Hoàn thành">Hoàn thành</option>
+                                    <option value="Thực tập">Thực tập</option>
+                                    <option value="Phỏng vấn">Phỏng vấn</option>
+                                    <option value="Chờ phản hồi">Chờ phản hồi</option>
                                 </select>
                             </div>
                             <div className="filter-group">
@@ -210,7 +189,7 @@ const StudentManagement = () => {
                                 <div className="cell position-cell">{student.gpa}</div>
                                 <div className="cell student-cell">
                                     <span className={`status-badge ${getStatusStyle(student.status)}`}>
-                                        {getStatusNameVietnamese(getStatusName(student.status))}
+                                        {student.status}
                                     </span>
                                 </div>
                                 <div className="cell file-cell">
