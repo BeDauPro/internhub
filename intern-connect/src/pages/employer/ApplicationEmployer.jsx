@@ -81,18 +81,6 @@ const ApplicationEmployer = () => {
         return statusMap[apiStatus?.toLowerCase()] || 'Chờ phản hồi';
     };
 
-    // Map display status values back to API values (enum format for backend)
-    // const mapStatusToApi = (displayStatus) => {
-    //     const reverseStatusMap = {
-    //         'Chờ phản hồi': 0, // Pending
-    //         'Phỏng vấn': 1,    // Interview
-    //         'Thực tập': 2,     // Internship
-    //         'Hoàn thành': 3    // Completed
-    //     };
-
-    //     return reverseStatusMap[displayStatus];
-    // };
-
     const mapStatusToApi = (statusText) => {
         const statusMap = {
             'Chờ phản hồi': 0,
@@ -209,7 +197,7 @@ const ApplicationEmployer = () => {
                     app.id === id ? { ...app, status: newStatus } : app
                 )
             );
-    
+            alert(`Trạng thái của ứng viên ID ${id} đã được cập nhật thành "${newStatus}".`);
             // Gọi lại API để đảm bảo dữ liệu đồng bộ
             await fetchCandidates();
             
