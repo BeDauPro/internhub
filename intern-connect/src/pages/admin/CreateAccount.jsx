@@ -68,7 +68,7 @@ const CreateAccount = () => {
               value={newAccount.userName}
               onChange={handleInputChange}
               required
-              placeholder="Nhập username (sẽ tự động thêm 'company')"
+              placeholder="Nhập username (thêm 'company' sau tên)"
             />
             <small>Lưu ý: Username sẽ tự động thêm 'company' nếu chưa có</small>
           </label>

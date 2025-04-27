@@ -13,7 +13,7 @@ const StudentManagement = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const studentsPerPage = 10;
     const [studentIdFilter, setStudentIdFilter] = useState("");
-    const [statusFilter, setStatusFilter] = useState(""); // New status filter state
+    const [statusFilter, setStatusFilter] = useState(""); 
     const [sortOrder, setSortOrder] = useState("");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);

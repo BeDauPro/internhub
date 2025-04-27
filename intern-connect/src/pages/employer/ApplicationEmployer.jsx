@@ -4,6 +4,7 @@ import { FaFilter, FaFileAlt } from "react-icons/fa";
 import "../../styles/pages/employer/applicationemployer.scss";
 import Footer from '../../components/Footer';
 import { updateApplicationStatus, getCandidatesForEmployer } from '../../services/ApplicationApi';
+import { getStudentById } from '../../services/studentApi';
 
 const ApplicationEmployer = () => {
     const navigate = useNavigate();
@@ -43,7 +44,8 @@ const ApplicationEmployer = () => {
                     student: candidate.studentName,
                     date: formatDate(candidate.applicationDate),
                     status: mapStatusFromApi(candidate.status),
-                    cvFile: candidate.cvFile
+                    cvFile: candidate.cvFile,
+                    studentId: candidate.studentId // Thêm dòng này
                 };
             });
     
@@ -218,14 +220,27 @@ const ApplicationEmployer = () => {
         setCurrentPage(pageNumber);
     };
 
-    const handleViewProfile = (app) => {
-        // Navigate to student profile with student ID or other identifier
-        // You may need to adjust this based on your routing setup
-        navigate(`/studentprofile/${app.studentId}`, {
-            state: {
-                cvFile: app.cvFile
-            }
-        });
+    const handleViewProfile = async (app) => {
+        if (!app.studentId) {
+            console.error("Student ID is undefined");
+            alert("Không thể xem hồ sơ vì thiếu ID sinh viên.");
+            return;
+        }
+    
+        try {
+            const studentData = await getStudentById(app.studentId);
+            console.log("Student Data:", studentData);
+    
+            navigate(`/admin/studentprofile/${app.studentId}`, {
+                state: {
+                    studentData,
+                    cvFile: app.cvFile 
+                }
+            });
+        } catch (error) {
+            console.error("Error fetching student profile:", error);
+            alert("Không thể tải thông tin sinh viên. Vui lòng thử lại sau.");
+        }
     };
 
     // Render loading or error states

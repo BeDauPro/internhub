@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom'; // ✅ THÊM useParams
+import { useNavigate, useParams } from 'react-router-dom'; //  THÊM useParams
 import '../../styles/pages/employer/employerprofile.scss';
 import logo from '../../images/fpt.jpg';
 import {
@@ -12,7 +12,7 @@ import { getEmployerProfile, getEmployerProfileById } from '../../services/emplo
 
 const EmployerProfile = () => {
   const navigate = useNavigate();
-  const { employerId } = useParams(); // ✅ gọi ở đây
+  const { employerId } = useParams();
   const [employerProfile, setEmployerProfile] = useState(null);
   const [role, setRole] = useState(null);
 
@@ -35,8 +35,8 @@ const EmployerProfile = () => {
       }
     };
 
-    if (userRole) fetchData(); // ✅ chỉ gọi nếu đã có role
-  }, [employerId]); // ✅ thêm employerId vào dependency để đảm bảo đúng
+    if (userRole) fetchData(); // chỉ gọi nếu đã có role
+  }, [employerId]); // thêm employerId vào dependency để đảm bảo đúng
 
   if (!employerProfile) return <p>Đang tải...</p>;
 

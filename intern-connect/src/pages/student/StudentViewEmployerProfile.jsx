@@ -11,20 +11,18 @@ import { getEmployerProfileById } from '../../services/employerApi';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const StudentViewEmployerProfile = () => {
-  const { employerId } = useParams(); // Lấy employerId từ URL
+  const { employerId } = useParams();
   const navigate = useNavigate();
   const [employerProfile, setEmployerProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  console.log('Employer ID:', employerId);
   useEffect(() => {
     const fetchEmployerProfile = async () => {
       try {
         if (!employerId) {
           throw new Error('No employer ID provided');
         }
-
         setLoading(true);
         const data = await getEmployerProfileById(employerId);
         setEmployerProfile(data);

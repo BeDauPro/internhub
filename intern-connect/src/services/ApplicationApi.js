@@ -63,15 +63,6 @@ export const getStudentApplicationHistory = async() => {
     }
 };
 
-// Update application status (for employers)
-// export const updateApplicationStatus = async(applicationId, newStatus) => {
-//     try {
-//         const response = await axiosInstance.put(`/applications/application/${applicationId}/status`, newStatus);
-//         return response.data;
-//     } catch (err) {
-//         throw handleError(err);
-//     }
-// };
 
 export const updateApplicationStatus = async (applicationId, status) => {
     try {

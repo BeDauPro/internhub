@@ -82,12 +82,6 @@ const AdminViewStudentProfile = () => {
     return (
         <>
             <div className="profile-container admin-view">
-                <div className="back-navigation">
-                    <button onClick={handleBackClick} className="back-btn">
-                        <FaArrowLeft /> Quay lại danh sách sinh viên
-                    </button>
-                </div>
-
                 <div className="profile-card">
                     <img
                         className="profile-image"
