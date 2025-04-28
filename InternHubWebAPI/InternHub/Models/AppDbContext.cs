@@ -16,14 +16,14 @@ namespace InternHub.Models
         public DbSet<StudentReview> StudentReviews { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
-
+        //constructor nhận DbContextOptions để cấu hình kết nối DB
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
-
+        //(fluent api) phương thức này được dùng để cấu hình chi tiết các bảng và mối quan hệ giữa chúng
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // Định nghĩa bảng
+            // Định nghĩa bảng (đặt lại tên bảng)
             modelBuilder.Entity<Student>().ToTable("Students");
             modelBuilder.Entity<Employer>().ToTable("Employers");
             modelBuilder.Entity<Admin>().ToTable("Admins");
@@ -36,9 +36,11 @@ namespace InternHub.Models
             
             modelBuilder.Entity<Event>()
              .HasOne(e => e.Admin)
-             .WithMany(a => a.Events)
+             .WithMany(a => a.Events) 
              .HasForeignKey(e => e.CreatedByAdminId)
+             //khi xoá admin thì các event liên quan không bị xoá
              .OnDelete(DeleteBehavior.Restrict);
+
             // Cấu hình Unique: Một Student chỉ được review một Employer
             modelBuilder.Entity<StudentReview>()
             .HasIndex(sr => new { sr.StudentId, sr.EmployerId, sr.ReviewerRole })  
@@ -50,6 +52,8 @@ namespace InternHub.Models
                 .HasOne(a => a.Student)
                 .WithMany(s => s.ApplicationHistories)
                 .HasForeignKey(a => a.StudentId)
+                
+                //khi xoá student thì các lịch sử ứng tuyển liên quan sẽ bị xoá
                 .OnDelete(DeleteBehavior.Cascade);
 
             // Cấu hình mối quan hệ giữa ApplicationHistory và Employer

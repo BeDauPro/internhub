@@ -30,7 +30,7 @@ const Register = () => {
       };
       await registerApi(data);
       alert("Đăng ký thành công! Vui lòng kiểm tra email để xác thực.");
-      navigate("/login");
+      navigate("/email-verification");
     } catch (error) {
       if (error.response && error.response.status === 400) {
         const apiErrors = error.response.data.errors;

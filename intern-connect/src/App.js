@@ -23,6 +23,7 @@ import useAuth from "./hooks/useAuth";
 import ForgotPassword from "./pages/ForgotPassword";
 import StudentViewEmployerProfile from "./pages/student/StudentViewEmployerProfile";
 import AdminViewStudentProfile from './pages/student/AdminViewStudentProfile';
+import EmailVerification from "./pages/EmailVerification";
 import {
     fetchStudentProfile,
     fetchEmployerProfile,
@@ -116,6 +117,7 @@ const App = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/forgotpassword" element={<ForgotPassword />} />
+            <Route path="/email-verification" element={<EmailVerification />} />
       
             {/* Student Routes */}
             <Route element={
@@ -149,6 +151,7 @@ const App = () => {
               <Route path="/editjob/:id" element={<EditJob onSave={handleSave} />} />
               <Route path="/applicationemployer" element={<ApplicationEmployer applicationData={applicationEmployer} />} />
               <Route path="/editprofile" element={<EditProfile onSave={handleSave} />} />
+              <Route path="/students/:studentId" element={<AdminViewStudentProfile />} />
               {/* <Route path="/admin/studentprofile/:studentId" element={<AdminViewStudentProfile />} /> */}
             </Route>
       
@@ -163,7 +166,7 @@ const App = () => {
               <Route path="/eventmanagement" element={<EventManagement events={events} />} />
               <Route path="/studentmanagement" element={<StudentManagement studentsData={managementStudents} />} />
               <Route path="/accountmanagement" element={<AccountManagement accounts={accounts} />} />
-              <Route path="/admin/studentprofile/:studentId" element={<AdminViewStudentProfile />} />
+              {/* <Route path="/admin/studentprofile/:studentId" element={<AdminViewStudentProfile />} /> */}
               <Route path="/confirmjobs" element={<ConfirmJobs jobs={jobs} />} />
               <Route path="/createaccount" element={
                 <CreateAccount onAddAccount={(account) => setAccounts((prev) => [account, ...prev])} />

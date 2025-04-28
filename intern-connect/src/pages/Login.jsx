@@ -37,10 +37,16 @@ const Login = () => {
         alert("Đăng nhập thất bại. Vui lòng thử lại.");
       }
     } catch (error) {
-      if (error.response && error.response.status === 400) {
-        alert("Email hoặc mật khẩu không đúng.");
+      if (error.response) {
+        if (error.response.status === 400) {
+          alert("Email hoặc mật khẩu không đúng.");
+        } else if (error.response.status === 401) {
+          alert("Email chưa được xác thực. Vui lòng kiểm tra email để xác thực.");
+        } else {
+          alert("Đã xảy ra lỗi không xác định.");
+        }
       } else {
-        alert("Đã xảy ra lỗi không xác định.");
+        alert("Không thể kết nối đến máy chủ. Vui lòng thử lại sau.");
       }
     }
   };

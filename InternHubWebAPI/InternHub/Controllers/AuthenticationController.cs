@@ -21,7 +21,7 @@ namespace InternHub.Controllers
         private readonly AuthService _authService;
         private readonly IEmailSender _emailSender;
         private readonly AppDbContext _context;
-
+        //constructor khởi tạo các dependency thông qua DI
         public AuthenticationController(UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager,
             IConfiguration configuration,
@@ -41,11 +41,12 @@ namespace InternHub.Controllers
         [HttpPost("register-user")]
         public async Task<IActionResult> Register([FromBody] RegisterViewModel registerVm)
         {
+            //kiểm tra tính hợp lệ đầu vào
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-
+            //kiểm tra email đã tồn tại chưa
             var userExists = await _userManager.FindByEmailAsync(registerVm.Email);
             if (userExists != null)
             {
@@ -69,10 +70,6 @@ namespace InternHub.Controllers
             {
                 role = "Admin";
             }
-            else if (Regex.IsMatch(newUser.Email, @"^[a-zA-Z0-9._%+-]+@company\.com$"))
-            {
-                role = "Employer";
-            }
             else if (new Attributes.StudentEmailAttribute().IsValid(newUser.Email))
             {
                 role = "Student";
@@ -86,8 +83,8 @@ namespace InternHub.Controllers
             // Kiểm tra định dạng email nếu vai trò là Student
             if (role == "Student" && !new Attributes.StudentEmailAttribute().IsValid(newUser.Email))
             {
-               ModelState.AddModelError("Email", "Email phải có định dạng: [2 số]t[7 số]@husc.edu.vn.");
-               return BadRequest(ModelState);
+                ModelState.AddModelError("Email", "Email phải có định dạng: [2 số]t[7 số]@husc.edu.vn.");
+                return BadRequest(ModelState);
             }
 
             // Lưu người dùng vào cơ sở dữ liệu trước
@@ -99,7 +96,7 @@ namespace InternHub.Controllers
 
             // Thêm vai trò cho người dùng
             await _userManager.AddToRoleAsync(newUser, role);
-
+            //gửi email xác thực
             var verificationLink = $"{_configuration["JWT:EmailVerificationUrl"]}?token={verificationToken}";
             var message = $"Please verify your email by clicking the link: {verificationLink}";
             await _emailSender.SendEmailAsync(newUser.Email, "Email Verification", message);
@@ -110,14 +107,16 @@ namespace InternHub.Controllers
         [HttpGet("verify-email")]
         public async Task<IActionResult> VerifyEmail(string token)
         {
+            // tìm ngừoi dùng dựa trên verification token
             var user = await _userManager.Users.FirstOrDefaultAsync(u => u.VerificationToken == token);
             if (user == null)
             {
                 return BadRequest("Invalid or expired token.");
             }
-
+            // đánh dấu email đã được xác thực và xoá token
             user.EmailConfirmed = true;
             user.VerificationToken = null;
+            // cập nhật thông tin người dùng
             await _userManager.UpdateAsync(user);
 
             return Ok("Email verified successfully!");
@@ -135,9 +134,9 @@ namespace InternHub.Controllers
             // Tạo token reset mật khẩu
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
-            // Lưu token vào cơ sở dữ liệu (nếu cần thiết, nếu bạn không muốn lưu token, có thể bỏ qua bước này)
+            // Lưu token vào cơ sở dữ liệu 
             user.PasswordResetToken = token;
-            user.ResetTokenExpires = DateTime.Now.AddHours(1);  // Đặt thời gian hết hạn cho token
+            user.ResetTokenExpires = DateTime.Now.AddHours(1);
             await _userManager.UpdateAsync(user);
 
             // Gửi token qua email
@@ -199,27 +198,20 @@ namespace InternHub.Controllers
             {
                 return Unauthorized(new { error = "Invalid email or password" });
             }
+            if (!user.EmailConfirmed)
+            {
+                return Unauthorized(new { error = "Email chưa được xác thực. Vui lòng kiểm tra email để xác thực." });
+            }
 
-            string role;
-            if (user.Email == "khoacntt@husc.edu.vn")
-            {
-                role = "Admin";
-            }
-            else if (new Attributes.StudentEmailAttribute().IsValid(user.Email))
-            {
-                role = "Student";
-            }
-            else
-            {
-                role = "Employer";
-            }
+            var roles = await _userManager.GetRolesAsync(user);
+            string role = roles.FirstOrDefault();
 
             var tokenValue = await _authService.GenerateJwtToken(user, role);
 
             return Ok(new
             {
                 token = tokenValue,
-                role = role // Đảm bảo `role` được trả về chính xác
+                role = role
             });
         }
     }

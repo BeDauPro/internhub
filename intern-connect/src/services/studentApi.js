@@ -36,7 +36,7 @@ export const getStudentProfile = async() => {
 };
 export { getStudentProfile as fetchStudentProfile };
 
-// NEW API: Lấy thông tin sinh viên theo ID (cho Admin)
+//Lấy thông tin sinh viên theo ID (cho Admin)
 export const getStudentById = async(studentId) => {
     try {
         const response = await axiosInstance.get(`/${studentId}`);

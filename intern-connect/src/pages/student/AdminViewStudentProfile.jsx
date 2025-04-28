@@ -21,7 +21,6 @@ import { getStudentById } from '../../services/studentApi';
 import Evaluate from './Evaluate';
 const AdminViewStudentProfile = () => {
     const { studentId } = useParams();
-    const navigate = useNavigate();
     const [student, setStudent] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -45,10 +44,6 @@ const AdminViewStudentProfile = () => {
         }
     }, [studentId]);
 
-    const handleBackClick = () => {
-        navigate('/admin/student-management');
-    };
-
     if (loading) {
         return (
             <div className="loading-container">
@@ -57,24 +52,10 @@ const AdminViewStudentProfile = () => {
         );
     }
 
-    if (error) {
-        return (
-            <div className="error-container">
-                <h2>{error}</h2>
-                <button onClick={handleBackClick} className="back-btn">
-                    <FaArrowLeft /> Quay lại danh sách sinh viên
-                </button>
-            </div>
-        );
-    }
-
     if (!student) {
         return (
             <div className="error-container">
                 <h2>Không tìm thấy thông tin sinh viên</h2>
-                <button onClick={handleBackClick} className="back-btn">
-                    <FaArrowLeft /> Quay lại danh sách sinh viên
-                </button>
             </div>
         );
     }

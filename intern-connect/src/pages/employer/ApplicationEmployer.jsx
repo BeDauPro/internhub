@@ -34,8 +34,8 @@ const ApplicationEmployer = () => {
             setLoading(true);
             const response = await getCandidatesForEmployer();
             
-            console.log("API Response:", response);
-            
+            console.log("Response from API:", response);
+
             const formattedApplications = response.map(candidate => {
                 console.log("Mapping candidate:", candidate.applicationId, "Status:", candidate.status);
                 return {
@@ -45,7 +45,7 @@ const ApplicationEmployer = () => {
                     date: formatDate(candidate.applicationDate),
                     status: mapStatusFromApi(candidate.status),
                     cvFile: candidate.cvFile,
-                    studentId: candidate.studentId // Thêm dòng này
+                    studentId: candidate.studentId 
                 };
             });
     
@@ -220,26 +220,31 @@ const ApplicationEmployer = () => {
         setCurrentPage(pageNumber);
     };
 
-    const handleViewProfile = async (app) => {
-        if (!app.studentId) {
+    const handleViewProfile = async (studentId) => {
+        if (!studentId) {
             console.error("Student ID is undefined");
             alert("Không thể xem hồ sơ vì thiếu ID sinh viên.");
             return;
         }
     
         try {
-            const studentData = await getStudentById(app.studentId);
+            // Sử dụng API để lấy thông tin sinh viên
+            const studentData = await getStudentById(studentId);
             console.log("Student Data:", studentData);
     
-            navigate(`/admin/studentprofile/${app.studentId}`, {
+            // Chuyển hướng đến trang chi tiết sinh viên với dữ liệu đã lấy được
+            navigate(`/students/${studentId}`, {
                 state: {
-                    studentData,
-                    cvFile: app.cvFile 
+                    studentData
                 }
             });
         } catch (error) {
             console.error("Error fetching student profile:", error);
-            alert("Không thể tải thông tin sinh viên. Vui lòng thử lại sau.");
+            if (error.response && error.response.status === 404) {
+                alert("Không tìm thấy sinh viên với ID này.");
+            } else {
+                alert("Không thể tải thông tin sinh viên. Vui lòng thử lại sau.");
+            }
         }
     };
 
@@ -311,7 +316,7 @@ const ApplicationEmployer = () => {
 
                 <div className="applications-table">
                     <div className="table-header">
-                        <div className="header-cell id-cell">ID</div>
+                        <div className="header-cell id-cell">Aplication ID</div>
                         <div className="header-cell position-cell">Việc làm</div>
                         <div className="header-cell student-cell">Sinh viên</div>
                         <div className="header-cell date-cell">Ngày nộp đơn</div>
@@ -329,7 +334,7 @@ const ApplicationEmployer = () => {
                                 <div className="cell file-cell">
                                     <button
                                         className="file-button"
-                                        onClick={() => handleViewProfile(app)}
+                                        onClick={() => handleViewProfile(app.studentId)}
                                         title="Xem hồ sơ"
                                     >
                                         <FaFileAlt />
