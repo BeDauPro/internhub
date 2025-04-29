@@ -44,7 +44,6 @@ const ApplicationEmployer = () => {
                     student: candidate.studentName,
                     date: formatDate(candidate.applicationDate),
                     status: mapStatusFromApi(candidate.status),
-                    cvFile: candidate.cvFile,
                     studentId: candidate.studentId 
                 };
             });

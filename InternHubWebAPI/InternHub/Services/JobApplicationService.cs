@@ -218,8 +218,9 @@ namespace InternHub.Services
                     ApplicationId = a.ApplicationId,
                     JobTitle = a.JobPosting.JobTitle,
                     StudentName = a.Student.FullName,
-                    CVFile = a.Student.CVFile,
+                    //CVFile = a.Student.CVFile,
                     ApplicationDate = a.ApplicationDate,
+                    StudentId = a.StudentId,
                     Status = a.Status
                 })
                 .ToListAsync();

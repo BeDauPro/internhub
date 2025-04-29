@@ -43,9 +43,10 @@
             public int ApplicationId { get; set; }
             public string JobTitle { get; set; }
             public string StudentName { get; set; }
-            public string CVFile { get; set; }
+            //public string CVFile { get; set; }
             public DateTime ApplicationDate { get; set; }
             public string Status { get; set; }
+            public int StudentId { get; set; }
         }
     }
 }
