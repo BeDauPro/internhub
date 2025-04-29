@@ -1,9 +1,25 @@
-import React from 'react'
-import loginLogo from '../../images/login.jpg';
+import React, { useEffect, useState } from 'react'
+import defaultAvatar from '../../images/defaultAvatar.jpg';
 import { useNavigate } from "react-router-dom";
+import { getEmployerProfile } from '../../services/employerApi';
 
 const NavbarEmployer = () => {
   const navigate = useNavigate();
+  const [employer, setEmployer] = useState(null);
+
+  useEffect(() => {
+    const fetchEmployerData = async () => {
+      try {
+        const employerId = localStorage.getItem("employerId");
+        const data = await getEmployerProfile(employerId);
+        setEmployer(data);
+      } catch (err) {
+        console.error("Error fetching employer data:", err);
+      }
+    };
+
+    fetchEmployerData();
+  }, []);
   return (
     <div className="navbar-container">
       <nav className="navbar navbar-expand-lg navbar-dark shadow">
@@ -24,8 +40,14 @@ const NavbarEmployer = () => {
             <div className="d-flex align-items-center">
               <div className="dropdown">
                 <button className="btn user-btn dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown">
-                  <img src={loginLogo} alt="User" />
-                  <span className="studentName">FPT Software</span>
+                  <img
+                    src={employer?.companyLogo
+                      ? `${employer?.companyLogo}?t=${new Date().getTime()}`
+                      : defaultAvatar // Sử dụng defaultAvatar khi không có companyLogo
+                    }
+                    alt="User"
+                  />
+                  <span className="studentName">{employer?.companyName || "Employer Role"}</span>
                 </button>
                 <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                   <li><a className="dropdown-item" href="" onClick={() => navigate("/employerprofile")}>Hồ sơ doanh nghiệp</a></li>

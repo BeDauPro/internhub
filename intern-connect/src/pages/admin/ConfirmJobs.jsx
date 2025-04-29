@@ -22,7 +22,7 @@ const ConfirmJobs = () => {
       try {
         setIsLoading(true);
         const pendingJobs = await getPendingJobPostings();
-        
+
         // Transform jobs to match the original component's structure
         const transformedJobs = pendingJobs.map(job => ({
           id: job.jobPostingId,
@@ -82,6 +82,11 @@ const ConfirmJobs = () => {
     (selectedTitle === "All" || job.title === selectedTitle)
   );
 
+  const truncateText = (text, maxLength) => {
+    if (!text) return '';
+    return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
+  };
+
   const handleLoadMore = () => {
     setVisibleJobs((prevVisibleJobs) => prevVisibleJobs + 8);
   };
@@ -135,14 +140,14 @@ const ConfirmJobs = () => {
             {filteredJobs.slice(0, visibleJobs).map((job) => (
               <div key={job.id} className="jobCard animate-slide-up">
                 <div className="jobHeader" onClick={() => handleViewDetails(job.id)}>
-                  <span className="jobTitle">{job.title}</span>
+                  <span className="jobTitle">{truncateText(job.title, 15)}</span>
                   <span className={`jobType ${job.typeClass}`}>{job.type}</span>
                 </div>
                 <div className="jobBody" onClick={() => handleViewDetails(job.id)}>
                   <img src={job.logo} alt={job.company} className="jobLogo" />
                   <div>
-                    <span className="companyName">{job.company}</span>
-                    <div className="jobLocation">📍 {job.location}</div>
+                    <span className="companyName">{truncateText(job.company, 15)}</span>
+                    <div className="jobLocation">📍 {truncateText(job.location, 15)}</div>
                   </div>
                 </div>
                 <div className="jobFooter">

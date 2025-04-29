@@ -13,11 +13,13 @@ namespace InternHub.Services
     {
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
+        private readonly AzureBlobService _blobService;
 
-        public EmployerService(AppDbContext context, IMapper mapper)
+        public EmployerService(AppDbContext context, IMapper mapper, AzureBlobService blobService)
         {
             _context = context;
             _mapper = mapper;
+            _blobService = blobService;
         }
         public async Task<PagedResult<EmployerDto>> GetEmployersAsync(string? companyName, string? address, string? sortBy, string? sortDirection, int pageNumber, int pageSize)
         {
@@ -79,20 +81,28 @@ namespace InternHub.Services
             return employer == null ? null : _mapper.Map<EmployerDto>(employer);
         }
 
+        public async Task<string?> UploadCompanyLogoAsync(IFormFile file)
+        {
+            if (file != null && file.ContentType.StartsWith("image"))
+            {
+                var uploadedUrl = await _blobService.UploadFileAsync(file);
+                if (string.IsNullOrEmpty(uploadedUrl))
+                {
+                    throw new Exception("Failed to upload company logo.");
+                }
+                return uploadedUrl;
+            }
+            return null;
+        }
+
         public async Task<EmployerDto> CreateAsync(CreateEmployer dto, string userId, IWebHostEnvironment env)
         {
             var employer = _mapper.Map<Employer>(dto);
             employer.UserId = userId;
-            string webRootPath = env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
 
             if (dto.CompanyLogo != null && dto.CompanyLogo.ContentType.StartsWith("image"))
             {
-                string imagePath = Path.Combine("uploads", "images", Guid.NewGuid() + Path.GetExtension(dto.CompanyLogo.FileName));
-                string fullImagePath = Path.Combine(webRootPath, imagePath);
-                Directory.CreateDirectory(Path.GetDirectoryName(fullImagePath)!);
-                using var stream = new FileStream(fullImagePath, FileMode.Create);
-                await dto.CompanyLogo.CopyToAsync(stream);
-                employer.CompanyLogo = imagePath;
+                employer.CompanyLogo = await UploadCompanyLogoAsync(dto.CompanyLogo);
             }
 
             _context.Employers.Add(employer);
@@ -104,9 +114,9 @@ namespace InternHub.Services
         public async Task<EmployerDto?> UpdateAsync(int id, UpdateEmployer dto, IWebHostEnvironment env, string userId)
         {
             var employer = await _context.Employers.FindAsync(id);
-            if (employer == null || employer.UserId != userId) return null; // không cho cập nhật nếu không đúng chủ sở hữu
+            if (employer == null || employer.UserId != userId) return null;
 
-            // Cập nhật các trường nếu có
+            // Update fields if provided
             if (!string.IsNullOrWhiteSpace(dto.CompanyName)) employer.CompanyName = dto.CompanyName;
             if (!string.IsNullOrWhiteSpace(dto.CompanyEmail)) employer.CompanyEmail = dto.CompanyEmail;
             if (!string.IsNullOrWhiteSpace(dto.Phone)) employer.Phone = dto.Phone;
@@ -117,33 +127,34 @@ namespace InternHub.Services
             if (dto.EmployeeSize.HasValue) employer.EmployeeSize = dto.EmployeeSize.Value;
             if (dto.FoundedYear.HasValue) employer.FoundedYear = dto.FoundedYear.Value;
 
-            // Xử lý logo mới nếu có
-            string webRootPath = env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            // Handle new logo if provided
             if (dto.CompanyLogo != null && dto.CompanyLogo.ContentType.StartsWith("image"))
             {
-                string imagePath = Path.Combine("uploads", "images", Guid.NewGuid() + Path.GetExtension(dto.CompanyLogo.FileName));
-                string fullImagePath = Path.Combine(webRootPath, imagePath);
-                Directory.CreateDirectory(Path.GetDirectoryName(fullImagePath)!);
-                using var stream = new FileStream(fullImagePath, FileMode.Create);
-                await dto.CompanyLogo.CopyToAsync(stream);
-                employer.CompanyLogo = imagePath;
+                if (!string.IsNullOrEmpty(employer.CompanyLogo))
+                {
+                    await _blobService.DeleteFileIfExistsAsync(employer.CompanyLogo);
+                }
+                employer.CompanyLogo = await UploadCompanyLogoAsync(dto.CompanyLogo);
             }
 
             await _context.SaveChangesAsync();
             return _mapper.Map<EmployerDto>(employer);
         }
 
-
         public async Task<bool> DeleteAsync(int id, string userId)
         {
             var employer = await _context.Employers.FindAsync(id);
             if (employer == null || employer.UserId != userId) return false;
 
+            if (!string.IsNullOrEmpty(employer.CompanyLogo))
+            {
+                await _blobService.DeleteFileIfExistsAsync(employer.CompanyLogo);
+            }
+
             _context.Employers.Remove(employer);
             await _context.SaveChangesAsync();
             return true;
         }
-
     }
 }
 

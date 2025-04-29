@@ -1,26 +1,31 @@
 ﻿<Properties StartupConfiguration="{041E3534-1384-414A-9671-F6F7C0CDA538}|Default">
-  <MultiItemStartupConfigurations />
-  <MonoDevelop.Ide.ItemProperties.InternHub PreferredExecutionTarget="/Applications/Google Chrome.app" />
-  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
-  </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.Workbench ActiveDocument="InternHub/Models/AppDbContext.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="InternHub/Services/EmployerService.cs">
     <Files>
-      <File FileName="InternHub/Program.cs" />
-      <File FileName="InternHub/Models/AppDbContext.cs" Line="27" Column="36" />
+      <File FileName="InternHub/Services/EmployerService.cs" Line="84" Column="36" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="InternHubWebAPI">
-            <Node name="InternHub" expanded="True">
-              <Node name="Models" expanded="True" />
+            <Node name="InternHub">
+              <Node name="DTOs" expanded="True">
+                <Node name="Employer" expanded="True" />
+                <Node name="Student" expanded="True" />
+              </Node>
+              <Node name="Services" expanded="True">
+                <Node name="EmployerService.cs" selected="True" />
+              </Node>
             </Node>
           </Node>
         </State>
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.ItemProperties.InternHub PreferredExecutionTarget="/Applications/Google Chrome.app" />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
 </Properties>

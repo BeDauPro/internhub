@@ -45,12 +45,12 @@ const JobCard = ({ searchResults }) => {
           id: job.jobPostingId || job.id,
           title: job.jobTitle || 'Chưa có tiêu đề',
           type: job.workType || 'Chưa có loại hình',
-          typeClass: job.workType === 'Full-time' ? 'fullTime' : 'partTime', 
+          typeClass: job.workType === 'Full-time' ? 'fullTime' : 'partTime',
           logo: job.companyLogo || '/default-logo.png',
           company: job.companyName || 'Chưa có tên công ty',
           location: job.location || 'Chưa có địa điểm',
           quantity: job.vacancies || 0,
-          date: job.postedAt || 'Chưa có ngày tạo', 
+          date: job.postedAt || 'Chưa có ngày tạo',
         }));
 
         setJobs(transformedJobs);
@@ -68,18 +68,9 @@ const JobCard = ({ searchResults }) => {
     fetchJobs();
   }, [selectedType, selectedLocation, selectedCategory, searchResults]);
 
-  // Hàm hỗ trợ để format location
-  const formatLocation = (location) => {
-    if (!location) return 'Không xác định';
-    const parts = location.split(',');
-    return parts[0].trim();
-  };
-
-  // Hàm lấy tên công ty từ category
-  const getCompanyFromCategory = (category) => {
-    if (!category) return 'Công ty';
-    // Bạn có thể thêm logic để map category sang company name ở đây
-    return category;
+  const truncateText = (text, maxLength) => {
+    if (!text) return '';
+    return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
   };
 
   const filteredJobs = jobs.filter(job =>
@@ -134,15 +125,15 @@ const JobCard = ({ searchResults }) => {
             onClick={() => handleViewDetails(job.id)}
           >
             <div className="jobHeader">
-              <span className="jobTitle">{job.title}</span>
+              <span className="jobTitle">{truncateText(job.title, 15)}</span>
               <span className={`jobType ${job.typeClass}`}>{job.type}</span>
             </div>
 
             <div className="jobBody">
               <img src={job.logo} alt={job.company} className="jobLogo" />
               <div>
-                <span className="companyName">{job.company}</span>
-                <div className="jobLocation">📍 {job.location}</div>
+                <span className="companyName">{truncateText(job.company, 15)}</span>
+                <div className="jobLocation">📍 {truncateText(job.location, 15)}</div>
               </div>
             </div>
 

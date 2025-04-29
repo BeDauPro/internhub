@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom'; //  THÊM useParams
 import '../../styles/pages/employer/employerprofile.scss';
-import logo from '../../images/fpt.jpg';
 import {
   AiOutlineMail, AiOutlineHome, AiOutlinePhone,
   AiOutlineGroup, AiOutlineGlobal, AiOutlineFieldTime
@@ -9,6 +8,8 @@ import {
 import Review from './Review';
 import Footer from '../../components/Footer';
 import { getEmployerProfile, getEmployerProfileById } from '../../services/employerApi';
+import defaultAvatar from '../../images/defaultAvatar.jpg';
+import { FaUsers } from "react-icons/fa"; 
 
 const EmployerProfile = () => {
   const navigate = useNavigate();
@@ -48,14 +49,14 @@ const EmployerProfile = () => {
     <>
       <div className="profile-container">
         <div className="profile-card">
-          <img className="profile-image" src={employerProfile.companyLogo || logo} alt="Avatar" />
+          <img className="profile-image" src={employerProfile.companyLogo || defaultAvatar} alt="Avatar" />
           <h2>{employerProfile.companyName}</h2>
           <p className="company-id">ID nhà tuyển dụng: {employerProfile.employerId}</p>
           <h3>Thông tin liên hệ</h3>
           <p><AiOutlineMail /> {employerProfile.companyEmail}</p>
           <p><AiOutlineHome /> {employerProfile.address}</p>
           <p><AiOutlinePhone /> {employerProfile.phone}</p>
-          <p><AiOutlineGroup /> {employerProfile.employeeSize}</p>
+          <p><FaUsers /> {employerProfile.employeeSize}</p>
           <p><AiOutlineGlobal /> 
             <a href={employerProfile.website} target="_blank" rel="noopener noreferrer">
               {employerProfile.website}

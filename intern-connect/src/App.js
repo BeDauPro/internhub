@@ -166,7 +166,7 @@ const App = () => {
               <Route path="/eventmanagement" element={<EventManagement events={events} />} />
               <Route path="/studentmanagement" element={<StudentManagement studentsData={managementStudents} />} />
               <Route path="/accountmanagement" element={<AccountManagement accounts={accounts} />} />
-              {/* <Route path="/admin/studentprofile/:studentId" element={<AdminViewStudentProfile />} /> */}
+              <Route path="/admin/studentprofile/:studentId" element={<AdminViewStudentProfile />} />
               <Route path="/confirmjobs" element={<ConfirmJobs jobs={jobs} />} />
               <Route path="/createaccount" element={
                 <CreateAccount onAddAccount={(account) => setAccounts((prev) => [account, ...prev])} />

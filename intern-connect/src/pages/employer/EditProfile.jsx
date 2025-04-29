@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { AiOutlineMail, AiOutlineHome, AiOutlinePhone, AiOutlineGroup, AiOutlineGlobal, AiOutlineFieldTime } from "react-icons/ai";
 import Footer from "../../components/Footer";
 import { getEmployerProfile, updateEmployer, createEmployer, deleteEmployer } from "../../services/employerApi";
-
+import defaultAvatar from "../../images/defaultAvatar.jpg";
 const EditProfile = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({});
@@ -30,11 +30,6 @@ const EditProfile = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-  };
-
-  const handleArrayChange = (e, field) => {
-    const value = e.target.value.split(",").map((item) => item.trim());
-    setFormData({ ...formData, [field]: value });
   };
 
   const handleImageUpload = (e) => {
@@ -85,7 +80,11 @@ const EditProfile = () => {
           <div className="profile-edit-card">
             <img
               className="profile-edit-image"
-              src={formData.companyLogo || ""}
+              src={
+                formData.companyLogo instanceof File
+                  ? URL.createObjectURL(formData.companyLogo) 
+                  : formData.companyLogo || defaultAvatar 
+              }
               alt="Logo"
             />
             <section className="logo-upload">
