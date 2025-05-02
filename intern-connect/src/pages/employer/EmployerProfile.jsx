@@ -83,8 +83,6 @@ const EmployerProfile = () => {
               </div>
             )}
           </div>
-
-          <Review employerId={employerProfile.employerId} role={role} />
         </div>
       </div>
       <Footer />

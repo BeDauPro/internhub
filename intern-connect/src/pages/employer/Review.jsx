@@ -92,7 +92,6 @@ const Review = ({ employerId, role }) => {
         )}
       </div>
 
-      {/* ✅ Chỉ hiển thị form nếu là sinh viên */}
       {role === 'Student' && (
         <div className="container-comment mt-5">
           <h2 className="mb-3">Thêm nhận xét</h2>

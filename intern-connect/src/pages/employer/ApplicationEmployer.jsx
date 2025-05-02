@@ -74,7 +74,7 @@ const ApplicationEmployer = () => {
     const mapStatusFromApi = (apiStatus) => {
         const statusMap = {
             'pending': 'Chờ phản hồi',
-            'interview': 'Phỏng vấn',
+            'reviewed': 'Phỏng vấn',
             'internship': 'Thực tập',
             'completed': 'Hoàn thành'
         };

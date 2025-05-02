@@ -123,7 +123,7 @@ namespace InternHub.Services
             if (!isParsed)
                 throw new Exception("Invalid current application status");
 
-            // Kiểm tra không cho phép cập nhật xuống trạng thái thấp hơn
+            // Không cho phép cập nhật xuống trạng thái thấp hơn
             if (newStatus < currentAppStatus)
             {
                 throw new Exception($"Không thể cập nhật xuống trạng thái thấp hơn. Trạng thái hiện tại: {currentAppStatus}");
@@ -132,7 +132,6 @@ namespace InternHub.Services
             // Nếu sinh viên đang ở trạng thái Internship
             if (student.Status == StudentStatus.Internship)
             {
-                // Kiểm tra xem employer có quyền thay đổi status không
                 if (!int.TryParse(employerId, out int parsedEmployerId) || jobPosting.EmployerId != parsedEmployerId)
                 {
                     throw new Exception("Only the employer who provided the internship can update the student's status.");
@@ -142,7 +141,6 @@ namespace InternHub.Services
             // Nếu application đang ở trạng thái Internship
             if (currentAppStatus == StudentStatus.Internship)
             {
-                // Chỉ cho phép cập nhật lên Completed
                 if (newStatus != StudentStatus.Completed)
                 {
                     throw new Exception("Can only update from Internship to Completed status.");
@@ -152,11 +150,18 @@ namespace InternHub.Services
             // Nếu đang cập nhật lên Internship
             if (newStatus == StudentStatus.Internship)
             {
-                // Kiểm tra xem employer có quyền thay đổi status không
                 if (!int.TryParse(employerId, out int parsedEmployerId) || jobPosting.EmployerId != parsedEmployerId)
                 {
                     throw new Exception("Only the employer who provided the job posting can update the status to Internship.");
                 }
+
+                // Xoá tất cả các đơn ứng tuyển khác (ngoại trừ đơn hiện tại)
+                var otherApplications = await _context.Applications
+                    .Where(a => a.StudentId == student.Id && a.ApplicationId != applicationId)
+                    .ToListAsync();
+
+                _context.Applications.RemoveRange(otherApplications);
+                await _context.SaveChangesAsync(); // Xoá trước khi tiếp tục cập nhật
             }
 
             // Cập nhật status của application
@@ -164,7 +169,7 @@ namespace InternHub.Services
             _context.Applications.Update(application);
             await _context.SaveChangesAsync();
 
-            // Tìm trạng thái cao nhất trong các application
+            // Tìm trạng thái cao nhất trong các application còn lại (có thể chỉ còn 1)
             var allStatuses = await _context.Applications
                 .Where(a => a.StudentId == student.Id)
                 .Select(a => a.Status)
@@ -178,8 +183,10 @@ namespace InternHub.Services
             student.Status = highestEnumStatus;
             _context.Students.Update(student);
             await _context.SaveChangesAsync();
+
             return true;
         }
+
 
         public async Task<IEnumerable<StudentViewDto>> GetAllStudentsForAdminAsync()
         {

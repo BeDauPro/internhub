@@ -46,7 +46,7 @@ namespace InternHub.Controllers
         }
 
         [HttpGet("me")]
-        [Authorize(Roles = "Student")] // Ensure the role matches the logged-in user's role
+        [Authorize(Roles = "Student")] 
         public async Task<IActionResult> GetMyProfile()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);

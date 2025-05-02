@@ -44,15 +44,15 @@ namespace InternHub.Services
                 throw new InvalidOperationException("Không tìm thấy thông tin thực tập phù hợp.");
 
             if (dto.ReviewerRole == ReviewerRole.Employer)
-            {
-                if (application.Status != "Internship" && application.Status != "Completed")
-                    throw new InvalidOperationException("Sinh viên chưa từng thực tập tại công ty bạn.");
-            }
-            else if (dto.ReviewerRole == ReviewerRole.Student)
-            {
-                if (application.Status != "Completed")
-                    throw new InvalidOperationException("Bạn chưa hoàn thành thực tập tại công ty này.");
-            }
+                {
+                    if (application.Status != "Completed")
+                        throw new InvalidOperationException("Chỉ có thể đánh giá sinh viên sau khi hoàn thành thực tập.");
+                }
+                else if (dto.ReviewerRole == ReviewerRole.Student)
+                {
+                    if (application.Status != "Completed")
+                        throw new InvalidOperationException("Bạn chưa hoàn thành thực tập tại công ty này.");
+                }
 
             // Tạo review
             var review = _mapper.Map<StudentReview>(dto);
