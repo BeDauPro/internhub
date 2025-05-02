@@ -5,11 +5,13 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import loginImage from "../images/login.jpg";
 import Button from '../components/Button';
 import { loginUser as loginApi } from '../services/authApi';
+import { useAuthContext } from "../context/authContext";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
+  const {setToken} = useAuthContext()
   const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -21,8 +23,8 @@ const Login = () => {
         const { token, role } = response.data;
         localStorage.setItem("token", token.token);
         localStorage.setItem("role", role);
-
-        alert("Đăng nhập thành công!");
+        setToken(token.token);
+        // alert("Đăng nhập thành công!");
 
         if (role.toLowerCase() === "student") {
           navigate("/findjob");

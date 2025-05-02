@@ -29,6 +29,7 @@ const ProfileForm = () => {
       setLoading(true);
       try {
         const data = await getStudentProfile();
+        console.log("Fetched student data:", data);
         setFormData(data || {});
       } catch (error) {
         if (error.response?.status === 401) {
@@ -148,7 +149,7 @@ const ProfileForm = () => {
       <div className="profile-edit-container">
         <div className="profile-edit-wrapper">
           <div className="profile-edit-card">
-              <img className="profile-edit-image"  src={formData.ProfilePicture} alt="Preview" />
+              <img className="profile-edit-image"  src={formData.profilePicture} alt="Preview" />
             <section className="logo-upload">
               <h3>Ảnh đại diện</h3>
               <input

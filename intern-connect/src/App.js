@@ -40,10 +40,10 @@ import StudentManagement from "./pages/admin/StudentManagement";
 import AccountManagement from "./pages/admin/AccountManagement";
 import CreateAccount from "./pages/admin/CreateAccount";
 import NavbarWrapper from "./components/NavbarWrapper";
+import { useAuthContext } from "./context/authContext";
 
 const App = () => {
     const { isAuthenticated, role } = useAuth();
-
     const [profile, setProfile] = useState(null);
     const [eProfile, setEProfile] = useState(null);
     const [jobDetails, setJobDetails] = useState(null);
@@ -55,7 +55,7 @@ const App = () => {
     const [applicationEmployer, setApplicationEmployer] = useState([]);
     const [managementStudents, setManagementStudents] = useState([]);
     const [accounts, setAccounts] = useState([]);
-
+    const token = useAuthContext()
     useEffect(() => {
         const token = localStorage.getItem("token");
         const userRole = localStorage.getItem("role");
@@ -106,11 +106,11 @@ const App = () => {
 
     return (
         <Router>
-          {isAuthenticated && 
+           {token && 
             !["/login", "/register", "/forgotpassword"].includes(window.location.pathname) && (
               <NavbarWrapper />
             )
-          }
+          } 
       
           <Routes>
             <Route path="/" element={<Navigate to={getDefaultRoute()} />} />

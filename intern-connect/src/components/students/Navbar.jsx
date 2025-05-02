@@ -4,12 +4,13 @@ import "../../styles/components/navbar.scss";
 import { useNavigate } from "react-router-dom";
 import Notification from "../../pages/student/Notification";
 import { getStudentProfile } from "../../services/studentApi";
+import { useAuthContext } from "../../context/authContext";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const [showNotification, setShowNotification] = useState(false);
   const [student, setStudent] = useState(null);
-
+  const {logout} = useAuthContext()
   useEffect(() => {
     const fetchStudentData = async () => {
       try {
@@ -25,6 +26,7 @@ const Navbar = () => {
   }, []);
 
   const handleLogoutClick = () => {
+    logout()
     navigate("/login");
   };
 

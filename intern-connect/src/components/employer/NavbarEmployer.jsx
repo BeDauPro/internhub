@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react'
 import defaultAvatar from '../../images/defaultAvatar.jpg';
 import { useNavigate } from "react-router-dom";
 import { getEmployerProfile } from '../../services/employerApi';
+import { useAuthContext } from '../../context/authContext';
 
 const NavbarEmployer = () => {
   const navigate = useNavigate();
+  const [token, setToken] = useState(localStorage.getItem("token"));
   const [employer, setEmployer] = useState(null);
-
+  const {logout} = useAuthContext()
   useEffect(() => {
     const fetchEmployerData = async () => {
       try {
@@ -20,6 +22,12 @@ const NavbarEmployer = () => {
 
     fetchEmployerData();
   }, []);
+
+  const handleLogoutClick = () => {
+    logout()
+    navigate("/login");
+  };
+  if(!token) return null;
   return (
     <div className="navbar-container">
       <nav className="navbar navbar-expand-lg navbar-dark shadow">
@@ -51,7 +59,7 @@ const NavbarEmployer = () => {
                 </button>
                 <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                   <li><a className="dropdown-item" href="" onClick={() => navigate("/employerprofile")}>Hồ sơ doanh nghiệp</a></li>
-                  <li><a className="dropdown-item" href="#" onClick={() => navigate("/login")}>Đăng xuất</a></li>
+                  <li><a className="dropdown-item" href="#" onClick={handleLogoutClick}>Đăng xuất</a></li>
                 </ul>
               </div>
             </div>

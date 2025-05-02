@@ -23,13 +23,12 @@ const Evaluate = ({ studentId }) => {
   const fetchReviews = async () => {
     try {
       const data = await getReviewsForStudent(studentId);
-      const employerData = await getEmployerProfile();
-      const roleFromStorage = getRoleFromStorage();
-
+      const employData = await getEmployerProfile();
+      const roleFromStorage = getRoleFromStorage();      
       setReviews(data);
       setNewReview({
         ...newReview,
-        employerId: employerData.id,
+        employerId: employData.employerId,
         reviewerRole: roleFromStorage,
       });
       setUserRole(roleFromStorage); // lưu role riêng
@@ -47,7 +46,9 @@ const Evaluate = ({ studentId }) => {
     }
 
     try {
+      console.log('Đánh giá:', newReview);
       await createReview({ ...newReview, studentId });
+      // khi submit => parseInt
       setNewReview({ overallRating: 0, comments: '' });
       fetchReviews();
     } catch (error) {
@@ -87,7 +88,7 @@ const Evaluate = ({ studentId }) => {
                 className="form-control"
                 value={newReview.overallRating}
                 onChange={(e) =>
-                  setNewReview({ ...newReview, overallRating: parseInt(e.target.value) })
+                  setNewReview({ ...newReview, overallRating: parseInt(e.target.value)})
                 }
               />
             </div>

@@ -14,7 +14,7 @@ const NavbarWrapper = () => {
   } else if (role === "Admin") {
     return <NavbarAdmin />;
   } else {
-    return null;
+    return <></>;
   }
 };
 
