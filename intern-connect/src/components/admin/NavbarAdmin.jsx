@@ -1,8 +1,14 @@
 import React from 'react'
 import { useNavigate } from "react-router-dom";
+import { useAuthContext } from '../../context/authContext';
 
 const NavbarAdmin = () => {
     const navigate = useNavigate();
+    const {logout} = useAuthContext();
+    const handleLogoutClick = () => {
+      logout()
+      navigate("/login");
+    };
     return (
       <div className="navbar-container">
         <nav className="navbar navbar-expand-lg navbar-dark shadow">
@@ -59,7 +65,7 @@ const NavbarAdmin = () => {
                   </button>
                   <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                     <li>
-                      <a className="dropdown-item" href="#" onClick={() => navigate("/login")}>
+                      <a className="dropdown-item" href="#" onClick={handleLogoutClick}>
                         Đăng xuất
                       </a>
                     </li>
