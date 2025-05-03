@@ -4,7 +4,7 @@ import '../../styles/pages/employer/manageposts.scss';
 import NavbarEmployer from '../../components/employer/NavbarEmployer';
 import Footer from '../../components/Footer';
 import { useNavigate } from "react-router-dom";
-import { getEmployerJobs, deleteJob } from '../../services/JobPostingApi';
+import { getEmployerJobs } from '../../services/JobPostingApi';
 
 const ManagePosts = () => {
   const [jobs, setJobs] = useState([]);

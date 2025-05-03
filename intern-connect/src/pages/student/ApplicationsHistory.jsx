@@ -4,7 +4,7 @@ import "../../styles/pages/student/applicationhistory.scss";
 import Footer from '../../components/Footer';
 import { useNavigate } from "react-router-dom";
 import { getStudentApplicationHistory } from '../../services/ApplicationApi';
- 
+
 const ApplicationsHistory = () => {
     const navigate = useNavigate();
     const [applications, setApplications] = useState([]);
@@ -17,23 +17,32 @@ const ApplicationsHistory = () => {
     const [showFilterDropdown, setShowFilterDropdown] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const applicationsPerPage = 10;
- 
+
+    // Status mapping from English to Vietnamese
+    const statusMapping = {
+        'pending': 'Chờ phản hồi',
+        'reviewed': 'Phỏng vấn',
+        'interview': 'Phỏng vấn',
+        'internship': 'Thực tập',
+        'completed': 'Hoàn thành'
+    };
+
     // Fetch application history on component mount
     useEffect(() => {
         const fetchApplicationHistory = async () => {
             try {
                 setLoading(true);
                 const historyData = await getStudentApplicationHistory();
- 
+
                 // Transform API data to match the component's expected format
                 const formattedData = historyData.map((app, index) => ({
                     id: app.jobPostingId,
                     position: app.jobTitle,
                     company: app.companyName,
                     dateRange: formatDate(app.applicationDate),
-                    status: mapStatusToVietnamese(app.status)
+                    status: statusMapping[app.status.toLowerCase()] || app.status
                 }));
- 
+
                 setApplications(formattedData);
                 setError(null);
             } catch (err) {
@@ -43,27 +52,16 @@ const ApplicationsHistory = () => {
                 setLoading(false);
             }
         };
- 
+
         fetchApplicationHistory();
     }, []);
- 
+
     // Helper function to format date
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         return date.toLocaleDateString('vi-VN');  // Format as DD/MM/YYYY
     };
- 
-    // Helper function to map API status values to Vietnamese display values
-    const mapStatusToVietnamese = (status) => {
-        const statusMap = {
-            'pending': 'Chờ phản hồi',
-            'reviewed': 'Phỏng vấn',
-            'internship': 'Thực tập',
-            'completed': 'Hoàn thành'
-        };
-        return statusMap[status.toLowerCase()] || status;
-    };
- 
+
     // Status priority order
     const statusPriority = {
         'Hoàn thành': 1,
@@ -71,7 +69,7 @@ const ApplicationsHistory = () => {
         'Phỏng vấn': 3,
         'Chờ phản hồi': 4
     };
- 
+
     const getStatusStyle = (status) => {
         switch (status) {
             case 'Chờ phản hồi':
@@ -86,12 +84,12 @@ const ApplicationsHistory = () => {
                 return '';
         }
     };
- 
+
     const handleFilterChange = (e) => {
         const { name, value } = e.target;
         setFilters({ ...filters, [name]: value });
     };
- 
+
     // Filter and sort applications based on criteria
     const filteredAndSortedApplications = applications
         .filter(app => {
@@ -115,22 +113,22 @@ const ApplicationsHistory = () => {
             }
             return 0;
         });
- 
+
     // Pagination logic
     const indexOfLastApplication = currentPage * applicationsPerPage;
     const indexOfFirstApplication = indexOfLastApplication - applicationsPerPage;
     const currentApplications = filteredAndSortedApplications.slice(indexOfFirstApplication, indexOfLastApplication);
- 
+
     const totalPages = Math.ceil(filteredAndSortedApplications.length / applicationsPerPage);
- 
+
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
     };
- 
+
     const toggleFilterDropdown = () => {
         setShowFilterDropdown(!showFilterDropdown);
     };
- 
+
     return (
         <>
             <div className="application-history-container">
@@ -171,7 +169,7 @@ const ApplicationsHistory = () => {
                         </div>
                     )}
                 </div>
- 
+
                 {loading ? (
                     <div className="loading">Đang tải dữ liệu...</div>
                 ) : error ? (
@@ -209,7 +207,7 @@ const ApplicationsHistory = () => {
                                 </div>
                             )}
                         </div>
- 
+
                         {/* Pagination controls */}
                         {totalPages > 1 && (
                             <div className="pagination">
@@ -231,5 +229,5 @@ const ApplicationsHistory = () => {
         </>
     );
 };
- 
+
 export default ApplicationsHistory;

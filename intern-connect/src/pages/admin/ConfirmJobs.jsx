@@ -50,7 +50,10 @@ const ConfirmJobs = () => {
   }, []);
 
   // Handle approve job
-  const handleApproveJob = async (jobId) => {
+  const handleApproveJob = async (jobId, event) => {
+    // Ngăn chặn sự kiện lan truyền để không trigger handleViewDetails
+    event.stopPropagation();
+
     try {
       await approveJobPosting(jobId);
       // Remove the job from the list after approval
@@ -63,7 +66,10 @@ const ConfirmJobs = () => {
   };
 
   // Handle reject job
-  const handleRejectJob = async (jobId) => {
+  const handleRejectJob = async (jobId, event) => {
+    // Ngăn chặn sự kiện lan truyền để không trigger handleViewDetails
+    event.stopPropagation();
+
     try {
       await rejectJobPosting(jobId);
       // Remove the job from the list after rejection
@@ -138,12 +144,12 @@ const ConfirmJobs = () => {
           <div className="jobList">
             {/* cắt ds công việc theo số lượng cần hiển thị */}
             {filteredJobs.slice(0, visibleJobs).map((job) => (
-              <div key={job.id} className="jobCard animate-slide-up">
-                <div className="jobHeader" onClick={() => handleViewDetails(job.id)}>
+              <div key={job.id} className="jobCard animate-slide-up" onClick={() => handleViewDetails(job.id)}>
+                <div className="jobHeader">
                   <span className="jobTitle">{truncateText(job.title, 15)}</span>
                   <span className={`jobType ${job.typeClass}`}>{job.type}</span>
                 </div>
-                <div className="jobBody" onClick={() => handleViewDetails(job.id)}>
+                <div className="jobBody">
                   <img src={job.logo} alt={job.company} className="jobLogo" />
                   <div>
                     <span className="companyName">{truncateText(job.company, 15)}</span>
@@ -151,10 +157,16 @@ const ConfirmJobs = () => {
                   </div>
                 </div>
                 <div className="jobFooter">
-                  <button className="btn btn-success" onClick={() => handleApproveJob(job.id)}>
+                  <button
+                    className="btn btn-success"
+                    onClick={(e) => handleApproveJob(job.id, e)}
+                  >
                     <i className="fas fa-check"></i> Duyệt
                   </button>
-                  <button className="btn btn-danger" onClick={() => handleRejectJob(job.id)}>
+                  <button
+                    className="btn btn-danger"
+                    onClick={(e) => handleRejectJob(job.id, e)}
+                  >
                     <i className="fas fa-times"></i> Từ chối
                   </button>
                 </div>

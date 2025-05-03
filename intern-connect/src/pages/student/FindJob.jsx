@@ -6,7 +6,7 @@ import '../../styles/pages/student/overview.scss';
 import FptIntern from '../../images/fptintern.jpg';
 import Intern from '../../images/intern.jpg';
 import imgLogin from '../../images/login.jpg';
-import { getAllJobs } from '../../services/JobPostingApi';
+import { getAllJobs, getFilteredJobs } from '../../services/JobPostingApi';
 
 const HeroSection = ({ onSearch, jobs }) => {
     const [searchInput, setSearchInput] = useState('');
@@ -14,6 +14,13 @@ const HeroSection = ({ onSearch, jobs }) => {
 
     const handleSearch = () => {
         onSearch(searchInput, selectedLocation);
+    };
+
+    // Hỗ trợ phím Enter trong ô tìm kiếm
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter') {
+            handleSearch();
+        }
     };
 
     useEffect(() => {
@@ -67,6 +74,7 @@ const HeroSection = ({ onSearch, jobs }) => {
                         placeholder="Vị trí tuyển dụng/tên công ty"
                         value={searchInput}
                         onChange={(e) => setSearchInput(e.target.value)}
+                        onKeyPress={handleKeyPress}
                     />
                 </div>
 
@@ -81,6 +89,18 @@ const HeroSection = ({ onSearch, jobs }) => {
                         {selectedLocation || 'Địa điểm'}
                     </button>
                     <ul className="dropdown-menu">
+                        <li>
+                            <a
+                                className="dropdown-item"
+                                href="#"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    setSelectedLocation('');
+                                }}
+                            >
+                                Tất cả địa điểm
+                            </a>
+                        </li>
                         {uniqueLocations.map(location => (
                             <li key={location}>
                                 <a
@@ -153,48 +173,88 @@ const Overview = () => {
 };
 
 const FindJob = () => {
-    const [searchResults, setSearchResults] = useState(null);
     const [jobs, setJobs] = useState([]);
+    const [filteredJobs, setFilteredJobs] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [searchInfo, setSearchInfo] = useState({
+        searchTerm: '',
+        location: ''
+    });
     const jobCardRef = React.useRef(null);
 
     useEffect(() => {
-        const fetchJobs = async () => {
+        const fetchInitialJobs = async () => {
             try {
                 setIsLoading(true);
-
-                // Gọi API với các tham số rỗng
+                // Lấy danh sách công việc ban đầu
                 const jobsData = await getAllJobs('', '', '');
 
                 if (Array.isArray(jobsData)) {
                     setJobs(jobsData);
+                    setFilteredJobs(jobsData);
                     setError(null);
                 } else {
                     setError("Không thể tải danh sách công việc");
                     setJobs([]);
+                    setFilteredJobs([]);
                 }
             } catch (err) {
                 console.error("Error fetching jobs:", err);
                 setError("Không thể tải danh sách công việc");
                 setJobs([]);
+                setFilteredJobs([]);
             } finally {
                 setIsLoading(false);
             }
         };
 
-        fetchJobs();
+        fetchInitialJobs();
     }, []);
 
-    const handleSearch = (searchInput, selectedLocation) => {
-        const result = searchInput ? { searchInput } : { selectedLocation };
-        setSearchResults(result);
-        if (jobCardRef.current) {
-            jobCardRef.current.scrollIntoView({ behavior: 'smooth' });
+    const handleSearch = async (searchInput, selectedLocation) => {
+        try {
+            setIsLoading(true);
+            setSearchInfo({
+                searchTerm: searchInput,
+                location: selectedLocation
+            });
+
+            // Gọi API tìm kiếm với các tham số
+            const result = await getFilteredJobs(
+                searchInput,      // searchTerm - tên công ty hoặc tiêu đề công việc
+                '',               // workType - để trống
+                selectedLocation, // location - địa điểm
+                '',               // jobCategory - để trống
+                'desc',           // sortDirection - sắp xếp giảm dần
+                1,                // pageNumber - trang đầu tiên
+                100               // pageSize - kích thước lớn để không cần phân trang
+            );
+
+            if (result && Array.isArray(result.items)) {
+                setFilteredJobs(result.items);
+            } else if (result && Array.isArray(result)) {
+                // Xử lý trường hợp API trả về mảng trực tiếp
+                setFilteredJobs(result);
+            } else {
+                setFilteredJobs([]);
+                setError("Không tìm thấy kết quả phù hợp");
+            }
+
+            // Cuộn đến kết quả tìm kiếm
+            if (jobCardRef.current) {
+                jobCardRef.current.scrollIntoView({ behavior: 'smooth' });
+            }
+        } catch (err) {
+            console.error("Error searching jobs:", err);
+            setError("Có lỗi xảy ra khi tìm kiếm công việc");
+            setFilteredJobs([]);
+        } finally {
+            setIsLoading(false);
         }
     };
 
-    if (isLoading) {
+    if (isLoading && jobs.length === 0) {
         return (
             <div className="find-job">
                 <HeroSection onSearch={handleSearch} jobs={[]} />
@@ -213,13 +273,26 @@ const FindJob = () => {
         <div className="find-job">
             <HeroSection onSearch={handleSearch} jobs={jobs} />
             <Overview />
-            {error && (
-                <div style={{ color: 'red', textAlign: 'center', margin: '20px' }}>
+
+            {isLoading && (
+                <div style={{ textAlign: 'center', padding: '20px' }}>
+                    <div className="spinner-border text-primary" role="status">
+                        <span className="visually-hidden">Đang tải...</span>
+                    </div>
+                </div>
+            )}
+
+            {error && !isLoading && (
+                <div className="alert alert-danger text-center" role="alert" style={{ margin: '20px auto', maxWidth: '600px' }}>
                     {error}
                 </div>
             )}
+
             <div ref={jobCardRef}>
-                <JobCard searchResults={searchResults} jobs={jobs} />
+                <JobCard
+                    jobs={filteredJobs}
+                    searchInfo={searchInfo}
+                />
             </div>
             <Footer />
         </div>

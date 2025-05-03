@@ -14,6 +14,7 @@ const ApplicationEmployer = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [filters, setFilters] = useState({
+        status: '',
         dateRange: '',
         startDate: '',
         endDate: ''
@@ -24,6 +25,22 @@ const ApplicationEmployer = () => {
     const statusRefs = useRef({});
     const [openStatusId, setOpenStatusId] = useState(null);
 
+    // Status mapping from English to Vietnamese
+    const statusMapping = {
+        'pending': 'Chờ phản hồi',
+        'interview': 'Phỏng vấn',
+        'internship': 'Thực tập',
+        'completed': 'Hoàn thành'
+    };
+
+    // Status priority order
+    const statusPriority = {
+        'Hoàn thành': 1,
+        'Thực tập': 2,
+        'Phỏng vấn': 3,
+        'Chờ phản hồi': 4
+    };
+
     // Fetch data from API when component mounts
     useEffect(() => {
         fetchCandidates();
@@ -33,7 +50,7 @@ const ApplicationEmployer = () => {
         try {
             setLoading(true);
             const response = await getCandidatesForEmployer();
-            
+
             console.log("Response from API:", response);
 
             const formattedApplications = response.map(candidate => {
@@ -43,11 +60,11 @@ const ApplicationEmployer = () => {
                     position: candidate.jobTitle,
                     student: candidate.studentName,
                     date: formatDate(candidate.applicationDate),
-                    status: mapStatusFromApi(candidate.status),
-                    studentId: candidate.studentId 
+                    status: statusMapping[candidate.status?.toLowerCase()] || 'Chờ phản hồi',
+                    studentId: candidate.studentId
                 };
             });
-    
+
             setApplications(formattedApplications);
             setError(null);
         } catch (err) {
@@ -70,18 +87,6 @@ const ApplicationEmployer = () => {
         return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
     };
 
-    // Map API status values to display values based on your enum
-    const mapStatusFromApi = (apiStatus) => {
-        const statusMap = {
-            'pending': 'Chờ phản hồi',
-            'interview': 'Phỏng vấn',
-            'internship': 'Thực tập',
-            'completed': 'Hoàn thành'
-        };
-
-        return statusMap[apiStatus?.toLowerCase()] || 'Chờ phản hồi';
-    };
-
     const mapStatusToApi = (statusText) => {
         const statusMap = {
             'Chờ phản hồi': 0,
@@ -91,7 +96,6 @@ const ApplicationEmployer = () => {
         };
         return statusMap[statusText] ?? 0;
     };
-    
 
     // Function to toggle the status dropdown
     const toggleStatusDropdown = (id, event) => {
@@ -138,60 +142,65 @@ const ApplicationEmployer = () => {
         setFilters({ ...filters, [name]: value });
     };
 
-    const filteredApplications = applications.filter(app => {
-        if (!filters.dateRange || filters.dateRange === 'all') {
-            return true;
-        }
+    const filteredApplications = applications
+        .filter(app => {
+            // Filter by status
+            const statusMatch = !filters.status || filters.status === 'priority' || app.status === filters.status;
 
-        const appDate = new Date(app.date.split('/').reverse().join('-'));
+            // Filter by date
+            let dateMatch = true;
+            if (filters.dateRange && filters.dateRange !== 'all') {
+                const appDate = new Date(app.date.split('/').reverse().join('-'));
+                const today = new Date();
+                const lastWeek = new Date();
+                lastWeek.setDate(today.getDate() - 7);
+                const lastMonth = new Date();
+                lastMonth.setMonth(today.getMonth() - 1);
 
-        if (filters.dateRange === 'custom') {
-            const startDate = filters.startDate ? new Date(filters.startDate) : null;
-            const endDate = filters.endDate ? new Date(filters.endDate) : null;
+                if (filters.dateRange === 'today') {
+                    dateMatch = appDate.toDateString() === today.toDateString();
+                } else if (filters.dateRange === 'lastWeek') {
+                    dateMatch = appDate >= lastWeek;
+                } else if (filters.dateRange === 'lastMonth') {
+                    dateMatch = appDate >= lastMonth;
+                } else if (filters.dateRange === 'custom') {
+                    const startDate = filters.startDate ? new Date(filters.startDate) : null;
+                    const endDate = filters.endDate ? new Date(filters.endDate) : null;
 
-            if (startDate && endDate) {
-                return appDate >= startDate && appDate <= endDate;
-            } else if (startDate) {
-                return appDate >= startDate;
-            } else if (endDate) {
-                return appDate <= endDate;
+                    if (startDate && endDate) {
+                        dateMatch = appDate >= startDate && appDate <= endDate;
+                    } else if (startDate) {
+                        dateMatch = appDate >= startDate;
+                    } else if (endDate) {
+                        dateMatch = appDate <= endDate;
+                    }
+                }
             }
-            return true;
-        }
 
-        const today = new Date();
-        const lastWeek = new Date();
-        lastWeek.setDate(today.getDate() - 7);
-
-        const lastMonth = new Date();
-        lastMonth.setMonth(today.getMonth() - 1);
-
-        if (filters.dateRange === 'today') {
-            return appDate.toDateString() === today.toDateString();
-        } else if (filters.dateRange === 'lastWeek') {
-            return appDate >= lastWeek;
-        } else if (filters.dateRange === 'lastMonth') {
-            return appDate >= lastMonth;
-        }
-
-        return true;
-    });
+            return statusMatch && dateMatch;
+        })
+        .sort((a, b) => {
+            // Sort by priority status if selected
+            if (filters.status === 'priority') {
+                return statusPriority[a.status] - statusPriority[b.status];
+            }
+            return 0;
+        });
 
     const toggleFilterDropdown = () => {
         setShowFilterDropdown(!showFilterDropdown);
     };
 
-
     // In your frontend component, modify handleStatusChange:
     const handleStatusChange = async (id, newStatus, event) => {
         event.stopPropagation();
-    
+
         try {
             const apiStatus = mapStatusToApi(newStatus);
             console.log(`Updating application ${id} status to:`, apiStatus);
-            
+
             await updateApplicationStatus(id, apiStatus);
-    
+
             // Cập nhật trạng thái cục bộ
             setApplications(prevApplications =>
                 prevApplications.map(app =>
@@ -201,7 +210,7 @@ const ApplicationEmployer = () => {
             alert(`Trạng thái của ứng viên ID ${id} đã được cập nhật thành "${newStatus}".`);
             // Gọi lại API để đảm bảo dữ liệu đồng bộ
             await fetchCandidates();
-            
+
             setOpenStatusId(null);
         } catch (err) {
             console.error("Error updating application status:", err);
@@ -225,12 +234,12 @@ const ApplicationEmployer = () => {
             alert("Không thể xem hồ sơ vì thiếu ID sinh viên.");
             return;
         }
-    
+
         try {
             // Sử dụng API để lấy thông tin sinh viên
             const studentData = await getStudentById(studentId);
             console.log("Student Data:", studentData);
-    
+
             // Chuyển hướng đến trang chi tiết sinh viên với dữ liệu đã lấy được
             navigate(`/students/${studentId}`, {
                 state: {
@@ -272,6 +281,21 @@ const ApplicationEmployer = () => {
                     </button>
                     {showFilterDropdown && (
                         <div className="filter-dropdown">
+                            <div className="filter-group">
+                                <label>Trạng thái:</label>
+                                <select
+                                    name="status"
+                                    value={filters.status}
+                                    onChange={handleFilterChange}
+                                >
+                                    <option value="">Tất cả</option>
+                                    <option value="priority">Ưu tiên (Hoàn thành → Chờ phản hồi)</option>
+                                    <option value="Hoàn thành">Hoàn thành</option>
+                                    <option value="Thực tập">Thực tập</option>
+                                    <option value="Phỏng vấn">Phỏng vấn</option>
+                                    <option value="Chờ phản hồi">Chờ phản hồi</option>
+                                </select>
+                            </div>
                             <div className="filter-group">
                                 <label>Thời gian:</label>
                                 <select
