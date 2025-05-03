@@ -178,7 +178,7 @@ namespace InternHub.Services
             student.UserId = userId;
             student.CVFile = await UploadCVAsync(dto.CVFile);
             student.ProfilePicture = dto.ProfilePicture;
-                _context.Students.Add(student);
+            _context.Students.Add(student);
             await _context.SaveChangesAsync();
 
             return _mapper.Map<StudentDto>(student);
@@ -201,8 +201,17 @@ namespace InternHub.Services
             if (dto.DateOfBirth.HasValue) student.DateOfBirth = dto.DateOfBirth.Value;
             if (!string.IsNullOrWhiteSpace(dto.Education)) student.Education = dto.Education;
             if (!string.IsNullOrWhiteSpace(dto.Phone)) student.Phone = dto.Phone;
-            if (!string.IsNullOrWhiteSpace(dto.ProfilePicture2)) student.ProfilePicture = dto.ProfilePicture2;
-            
+
+            if (!string.IsNullOrWhiteSpace(dto.ProfilePicture2))
+            {
+                // Nếu ảnh cũ khác ảnh mới và tồn tại ảnh cũ, thì xóa
+                if (!string.IsNullOrEmpty(student.ProfilePicture) && student.ProfilePicture != dto.ProfilePicture2)
+                {
+                    await _blobService.DeleteFileIfExistsAsync(student.ProfilePicture);
+                }
+                student.ProfilePicture = dto.ProfilePicture2;
+            }
+
 
             if (dto.CVFile != null && dto.CVFile.Length > 0)
             {

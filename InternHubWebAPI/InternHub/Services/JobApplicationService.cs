@@ -18,7 +18,7 @@ namespace InternHub.Services
         }
         public class ResultDto
         {
-            public string Status { get; set; } // "success" hoặc "fail"
+            public string Status { get; set; } 
             public string Message { get; set; }
         }
 

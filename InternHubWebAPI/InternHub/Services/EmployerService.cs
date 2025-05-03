@@ -69,6 +69,7 @@ namespace InternHub.Services
             };
         }
 
+        //lấy thông tin employer theo userId
         public async Task<EmployerDto?> GetByUserIdAsync(string userId)
         {
             var employer = await _context.Employers.FirstOrDefaultAsync(e => e.UserId == userId);
@@ -94,17 +95,18 @@ namespace InternHub.Services
             }
             return null;
         }
-
+        
         public async Task<EmployerDto> CreateAsync(CreateEmployer dto, string userId, IWebHostEnvironment env)
         {
+            //tạo mới employer từ dto
             var employer = _mapper.Map<Employer>(dto);
             employer.UserId = userId;
-
+            //upload logo nếu có
             if (dto.CompanyLogo != null && dto.CompanyLogo.ContentType.StartsWith("image"))
             {
                 employer.CompanyLogo = await UploadCompanyLogoAsync(dto.CompanyLogo);
             }
-
+            
             _context.Employers.Add(employer);
             await _context.SaveChangesAsync();
 
@@ -127,7 +129,7 @@ namespace InternHub.Services
             if (dto.EmployeeSize.HasValue) employer.EmployeeSize = dto.EmployeeSize.Value;
             if (dto.FoundedYear.HasValue) employer.FoundedYear = dto.FoundedYear.Value;
 
-            // Handle new logo if provided
+            // Xoá logo cũ nếu có và upload logo mới
             if (dto.CompanyLogo != null && dto.CompanyLogo.ContentType.StartsWith("image"))
             {
                 if (!string.IsNullOrEmpty(employer.CompanyLogo))

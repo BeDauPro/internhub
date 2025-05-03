@@ -32,7 +32,7 @@ namespace InternHub.Controllers
         }
 
         // CREATE: api/admin/Employer
-        [HttpPost]
+   
         [HttpPost]
         public async Task<IActionResult> CreateEmployer([FromBody] EmployerAccountCreateDto createDto)
         {
@@ -41,9 +41,6 @@ namespace InternHub.Controllers
 
             if (!createDto.UserName.EndsWith("company"))
                 return BadRequest(new { error = "Username phải kết thúc bằng 'company'" });
-
-            if (createDto.UserName.Contains("Đức"))
-                return BadRequest(new { error = "Username không được chứa chữ 'Đức'" });
 
             if (createDto.UserName.Contains("\r") || createDto.UserName.Contains("\n"))
                 return BadRequest(new { error = "Username không được chứa dấu Enter" });
@@ -92,14 +89,6 @@ namespace InternHub.Controllers
 
                 return Ok(responseDto);
             }
-            //catch (DbUpdateException dbEx)
-            //{
-            //    return StatusCode(500, new
-            //    {
-            //        error = "Lỗi cơ sở dữ liệu",
-            //        details = GetInnerExceptionMessages(dbEx)
-            //    });
-            //}
             catch (Exception ex)
             {
                 return StatusCode(500, new { error = ex.Message });
@@ -153,186 +142,6 @@ namespace InternHub.Controllers
             }
         }
 
-        //// READ ONE: api/admin/Employer/{id}
-        //[HttpGet("{id}")]
-        //public async Task<IActionResult> GetEmployer(int id)
-        //{
-        //    try
-        //    {
-        //        var employer = await _context.Set<Employer>()
-        //            .FirstOrDefaultAsync(e => e.EmployerId == id);
-
-        //        if (employer == null)
-        //        {
-        //            return NotFound(new { message = $"Không tìm thấy doanh nghiệp với Id: {id}" });
-        //        }
-
-        //        var user = await _userManager.FindByIdAsync(employer.UserId);
-        //        if (user == null)
-        //        {
-        //            return NotFound(new { message = $"Không tìm thấy thông tin người dùng cho doanh nghiệp này" });
-        //        }
-
-        //        var responseDto = new EmployerAccountResponseDto
-        //        {
-        //            Id = user.Id,
-        //            UserName = user.UserName,
-        //            Email = user.Email,
-        //            Phone = user.PhoneNumber,
-        //            CreatedAt = employer.CreatedAt,
-        //            EmployerId = employer.EmployerId,
-        //            Role = "Employer"
-        //        };
-
-        //        return Ok(responseDto);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, new { error = ex.Message });
-        //    }
-        //}
-
-        //// UPDATE: api/admin/Employer/{id}
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> UpdateEmployer(int id, [FromBody] EmployerAccountCreateDto updateDto)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-
-        //    // Kiểm tra thêm về username
-        //    if (!updateDto.UserName.EndsWith("company"))
-        //    {
-        //        ModelState.AddModelError("UserName", "Username phải kết thúc bằng 'company'");
-        //        return BadRequest(ModelState);
-        //    }
-
-        //    if (updateDto.UserName.Contains("Đức"))
-        //    {
-        //        ModelState.AddModelError("UserName", "Username không được chứa chữ 'Đức'");
-        //        return BadRequest(ModelState);
-        //    }
-
-        //    if (updateDto.UserName.Contains("\r") || updateDto.UserName.Contains("\n"))
-        //    {
-        //        ModelState.AddModelError("UserName", "Username không được chứa dấu Enter");
-        //        return BadRequest(ModelState);
-        //    }
-
-        //    try
-        //    {
-        //        var employer = await _context.Set<Employer>()
-        //            .FirstOrDefaultAsync(e => e.EmployerId == id);
-
-        //        if (employer == null)
-        //        {
-        //            return NotFound(new { message = $"Không tìm thấy doanh nghiệp với Id: {id}" });
-        //        }
-
-        //        var user = await _userManager.FindByIdAsync(employer.UserId);
-        //        if (user == null)
-        //        {
-        //            return NotFound(new { message = $"Không tìm thấy thông tin người dùng cho doanh nghiệp này" });
-        //        }
-
-        //        // Kiểm tra username và email không trùng với người dùng khác
-        //        if (user.UserName != updateDto.UserName)
-        //        {
-        //            var existingUserByUsername = await _userManager.FindByNameAsync(updateDto.UserName);
-        //            if (existingUserByUsername != null && existingUserByUsername.Id != user.Id)
-        //            {
-        //                return BadRequest(new { error = $"Username '{updateDto.UserName}' đã tồn tại!" });
-        //            }
-        //            user.UserName = updateDto.UserName;
-        //        }
-
-        //        if (user.Email != updateDto.Email)
-        //        {
-        //            var existingUserByEmail = await _userManager.FindByEmailAsync(updateDto.Email);
-        //            if (existingUserByEmail != null && existingUserByEmail.Id != user.Id)
-        //            {
-        //                return BadRequest(new { error = $"Email '{updateDto.Email}' đã tồn tại!" });
-        //            }
-        //            user.Email = updateDto.Email;
-        //        }
-
-        //        using var transaction = await _context.Database.BeginTransactionAsync();
-
-        //        try
-        //        {
-        //            // Cập nhật thông tin người dùng
-        //            user.PhoneNumber = updateDto.Phone;
-
-        //            // Cập nhật mật khẩu nếu có
-        //            if (!string.IsNullOrEmpty(updateDto.Password))
-        //            {
-        //                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-        //                var passwordResult = await _userManager.ResetPasswordAsync(user, token, updateDto.Password);
-
-        //                if (!passwordResult.Succeeded)
-        //                {
-        //                    return BadRequest(new
-        //                    {
-        //                        error = "Không thể cập nhật mật khẩu",
-        //                        details = passwordResult.Errors
-        //                    });
-        //                }
-        //            }
-
-        //            var updateUserResult = await _userManager.UpdateAsync(user);
-        //            if (!updateUserResult.Succeeded)
-        //            {
-        //                return BadRequest(new
-        //                {
-        //                    error = "Không thể cập nhật thông tin người dùng",
-        //                    details = updateUserResult.Errors
-        //                });
-        //            }
-
-        //            // Cập nhật thông tin doanh nghiệp
-        //            employer.Phone = updateDto.Phone;
-        //            employer.CompanyName = updateDto.UserName; // Cập nhật tên công ty theo username mới
-
-        //            _context.Set<Employer>().Update(employer);
-        //            await _context.SaveChangesAsync();
-
-        //            await transaction.CommitAsync();
-
-        //            var responseDto = new EmployerAccountResponseDto
-        //            {
-        //                Id = user.Id,
-        //                UserName = user.UserName,
-        //                Email = user.Email,
-        //                Phone = user.PhoneNumber,
-        //                CreatedAt = employer.CreatedAt,
-        //                EmployerId = employer.EmployerId,
-        //                Role = "Employer"
-        //            };
-
-        //            return Ok(responseDto);
-        //        }
-        //        catch (Exception)
-        //        {
-        //            await transaction.RollbackAsync();
-        //            throw;
-        //        }
-        //    }
-        //    catch (DbUpdateException dbEx)
-        //    {
-        //        return StatusCode(500, new
-        //        {
-        //            error = "Lỗi cơ sở dữ liệu",
-        //            details = GetInnerExceptionMessages(dbEx)
-        //        });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, new { error = ex.Message });
-        //    }
-        //}
-
-        // DELETE: api/admin/Employer/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEmployer(string id)
         {
