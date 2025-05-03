@@ -145,7 +145,7 @@ const StudentProfile = ({ studentId }) => {
                     </div>
 
                     {/* Chỉ nhà tuyển dụng mới thấy phần đánh giá */}
-                    {role === 'Employer' && <Evaluate studentId={studentId} />}
+                    {(role === 'Employer' || role === 'Student' ) && <Evaluate studentId={studentId} />}
                 </div>
             </div>
             <Footer />

@@ -13,17 +13,32 @@ const StudentManagement = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const studentsPerPage = 10;
     const [studentIdFilter, setStudentIdFilter] = useState("");
-    const [statusFilter, setStatusFilter] = useState(""); 
+    const [statusFilter, setStatusFilter] = useState("");
     const [sortOrder, setSortOrder] = useState("");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    // Mapping status from English to Vietnamese
+    const statusMapping = {
+        'Completed': 'Hoàn thành',
+        'Internship': 'Thực tập',
+        'Reviewed': 'Phỏng vấn',
+        'pending': 'Chờ phản hồi'
+    };
 
     useEffect(() => {
         const fetchStudents = async () => {
             try {
                 setLoading(true);
                 const data = await getAllStudentsForAdmin();
-                setManagementStudent(data);
+
+                // Map English status to Vietnamese status
+                const translatedData = data.map(student => ({
+                    ...student,
+                    status: statusMapping[student.status] || student.status
+                }));
+
+                setManagementStudent(translatedData);
                 setLoading(false);
             } catch (err) {
                 console.error("Lỗi khi lấy dữ liệu sinh viên:", err);

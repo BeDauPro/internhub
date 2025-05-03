@@ -23,6 +23,7 @@ import useAuth from "./hooks/useAuth";
 import ForgotPassword from "./pages/ForgotPassword";
 import StudentViewEmployerProfile from "./pages/student/StudentViewEmployerProfile";
 import AdminViewStudentProfile from './pages/student/AdminViewStudentProfile';
+import AdminViewJobDetail from './pages/admin/AdminViewJobDetail'; // Import trang AdminViewJobDetail
 import EmailVerification from "./pages/EmailVerification";
 import {
     fetchStudentProfile,
@@ -64,45 +65,45 @@ const App = () => {
         }
     }, []);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            const studentProfile = await fetchStudentProfile();
-            const employerProfile = await fetchEmployerProfile();
-            const jobDetail = await fetchJobDetails();
-            const applicationData = await fetchApplications();
-            const jobData = await fetchJobs();
-            const eventData = await fetchEvents();
-            const reviewData = await fetchReview();
-            const employerReviewData = await fetchEmployerReview();
-            const applicationEmployerData = await fetchApplicationEmployer();
+        useEffect(() => {
+            const fetchData = async() => {
+                const studentProfile = await fetchStudentProfile();
+                const employerProfile = await fetchEmployerProfile();
+                const jobDetail = await fetchJobDetails();
+                const applicationData = await fetchApplications();
+                const jobData = await fetchJobs();
+                const eventData = await fetchEvents();
+                const reviewData = await fetchReview();
+                const employerReviewData = await fetchEmployerReview();
+                const applicationEmployerData = await fetchApplicationEmployer();
 
-            setProfile(studentProfile);
-            setEProfile(employerProfile);
-            setJobDetails(jobDetail);
-            setApplications(applicationData);
-            setJobs(jobData);
-            setEvents(eventData);
-            setReviews(reviewData);
-            setEmployerReview(employerReviewData);
-            setApplicationEmployer(applicationEmployerData);
+                setProfile(studentProfile);
+                setEProfile(employerProfile);
+                setJobDetails(jobDetail);
+                setApplications(applicationData);
+                setJobs(jobData);
+                setEvents(eventData);
+                setReviews(reviewData);
+                setEmployerReview(employerReviewData);
+                setApplicationEmployer(applicationEmployerData);
+            };
+
+            fetchData();
+        }, []);
+
+        const handleSave = (updatedProfile) => {
+            setProfile(updatedProfile);
+            setEProfile(updatedProfile);
+            setJobDetails(updatedProfile);
         };
 
-        fetchData();
-    }, []);
+        const defaultRoutes = {
+            Student: "/findjob",
+            Employer: "/manageposts",
+            Admin: "/accountmanagement",
+        };
 
-    const handleSave = (updatedProfile) => {
-        setProfile(updatedProfile);
-        setEProfile(updatedProfile);
-        setJobDetails(updatedProfile);
-    };
-
-    const defaultRoutes = {
-        Student: "/findjob",
-        Employer: "/manageposts",
-        Admin: "/accountmanagement",
-    };
-
-    const getDefaultRoute = () => defaultRoutes[role] || "/login";
+        const getDefaultRoute = () => defaultRoutes[role] || "/login";
 
     return (
         <Router>
@@ -163,6 +164,7 @@ const App = () => {
                 role={role}
               />
             }>
+              <Route path="/admin/job/:id" element={<AdminViewJobDetail />} />
               <Route path="/eventmanagement" element={<EventManagement events={events} />} />
               <Route path="/studentmanagement" element={<StudentManagement studentsData={managementStudents} />} />
               <Route path="/accountmanagement" element={<AccountManagement accounts={accounts} />} />

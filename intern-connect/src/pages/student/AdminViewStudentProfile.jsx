@@ -131,7 +131,7 @@ const AdminViewStudentProfile = () => {
                             </div>
                         </section>
                     </div>
-                    <Evaluate  studentId={studentId} role="Employer, Admin" />
+                    <Evaluate  studentId={studentId} />
                 </div>        
             </div>
             <Footer />

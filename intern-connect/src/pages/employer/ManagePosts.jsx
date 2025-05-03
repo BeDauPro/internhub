@@ -4,7 +4,7 @@ import '../../styles/pages/employer/manageposts.scss';
 import NavbarEmployer from '../../components/employer/NavbarEmployer';
 import Footer from '../../components/Footer';
 import { useNavigate } from "react-router-dom";
-import { getEmployerJobs, deleteJob } from '../../services/JobPostingApi';
+import { getEmployerJobs } from '../../services/JobPostingApi';
 
 const ManagePosts = () => {
   const [jobs, setJobs] = useState([]);
@@ -85,6 +85,11 @@ const ManagePosts = () => {
     navigate(`/editjob/${jobId}`);
   };
 
+  const truncateText = (text, maxLength) => {
+    if (!text) return '';
+    return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
+  };
+
   if (isLoading) {
     return <div className="loading-container">Đang tải dữ liệu...</div>;
   }
@@ -156,9 +161,7 @@ const ManagePosts = () => {
             {filteredJobs.slice(0, visibleJobs).map((job) => (
               <div key={job.id} className="jobCard animate-slide-up">
                 <div className="jobHeader">
-                  <span className="jobTitle">
-                    {job.title.length > 20 ? `${job.title.substring(0, 17)}...` : job.title}
-                  </span>
+                <span className="jobTitle">{truncateText(job.title, 15)}</span>
                   <span className={`jobType ${job.typeClass}`}>
                     {job.type}
                   </span>
@@ -166,9 +169,8 @@ const ManagePosts = () => {
                 <div className="jobBody">
                   <img src={job.logo} alt={job.company} className="jobLogo" />
                   <div>
-                    <span className="companyName">{job.company}</span>
-                    <div className="jobLocation">📍 {job.location}</div>
-
+                    <span className="companyName">{truncateText(job.company, 15)}</span>
+                    <div className="jobLocation">📍 {truncateText(job.location, 15)}</div>
                   </div>
                 </div>
                 <div className="jobFooter">
