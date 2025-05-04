@@ -32,13 +32,20 @@ const Evaluate = ({ studentId }) => {
       if(roleFromStorage === 'Employer') {
         employData = await getEmployerProfile();
         console.log('Employer data:', employData);
+        setNewReview({
+          ...newReview,
+          employerId: employData.employerId,
+          reviewerRole: roleFromStorage,
+        });
       } 
+      else{
+        setNewReview({
+          ...newReview,
+          reviewerRole: roleFromStorage,
+        });
+      }
       setReviews(data);
-      setNewReview({
-        ...newReview,
-        employerId: employData.employerId,
-        reviewerRole: roleFromStorage,
-      });
+      
       console.log('reviews:', reviews)
       setUserRole(roleFromStorage); // lưu role riêng
     } catch (error) {
@@ -48,7 +55,7 @@ const Evaluate = ({ studentId }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    console.log('newReview:', newReview);
     if (!newReview.comments || newReview.overallRating < 1 || newReview.overallRating > 10) {
       alert('Vui lòng nhập đầy đủ nhận xét và điểm từ 1 đến 10');
       return;
@@ -56,7 +63,6 @@ const Evaluate = ({ studentId }) => {
 
     try {
       await createReview({ ...newReview, studentId });
-      // khi submit => parseInt
       setNewReview({ overallRating: 0, comments: '' });
       fetchReviews();
     } catch (error) {
@@ -68,7 +74,6 @@ const Evaluate = ({ studentId }) => {
   return (
     <div className="container-review">
       <h2 className="mb-4">Đánh giá sinh viên</h2>
-
       <div className="list-group">
         {reviews.length > 0 ? (
           reviews.map((review, index) => (
@@ -94,9 +99,8 @@ const Evaluate = ({ studentId }) => {
                 min="1"
                 max="10"
                 className="form-control"
-                value={newReview.overallRating}
-                onChange={(e) =>
-                  setNewReview({ ...newReview, overallRating: parseInt(e.target.value)})
+                onChange={(e) =>  
+                  setNewReview({ ...newReview, overallRating: e.target.value})
                 }
               />
             </div>

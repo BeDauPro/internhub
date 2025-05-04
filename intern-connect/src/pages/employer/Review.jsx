@@ -29,9 +29,13 @@ const Review = ({ employerId, role }) => {
       if(role === 'Student') {
         studentData = await getStudentProfile();
         console.log('Student data:', studentData);
-      }
-      setReviews(data);
-      setNewReview({...newReview, studentId: studentData.id, reviewerRole: role});
+        setNewReview({...newReview, studentId: studentData.id, reviewerRole: role});
+
+      } else {
+      setNewReview({...newReview, reviewerRole: role});
+    }
+    setReviews(data);
+
     } catch (error) {
       console.error('Error fetching reviews:', error);
     }
