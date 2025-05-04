@@ -18,30 +18,31 @@ import Footer from '../../components/Footer';
 import Evaluate from './Evaluate';
 import { getStudentProfile} from '../../services/studentApi';
 
-const StudentProfile = ({ studentId }) => {
+const StudentProfile = () => {
     const [student, setStudent] = useState(null);
     const [isCreating, setIsCreating] = useState(false);
     const [role, setRole] = useState(null);
-
+    
     useEffect(() => {
         const userRole = localStorage.getItem('role'); // "Student" hoặc "Employer"
         setRole(userRole);
 
         const fetchData = async () => {
             try {
-                const data = await getStudentProfile(studentId);
+                const data = await getStudentProfile();
                 if (!data) {
                     setIsCreating(true); // Nếu không có thông tin sinh viên, chuyển qua tạo tài khoản mới
                 } else {
                     setStudent(data); // Đã có thông tin sinh viên
                 }
+                console.log('Student data:', data);
             } catch (err) {
                 console.error('Error loading profile: ', err);
                 alert('Không thể tải thông tin sinh viên. Vui lòng thử lại sau.');
             }
         };
         fetchData();
-    }, [studentId]);
+    }, []);
 
     // Nếu không có thông tin sinh viên và không đang tạo mới, hiển thị thông báo lỗi
     if (!student && !isCreating) {
@@ -144,8 +145,8 @@ const StudentProfile = ({ studentId }) => {
                         )}
                     </div>
 
-                    {/* Chỉ nhà tuyển dụng mới thấy phần đánh giá */}
-                    {(role === 'Employer' || role === 'Student' ) && <Evaluate studentId={studentId} />}
+                    {(role === "Employer" || role === "Student") && <Evaluate studentId={student.id} />}
+
                 </div>
             </div>
             <Footer />

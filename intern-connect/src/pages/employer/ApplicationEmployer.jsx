@@ -28,7 +28,7 @@ const ApplicationEmployer = () => {
     // Status mapping from English to Vietnamese
     const statusMapping = {
         'pending': 'Chờ phản hồi',
-        'interview': 'Phỏng vấn',
+        'reviewed': 'Phỏng vấn',
         'internship': 'Thực tập',
         'completed': 'Hoàn thành'
     };

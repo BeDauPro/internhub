@@ -105,7 +105,9 @@ const EmployerProfile = () => {
               </div>
             )}
           </div>
+          <Review employerId={employerProfile.employerId} />
         </div>
+
       </div>
       <Footer />
     </>

@@ -23,7 +23,7 @@ const StudentManagement = () => {
         'Completed': 'Hoàn thành',
         'Internship': 'Thực tập',
         'Reviewed': 'Phỏng vấn',
-        'pending': 'Chờ phản hồi'
+        'Pending': 'Chờ phản hồi'
     };
 
     useEffect(() => {
@@ -129,7 +129,7 @@ const StudentManagement = () => {
     const getStatusStyle = (status) => {
         switch (status) {
             case 'Chờ phản hồi':
-                return 'waiting';
+                return 'pending';
             case 'Phỏng vấn':
                 return 'interview';
             case 'Thực tập':

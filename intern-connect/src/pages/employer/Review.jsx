@@ -18,12 +18,18 @@ const Review = ({ employerId, role }) => {
       fetchReviews();
     }
   }, [employerId]);
-
+  console.log('employerId:', employerId);
   const fetchReviews = async () => {
     try {
       const data = await getReviewsForEmployer(employerId);
-      const studentData = await getStudentProfile();
+      console.log('Đánh giá:', data);
+      
       const role = getRoleFromStorage();
+      let studentData = null;
+      if(role === 'Student') {
+        studentData = await getStudentProfile();
+        console.log('Student data:', studentData);
+      }
       setReviews(data);
       setNewReview({...newReview, studentId: studentData.id, reviewerRole: role});
     } catch (error) {

@@ -23,14 +23,23 @@ const Evaluate = ({ studentId }) => {
   const fetchReviews = async () => {
     try {
       const data = await getReviewsForStudent(studentId);
-      const employData = await getEmployerProfile();
-      const roleFromStorage = getRoleFromStorage();      
+      console.log('Đánh giá:', data);
+
+      const roleFromStorage = getRoleFromStorage();     
+      console.log('Role from storage:', roleFromStorage); 
+      //const employData = await getEmployerProfile();
+      let employData = null;
+      if(roleFromStorage === 'Employer') {
+        employData = await getEmployerProfile();
+        console.log('Employer data:', employData);
+      } 
       setReviews(data);
       setNewReview({
         ...newReview,
         employerId: employData.employerId,
         reviewerRole: roleFromStorage,
       });
+      console.log('reviews:', reviews)
       setUserRole(roleFromStorage); // lưu role riêng
     } catch (error) {
       console.error('Lỗi khi lấy đánh giá:', error);
@@ -46,7 +55,6 @@ const Evaluate = ({ studentId }) => {
     }
 
     try {
-      console.log('Đánh giá:', newReview);
       await createReview({ ...newReview, studentId });
       // khi submit => parseInt
       setNewReview({ overallRating: 0, comments: '' });

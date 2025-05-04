@@ -1,5 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
+using InternHub.Attributes;
 
 namespace InternHub.DTOs.Admin
 {
@@ -14,7 +15,8 @@ namespace InternHub.DTOs.Admin
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Mật khẩu là bắt buộc")]
-        [StringLength(100, ErrorMessage = "Mật khẩu phải có ít nhất {2} ký tự", MinimumLength = 6)]
+        // [StringLength(100, ErrorMessage = "Mật khẩu phải có ít nhất {2} ký tự", MinimumLength = 6)]
+        [StrongPassword(ErrorMessage = "Mật khẩu phải chứa ít nhất một chữ cái viết hoa, một chữ cái viết thường, một số và một ký tự đặc biệt.")]
         public string Password { get; set; }
 
         [Required(ErrorMessage = "Số điện thoại là bắt buộc")]
@@ -24,13 +26,6 @@ namespace InternHub.DTOs.Admin
         // Validation tùy chỉnh
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            // Kiểm tra nếu username chứa "Đức"
-            if (UserName.Contains("Đức"))
-            {
-                yield return new ValidationResult(
-                    "Username không được chứa chữ 'Đức'",
-                    new[] { nameof(UserName) });
-            }
 
             // Kiểm tra nếu username chứa dấu Enter (\r, \n, hoặc \r\n)
             if (UserName.Contains("\r") || UserName.Contains("\n"))
