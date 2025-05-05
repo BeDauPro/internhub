@@ -77,8 +77,9 @@ const Evaluate = ({ studentId }) => {
       <div className="list-group">
         {reviews.length > 0 ? (
           reviews.map((review, index) => (
+            
             <div key={index} className="list-group-item">
-              <h5>{review.employerName}</h5>
+              <h5><b>{review.employerName}</b></h5>
               <p><strong>Điểm:</strong> {review.overallRating}/10</p>
               <p>{review.comments}</p>
             </div>

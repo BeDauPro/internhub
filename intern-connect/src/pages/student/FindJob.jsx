@@ -74,7 +74,7 @@ const HeroSection = ({ onSearch, jobs }) => {
                         placeholder="Vị trí tuyển dụng/tên công ty"
                         value={searchInput}
                         onChange={(e) => setSearchInput(e.target.value)}
-                        onKeyPress={handleKeyPress}
+                        onKeyDown={handleKeyPress}
                     />
                 </div>
 

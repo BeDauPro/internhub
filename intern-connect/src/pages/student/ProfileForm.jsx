@@ -15,7 +15,6 @@ import {
   updateStudent,
   deleteStudent,
   getStudentProfile,
-  updateAvatar,
   createAvatar,
 } from "../../services/studentApi";
 
@@ -37,7 +36,7 @@ const ProfileForm = () => {
           navigate("/login");
         } else {
           console.error("Lỗi khi tải dữ liệu sinh viên:", error);
-          alert("Không thể tải dữ liệu sinh viên");
+          // alert("Không thể tải dữ liệu sinh viên");
         }
       } finally {
         setLoading(false);

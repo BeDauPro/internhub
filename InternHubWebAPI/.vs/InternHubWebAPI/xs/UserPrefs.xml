@@ -1,8 +1,8 @@
 ﻿<Properties StartupConfiguration="{041E3534-1384-414A-9671-F6F7C0CDA538}|Default">
-  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MultiItemStartupConfigurations />
-  <MonoDevelop.Ide.ItemProperties.InternHub PreferredExecutionTarget="/Applications/Google Chrome.app" />
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.ItemProperties.InternHub PreferredExecutionTarget="/Applications/Google Chrome.app" />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.Workbench ActiveDocument="InternHub/DTOs/Employer/CreateEmployer.cs">
     <Files>
       <File FileName="InternHub/Services/EmployerService.cs" />
@@ -10,15 +10,17 @@
       <File FileName="InternHub/Services/JobApplicationService.cs" />
       <File FileName="InternHub/DTOs/Employer/UpdateEmployer.cs" />
       <File FileName="InternHub/DTOs/Employer/EmployerDto.cs" />
-      <File FileName="InternHub/DTOs/Employer/CreateEmployer.cs" Line="16" Column="9" />
+      <File FileName="InternHub/DTOs/Employer/CreateEmployer.cs" Line="15" Column="46" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="InternHubWebAPI">
-            <Node name="InternHub" expanded="True">
-              <Node name="DTOs" expanded="True">
-                <Node name="Employer" expanded="True" />
+            <Node name="InternHub">
+              <Node name="DTOs">
+                <Node name="Employer">
+                  <Node name="CreateEmployer.cs" selected="True" />
+                </Node>
               </Node>
               <Node name="Services" expanded="True" />
             </Node>

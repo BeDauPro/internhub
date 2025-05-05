@@ -23,25 +23,25 @@ const Review = ({ employerId, role }) => {
     try {
       const data = await getReviewsForEmployer(employerId);
       console.log('Đánh giá:', data);
-      
+
       const role = getRoleFromStorage();
       let studentData = null;
-      if(role === 'Student') {
+      if (role === 'Student') {
         studentData = await getStudentProfile();
         console.log('Student data:', studentData);
-        setNewReview({...newReview, studentId: studentData.id, reviewerRole: role});
+        setNewReview({ ...newReview, studentId: studentData.id, reviewerRole: role });
 
       } else {
-      setNewReview({...newReview, reviewerRole: role});
-    }
-    setReviews(data);
+        setNewReview({ ...newReview, reviewerRole: role });
+      }
+      setReviews(data);
 
     } catch (error) {
       console.error('Error fetching reviews:', error);
     }
   };
 
-  
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -79,11 +79,12 @@ const Review = ({ employerId, role }) => {
               <img
                 src={review.studentAvatar}
                 alt={review.studentName}
-                className="rounded-circle mr-3"
-                style={{ width: '80px', height: '80px' }}
+                className="rounded-circle"
+                style={{ width: '80px', height: '80px', marginRight: '16px' }}
               />
+
               <div className="flex-grow-1">
-                <h5>{review.studentName}</h5>
+              <h5><b>{review.studentName}</b></h5>
                 <div>
                   {[...Array(5)].map((_, i) => (
                     <FontAwesomeIcon
