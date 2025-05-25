@@ -1,35 +1,30 @@
 ﻿<Properties StartupConfiguration="{041E3534-1384-414A-9671-F6F7C0CDA538}|Default">
-  <MultiItemStartupConfigurations />
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.ItemProperties.InternHub PreferredExecutionTarget="/Applications/Google Chrome.app" />
-  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MonoDevelop.Ide.Workbench ActiveDocument="InternHub/DTOs/Employer/CreateEmployer.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="InternHub/Program.cs">
     <Files>
-      <File FileName="InternHub/Services/EmployerService.cs" />
-      <File FileName="InternHub/DTOs/JobApplication/JobApplicationDto.cs" />
-      <File FileName="InternHub/Services/JobApplicationService.cs" />
-      <File FileName="InternHub/DTOs/Employer/UpdateEmployer.cs" />
-      <File FileName="InternHub/DTOs/Employer/EmployerDto.cs" />
-      <File FileName="InternHub/DTOs/Employer/CreateEmployer.cs" Line="15" Column="46" />
+      <File FileName="InternHub/Models/Employer.cs" />
+      <File FileName="InternHub/Controllers/JobPostingController.cs" />
+      <File FileName="InternHub/Services/JobPostingService.cs" Line="335" Column="13" />
+      <File FileName="InternHub/Program.cs" Line="14" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
-          <Node name="InternHubWebAPI">
+          <Node name="InternHubWebAPI" expanded="True">
             <Node name="InternHub">
-              <Node name="DTOs">
-                <Node name="Employer">
-                  <Node name="CreateEmployer.cs" selected="True" />
-                </Node>
-              </Node>
+              <Node name="Models" expanded="True" />
               <Node name="Services" expanded="True" />
+              <Node name="Program.cs" selected="True" />
             </Node>
           </Node>
         </State>
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.ItemProperties.InternHub PreferredExecutionTarget="/Applications/Google Chrome.app" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
 </Properties>

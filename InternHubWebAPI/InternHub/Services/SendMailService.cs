@@ -1,76 +1,52 @@
-﻿using MimeKit;
-using MailKit.Net.Smtp;
-using Microsoft.Extensions.Options;
-using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 using InternHub.Contacts;
-using MailKit.Security;
 
 namespace InternHub.Services
 {
-    public class MailSettings
+    public class SendGridMailService : IEmailSender
     {
-        public string Mail { get; set; }
-        public string DisplayName { get; set; }
-        public string Password { get; set; }
-        public string Host { get; set; }
-        public int Port { get; set; }
-    }
+        private readonly IConfiguration _config;
+        private readonly ILogger<SendGridMailService> _logger;
 
-    public class SendMailService : IEmailSender
-    {
-        private readonly MailSettings _mailSettings;
-        private readonly ILogger<SendMailService> _logger;
-
-        public SendMailService(IOptions<MailSettings> mailSettings, ILogger<SendMailService> logger)
+        public SendGridMailService(IConfiguration config, ILogger<SendGridMailService> logger)
         {
-            _mailSettings = mailSettings.Value;
+            _config = config;
             _logger = logger;
         }
 
         public async Task SendEmailAsync(string email, string subject, string htmlMessage)
         {
-            var message = new MimeMessage();
-            message.Sender = new MailboxAddress(_mailSettings.DisplayName, _mailSettings.Mail);
-            message.From.Add(new MailboxAddress(_mailSettings.DisplayName, _mailSettings.Mail));
-            message.To.Add(MailboxAddress.Parse(email));
-            message.Subject = subject;
+            var apiKey = _config["SendGrid:ApiKey"];
+            var client = new SendGridClient(apiKey);
 
-            var builder = new BodyBuilder { HtmlBody = htmlMessage };
-            message.Body = builder.ToMessageBody();
+            var from = new EmailAddress(_config["SendGrid:SenderEmail"], _config["SendGrid:SenderName"]);
+            var to = new EmailAddress(email);
+            var msg = MailHelper.CreateSingleEmail(from, to, subject, null, htmlMessage);
 
-            using var smtp = new SmtpClient();
+            var response = await client.SendEmailAsync(msg);
 
-            try
+            if (response.IsSuccessStatusCode)
             {
-                smtp.Connect(_mailSettings.Host, _mailSettings.Port, SecureSocketOptions.StartTls);
-                smtp.Authenticate(_mailSettings.Mail, _mailSettings.Password);
-                await smtp.SendAsync(message);
-
-                // **Lưu lại email đã gửi thành công**
-                SaveEmailToFile(message, "logs/emails/sent");
+                SaveEmailLog(email, subject, htmlMessage, "logs/emails/sent");
             }
-            catch (Exception ex)
+            else
             {
-                // **Lưu lại email lỗi**
-                SaveEmailToFile(message, "logs/emails/failed");
-
-                _logger.LogError($"Lỗi gửi mail: {ex.Message}");
+                SaveEmailLog(email, subject, htmlMessage, "logs/emails/failed");
+                _logger.LogError($"SendGrid failed: {response.StatusCode}");
             }
-
-            smtp.Disconnect(true);
-            _logger.LogInformation($"Email đã gửi đến: {email}");
         }
 
-        private void SaveEmailToFile(MimeMessage message, string folderPath)
+        private void SaveEmailLog(string to, string subject, string body, string folderPath)
         {
-            System.IO.Directory.CreateDirectory(folderPath);
-            var emailSaveFile = $"{folderPath}/{Guid.NewGuid()}.eml";
-            using var fileStream = System.IO.File.Create(emailSaveFile);
-            message.WriteTo(fileStream);
+            Directory.CreateDirectory(folderPath);
+            var filePath = $"{folderPath}/{Guid.NewGuid()}.txt";
+            File.WriteAllText(filePath, $"To: {to}\nSubject: {subject}\nBody:\n{body}");
         }
-
     }
 }

@@ -20,6 +20,7 @@ import {
 
 const ProfileForm = () => {
   const navigate = useNavigate();
+  const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(false);
   //lấy thông tin sinh viên từ API
@@ -48,6 +49,22 @@ const ProfileForm = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    if (name === "gpa") {
+      const gpaValue = parseFloat(value);
+      if (isNaN(gpaValue) || gpaValue < 0 || gpaValue > 4) {
+        setErrors((prev) => ({
+          ...prev,
+          gpa: "GPA phải từ 0 đến 4",
+        }));
+        alert("GPA phải từ 0 đến 4");
+      } else {
+        setErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors.gpa;
+          return newErrors;
+        });
+      }
+    }
     setFormData({ ...formData, [name]: value });
   };
 
@@ -57,9 +74,9 @@ const ProfileForm = () => {
   };
 
   const handleAvatarChange = async (e) => {
-    
+
     const file = e.target.files[0];
-  
+
     if (!file) return;
 
     try {
@@ -69,7 +86,7 @@ const ProfileForm = () => {
         localStorage.setItem("ProfileUpdateImage", response.url);
         console.log("New image URL:", response.url);
         // cập nhật lại formData với ảnh đại diện mới
-        setFormData((prev) => ({  
+        setFormData((prev) => ({
           ...prev,
           ProfilePicture: response.url,
         }));
@@ -114,11 +131,11 @@ const ProfileForm = () => {
       } else {
         formDataToSend.append(key, formData[key] || "");
       }
-      
+
     });
 
     profilePicture ? formDataToSend.append("ProfilePicture2", profilePicture) : console.log("No new profile picture");
-    
+
     try {
       await updateStudent(formData.id, formDataToSend);
       alert("Cập nhật sinh viên thành công!");
@@ -148,7 +165,7 @@ const ProfileForm = () => {
       <div className="profile-edit-container">
         <div className="profile-edit-wrapper">
           <div className="profile-edit-card">
-              <img className="profile-edit-image"  src={formData.profilePicture} alt="Preview" />
+            <img className="profile-edit-image" src={formData.profilePicture} alt="Preview" />
             <section className="logo-upload">
               <h3>Ảnh đại diện</h3>
               <input
@@ -267,17 +284,21 @@ const ProfileForm = () => {
                 placeholder="Nhập các ngôn ngữ (cách nhau bằng dấu phẩy)"
               />
             </section>
-
             <section>
               <h3>GPA</h3>
               <input
-                type="text"
+                type="number"
+                step="0.01"
+                min="0"
+                max="4"
                 name="gpa"
                 value={formData.gpa || ""}
                 onChange={handleChange}
                 placeholder="Nhập GPA"
               />
+              {errors.gpa && <p className="error-text">{errors.gpa}</p>}
             </section>
+
 
             <section>
               <h3>Github</h3>

@@ -27,6 +27,25 @@ const EditProfile = () => {
     fetchProfile();
   }, []);
 
+  const validateForm = () => {
+    const errors = {};
+    const currentYear = new Date().getFullYear();
+
+    if (formData.foundedYear) {
+      const year = parseInt(formData.foundedYear, 10);
+      if (isNaN(year) || year < 1900 || year > currentYear) {
+        errors.foundedYear = `Năm thành lập phải từ 1900 đến ${currentYear}`;
+      }
+    }
+    // Có thể thêm các kiểm tra khác ở đây nếu muốn
+
+    if (Object.keys(errors).length > 0) {
+      alert(Object.values(errors).join("\n"));
+      return false;
+    }
+    return true;
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -38,6 +57,7 @@ const EditProfile = () => {
   };
 
   const handleCreate = async () => {
+    if (!validateForm()) return;
     try {
       await createEmployer(formData);
       alert("Tạo thông tin nhà tuyển dụng thành công!");
@@ -49,6 +69,7 @@ const EditProfile = () => {
   };
 
   const handleUpdate = async () => {
+    if (!validateForm()) return;
     try {
       await updateEmployer(formData.employerId, formData);
       alert("Cập nhật thông tin nhà tuyển dụng thành công!");
@@ -82,8 +103,8 @@ const EditProfile = () => {
               className="profile-edit-image"
               src={
                 formData.companyLogo instanceof File
-                  ? URL.createObjectURL(formData.companyLogo) 
-                  : formData.companyLogo || defaultAvatar 
+                  ? URL.createObjectURL(formData.companyLogo)
+                  : formData.companyLogo || defaultAvatar
               }
               alt="Logo"
             />

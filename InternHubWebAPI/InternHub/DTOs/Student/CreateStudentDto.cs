@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace InternHub.DTOs.Student
 {
     public class CreateStudentDto
@@ -11,6 +13,7 @@ namespace InternHub.DTOs.Student
         public string? Bio { get; set; }
         public DateTime? DateOfBirth { get; set; }
         public string? Gender { get; set; }
+        [Range(0, 4, ErrorMessage = "GPA phải nằm trong khoảng từ 0 đến 4.")]
         public decimal? GPA { get; set; }
         public string? Skills { get; set; }
         public string? Languages { get; set; }

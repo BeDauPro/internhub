@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using InternHub.Models.Enums;
 
 namespace InternHub.DTOs.Student
@@ -13,6 +14,7 @@ namespace InternHub.DTOs.Student
         public string? Skills { get; set; }
         public string? Languages { get; set; }
         public string? UserId { get; set; }
+        [Range(0, 4, ErrorMessage = "GPA phải nằm trong khoảng từ 0 đến 4.")]
         public decimal? GPA { get; set; }
         public DateTime? DateOfBirth { get; set; }
         public string? ProfilePicture { get; set; }

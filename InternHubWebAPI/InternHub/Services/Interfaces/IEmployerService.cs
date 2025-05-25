@@ -12,6 +12,7 @@ namespace InternHub.Services.Interfaces
         Task<EmployerDto> CreateAsync(CreateEmployer dto, string userId, IWebHostEnvironment env);
         Task<EmployerDto?> UpdateAsync(int id, UpdateEmployer dto, IWebHostEnvironment env, string userId);
         Task<bool> DeleteAsync(int id, string userId);
+        Task<string?> UploadCompanyLogoAsync(IFormFile file);
     }
 }
 

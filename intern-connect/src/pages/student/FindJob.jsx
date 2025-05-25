@@ -212,7 +212,7 @@ const FindJob = () => {
         fetchInitialJobs();
     }, []);
 
-    const handleSearch = async (searchInput, selectedLocation) => {
+    const handleSearch = async (searchInput, selectedLocation) => { 
         try {
             setIsLoading(true);
             setSearchInfo({

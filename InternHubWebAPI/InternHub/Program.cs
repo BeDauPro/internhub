@@ -10,6 +10,7 @@ using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
 using AutoMapper;
 using InternHub.Services.Interfaces;
+using SendGrid.Helpers.Mail;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -32,8 +33,8 @@ builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailS
 //quản lí bài đăng admin
 builder.Services.AddScoped<IJobPostingService, JobPostingService>();
 // Đăng ký dịch vụ gửi email
-builder.Services.AddTransient<IEmailSender, SendMailService>();
-
+// builder.Services.AddTransient<IEmailSender, SendMailService>();
+builder.Services.AddTransient<IEmailSender, SendGridMailService>();
 builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<IEmployerService, EmployerService>();
 builder.Services.AddScoped<IStudentReviewService, StudentReviewService>();
@@ -185,7 +186,6 @@ using (var scope = app.Services.CreateScope())
         }
     }
 }
-
 
 // Middleware
 if (app.Environment.IsDevelopment())

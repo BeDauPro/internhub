@@ -1,0 +1,4 @@
+To: 21t1020310@husc.edu.vn
+Subject: Password Reset
+Body:
+Click the link to reset your password: http://localhost:4200/reset-password?email=21t1020310@husc.edu.vn&token=CfDJ8MyTmTniy9dAqrresKp6VU6SBG1S0ZSGQ61GpkgggoQHKxRVNYWvpthVyPMYUOMAmCwZo6VRLFcES%2BDbD7uYzqPPEyJcCUA9Dkjk5psLISxbHKVQG6DW%2FvaHsEli%2FuXHhJig%2B6%2B%2BH5qjPIhOG5Ws%2B4ANQU1tLX%2FvL%2F7mmmrcghUivVPwMR%2Bfnqt10lfuFVKdQv86lEbDocefEJQmOnQHGTryNZLJcNFqNtoJDLlybAuw

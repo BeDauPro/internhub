@@ -112,7 +112,7 @@ namespace InternHub.Services
         public async Task<IEnumerable<JobPostingListDto>> GetAllJobPostingsAsync(string userRole = null)
         {
             // Trước tiên, xóa các bài đăng đã hết hạn
-            await DeleteAllExpiredJobPostings();
+            //await DeleteAllExpiredJobPostings();
 
             var query = _context.JobPostings
                 .Include(j => j.Employer)
@@ -138,7 +138,7 @@ namespace InternHub.Services
         public async Task<IEnumerable<JobPostingListDto>> GetFilteredJobPostingsAsync(string category, string location, string workType)
         {
             // Trước tiên, xóa các bài đăng đã hết hạn
-            await DeleteAllExpiredJobPostings();
+            //await DeleteAllExpiredJobPostings();
 
             var query = _context.JobPostings
                 .Include(j => j.Employer)
@@ -169,7 +169,7 @@ namespace InternHub.Services
         public async Task<IEnumerable<JobPostingResponseDto>> GetPendingJobPostingsAsync()
         {
             // Trước tiên, xóa các bài đăng đã hết hạn
-            await DeleteAllExpiredJobPostings();
+            //await DeleteAllExpiredJobPostings();
 
             var pendingJobPostings = await _context.JobPostings
                 .Include(j => j.Employer)
@@ -183,7 +183,7 @@ namespace InternHub.Services
         public async Task<IEnumerable<JobPostingResponseDto>> GetEmployerJobPostingsAsync(int employerId)
         {
             // Trước tiên, xóa các bài đăng đã hết hạn
-            await DeleteAllExpiredJobPostings();
+            //await DeleteAllExpiredJobPostings();
 
             var employerJobPostings = await _context.JobPostings
                 .Include(j => j.Employer)
@@ -284,7 +284,7 @@ namespace InternHub.Services
         // Helper methods - Các phương thức mapping DTO
 
         // Map to List DTO (Hiển thị dạng danh sách - Hình 1)
-        private JobPostingListDto MapToListDto(JobPosting jobPosting, Employer employer)
+        private static JobPostingListDto MapToListDto(JobPosting jobPosting, Employer employer)
         {
             return new JobPostingListDto
             {
@@ -337,7 +337,7 @@ namespace InternHub.Services
             int pageSize = 8)
         {
             // Xóa các bài đăng đã hết hạn
-            await DeleteAllExpiredJobPostings();
+            //await DeleteAllExpiredJobPostings();
 
             var query = _context.JobPostings
                 .Include(j => j.Employer)
@@ -397,7 +397,7 @@ namespace InternHub.Services
         public async Task<IEnumerable<JobPostingListDto>> GetEmployerJobPostingsListAsync(int employerId)
         {
             // Trước tiên, xóa các bài đăng đã hết hạn
-            await DeleteAllExpiredJobPostings();
+            //await DeleteAllExpiredJobPostings();
 
             var employerJobPostings = await _context.JobPostings
                 .Include(j => j.Employer)
@@ -443,18 +443,18 @@ namespace InternHub.Services
         }
 
         // Xóa tất cả các bài đăng đã hết hạn
-        private async Task DeleteAllExpiredJobPostings()
-        {
-            var now = DateTime.UtcNow;
-            var expiredJobs = await _context.JobPostings
-                .Where(j => j.ApplicationDeadline <= now)
-                .ToListAsync();
+        //private async Task DeleteAllExpiredJobPostings()
+        //{
+        //    var now = DateTime.UtcNow;
+        //    var expiredJobs = await _context.JobPostings
+        //        .Where(j => j.ApplicationDeadline <= now)
+        //        .ToListAsync();
 
-            if (expiredJobs.Any())
-            {
-                _context.JobPostings.RemoveRange(expiredJobs);
-                await _context.SaveChangesAsync();
-            }
-        }
+        //    if (expiredJobs.Any())
+        //    {
+        //        _context.JobPostings.RemoveRange(expiredJobs);
+        //        await _context.SaveChangesAsync();
+        //    }
+        //}
     }
 }
